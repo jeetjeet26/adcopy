@@ -58,13 +58,13 @@ class AdCopyGenerator {
             headlines.push(this.createBenefitHeadline(usp));
         }
 
-        // Ensure we have at least 3 headlines
-        while (headlines.length < 3) {
+        // Ensure we have at least 11 headlines
+        while (headlines.length < 11) {
             headlines.push(this.getGenericHeadline(industry));
         }
 
-        // Return only unique headlines
-        return [...new Set(headlines)].slice(0, 15);
+        // Return only unique headlines, up to 11
+        return [...new Set(headlines)].slice(0, 11);
     }
 
     /**
@@ -111,12 +111,14 @@ class AdCopyGenerator {
         // Generic descriptions based on industry
         descriptions.push(this.truncateToLength(`Looking for quality ${industry}? We offer the best solutions tailored to your needs. ${cta || 'Contact us today!'}`, 90));
         
-        // Add more generic descriptions if needed
-        if (descriptions.length < 2) {
-            descriptions.push(this.truncateToLength(`Premium ${industry} services with exceptional customer satisfaction. ${cta || 'Get in touch now!'}`, 90));
-        }
+        // Add more descriptions for variety
+        descriptions.push(this.truncateToLength(`Premium ${industry} services with exceptional customer satisfaction. ${cta || 'Get in touch now!'}`, 90));
+        
+        descriptions.push(this.truncateToLength(`Professional ${industry} solutions designed to exceed your expectations. ${cta || 'Learn more today!'}`, 90));
+        
+        descriptions.push(this.truncateToLength(`Trusted ${industry} provider with proven results and outstanding service quality. ${cta || 'Contact us!'}`, 90));
 
-        // Return only unique descriptions
+        // Return exactly 4 unique descriptions
         return [...new Set(descriptions)].slice(0, 4);
     }
 
@@ -302,10 +304,18 @@ class AdCopyGenerator {
             `Quality ${industry} Services`,
             `${industry} Experts`,
             `Professional ${industry}`,
-            `Trusted ${industry} Solutions`
+            `Trusted ${industry} Solutions`,
+            `Premium ${industry} Options`,
+            `Elite ${industry} Services`,
+            `Leading ${industry} Company`,
+            `Best ${industry} Results`,
+            `Certified ${industry} Pro`,
+            `Award-Winning ${industry}`
         ];
         
-        return templates[Math.floor(Math.random() * templates.length)];
+        // Cycle through templates to ensure variety
+        const index = Math.floor(Math.random() * templates.length);
+        return this.truncateToLength(templates[index], 30);
     }
 
     /**

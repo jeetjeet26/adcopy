@@ -135,27 +135,38 @@ class AgenticAdCopyGenerator {
      * @param {Object} adCopy - Generated ad copy
      */
     updateAdCopyUI(adCopy) {
-        // Update headlines - Fixed to match actual HTML IDs
-        const headlineIds = ['headline1', 'headline2', 'headline3'];
-        for (let i = 0; i < adCopy.headlines.length; i++) {
+        // Debug logging to see what we received
+        console.log('Received ad copy data:', adCopy);
+        console.log('Headlines:', adCopy.headlines);
+        console.log('Descriptions:', adCopy.descriptions);
+        
+        // Update headlines - Updated to handle 11 headlines
+        const headlineIds = ['headline1', 'headline2', 'headline3', 'headline4', 'headline5', 'headline6', 'headline7', 'headline8', 'headline9', 'headline10', 'headline11'];
+        for (let i = 0; i < adCopy.headlines.length && i < headlineIds.length; i++) {
             const headlineInput = document.getElementById(headlineIds[i]);
             if (headlineInput) {
+                console.log(`Setting headline ${i + 1}:`, adCopy.headlines[i]);
                 headlineInput.value = adCopy.headlines[i];
                 // Trigger input event to update character count
                 const event = new Event('input', { bubbles: true });
                 headlineInput.dispatchEvent(event);
+            } else {
+                console.warn(`Could not find headline input: ${headlineIds[i]}`);
             }
         }
         
-        // Update descriptions - Fixed to match actual HTML IDs
-        const descriptionIds = ['description1', 'description2'];
-        for (let i = 0; i < adCopy.descriptions.length; i++) {
+        // Update descriptions - Updated to handle 4 descriptions
+        const descriptionIds = ['description1', 'description2', 'description3', 'description4'];
+        for (let i = 0; i < adCopy.descriptions.length && i < descriptionIds.length; i++) {
             const descriptionInput = document.getElementById(descriptionIds[i]);
             if (descriptionInput) {
+                console.log(`Setting description ${i + 1}:`, adCopy.descriptions[i]);
                 descriptionInput.value = adCopy.descriptions[i];
                 // Trigger input event to update character count
                 const event = new Event('input', { bubbles: true });
                 descriptionInput.dispatchEvent(event);
+            } else {
+                console.warn(`Could not find description input: ${descriptionIds[i]}`);
             }
         }
         
@@ -182,8 +193,18 @@ class AgenticAdCopyGenerator {
         const headline1 = document.getElementById('headline1').value;
         const headline2 = document.getElementById('headline2').value;
         const headline3 = document.getElementById('headline3').value;
+        const headline4 = document.getElementById('headline4').value;
+        const headline5 = document.getElementById('headline5').value;
+        const headline6 = document.getElementById('headline6').value;
+        const headline7 = document.getElementById('headline7').value;
+        const headline8 = document.getElementById('headline8').value;
+        const headline9 = document.getElementById('headline9').value;
+        const headline10 = document.getElementById('headline10').value;
+        const headline11 = document.getElementById('headline11').value;
         const description1 = document.getElementById('description1').value;
         const description2 = document.getElementById('description2').value;
+        const description3 = document.getElementById('description3').value;
+        const description4 = document.getElementById('description4').value;
         const path1 = document.getElementById('path1').value;
         const path2 = document.getElementById('path2').value;
         const websiteUrl = document.getElementById('website-url').value;
@@ -191,6 +212,11 @@ class AgenticAdCopyGenerator {
         const previewContainer = document.getElementById('ad-preview');
         if (previewContainer) {
             const domain = this.extractDomain(websiteUrl);
+            
+            // Count total available headlines and descriptions
+            const availableHeadlines = [headline1, headline2, headline3, headline4, headline5, headline6, headline7, headline8, headline9, headline10, headline11].filter(h => h && h.trim()).length;
+            const availableDescriptions = [description1, description2, description3, description4].filter(d => d && d.trim()).length;
+            
             previewContainer.innerHTML = `
                 <div style="border: 1px solid #ddd; padding: 15px; border-radius: 4px; background-color: #fff;">
                     <div style="color: #1a73e8; font-size: 18px; font-weight: bold; margin-bottom: 5px;">
@@ -201,6 +227,9 @@ class AgenticAdCopyGenerator {
                     </div>
                     <div style="color: #545454; font-size: 14px; line-height: 1.4;">
                         ${description1 || 'Description 1'} ${description2 || 'Description 2'}
+                    </div>
+                    <div style="color: #999; font-size: 12px; margin-top: 10px; font-style: italic;">
+                        Total available: ${availableHeadlines} headlines, ${availableDescriptions} descriptions
                     </div>
                 </div>
             `;

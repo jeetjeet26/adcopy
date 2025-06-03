@@ -68,9 +68,9 @@ Provide a strategic approach for creating effective Google Ads copy for this cli
     }
 
     /**
-     * Create prompt for generation
+     * Create generation prompt
      * @param {Object} clientInfo - Client information
-     * @param {string} orchestrationResult - Result from orchestration
+     * @param {string} orchestrationResult - Result from orchestration step
      * @returns {Array} - Messages for OpenAI API
      */
     createGenerationPrompt(clientInfo, orchestrationResult) {
@@ -79,11 +79,11 @@ Provide a strategic approach for creating effective Google Ads copy for this cli
                 role: "system",
                 content: `You are an expert Google Ads copywriter specializing in real estate marketing. Your task is to create exactly one Google Ad that follows these strict requirements:
 
-1. Headlines: Create exactly 3 headlines, each maximum 30 characters
-2. Descriptions: Create exactly 2 descriptions, each maximum 90 characters
+1. Headlines: Create exactly 11 headlines, each maximum 30 characters
+2. Descriptions: Create exactly 4 descriptions, each maximum 90 characters
 3. Path fields: Create exactly 2 path fields, each maximum 15 characters
 
-The ad must be compelling, focused on benefits, and include a clear call to action. Format your response as a JSON object with these exact keys: headlines (array of 3 strings), descriptions (array of 2 strings), paths (array of 2 strings).`
+The ad must be compelling, focused on benefits, and include a clear call to action. Format your response as a JSON object with these exact keys: headlines (array of 11 strings), descriptions (array of 4 strings), paths (array of 2 strings).`
             },
             {
                 role: "user",
@@ -162,8 +162,8 @@ Remember:
                 
                 // Validate and ensure all required fields are present
                 return {
-                    headlines: this.validateAndTruncateArray(adCopy.headlines || [], 3, 30),
-                    descriptions: this.validateAndTruncateArray(adCopy.descriptions || [], 2, 90),
+                    headlines: this.validateAndTruncateArray(adCopy.headlines || [], 11, 30),
+                    descriptions: this.validateAndTruncateArray(adCopy.descriptions || [], 4, 90),
                     paths: this.validateAndTruncateArray(adCopy.paths || [], 2, 15)
                 };
             }
@@ -220,8 +220,8 @@ Remember:
         }
 
         return {
-            headlines: this.validateAndTruncateArray(headlines, 3, 30),
-            descriptions: this.validateAndTruncateArray(descriptions, 2, 90),
+            headlines: this.validateAndTruncateArray(headlines, 11, 30),
+            descriptions: this.validateAndTruncateArray(descriptions, 4, 90),
             paths: this.validateAndTruncateArray(paths, 2, 15)
         };
     }
@@ -259,13 +259,23 @@ Remember:
     getPlaceholder(index, maxLength) {
         const placeholders = {
             30: [
-                "Luxury Living Awaits",
-                "Premium Apartments Available",
-                "Modern Urban Residences"
+                "Premium Living Space",
+                "Luxury Apartments Now", 
+                "Modern Urban Homes",
+                "Executive Residences",
+                "Downtown Living",
+                "Upscale Amenities",
+                "Prime Location Units",
+                "Quality Craftsmanship", 
+                "Move-In Ready Now",
+                "Professional Housing",
+                "Elite Communities"
             ],
             90: [
                 "Experience the perfect blend of luxury and convenience in our premium apartments. Schedule a tour today!",
-                "Discover upscale living with state-of-the-art amenities and prime location. Contact us to learn more."
+                "Discover upscale living with state-of-the-art amenities and prime location. Contact us to learn more.",
+                "Premium apartments featuring modern design, top amenities, and unbeatable location. Apply now!",
+                "Elevate your lifestyle with our luxury residences. Professional management and exceptional service."
             ],
             15: [
                 "apartments",
@@ -284,13 +294,23 @@ Remember:
     getEmptyAdCopy() {
         return {
             headlines: [
-                "Luxury Living Awaits",
-                "Premium Apartments Available",
-                "Modern Urban Residences"
+                "Premium Living Space",
+                "Luxury Apartments Now", 
+                "Modern Urban Homes",
+                "Executive Residences",
+                "Downtown Living",
+                "Upscale Amenities",
+                "Prime Location Units",
+                "Quality Craftsmanship", 
+                "Move-In Ready Now",
+                "Professional Housing",
+                "Elite Communities"
             ],
             descriptions: [
                 "Experience the perfect blend of luxury and convenience in our premium apartments. Schedule a tour today!",
-                "Discover upscale living with state-of-the-art amenities and prime location. Contact us to learn more."
+                "Discover upscale living with state-of-the-art amenities and prime location. Contact us to learn more.",
+                "Premium apartments featuring modern design, top amenities, and unbeatable location. Apply now!",
+                "Elevate your lifestyle with our luxury residences. Professional management and exceptional service."
             ],
             paths: [
                 "apartments",
@@ -313,11 +333,21 @@ Remember:
             headlines: [
                 name.substring(0, 30),
                 `${location.substring(0, 22)} Living`,
-                `Premium Apartments`
+                `Premium Apartments`,
+                "Executive Housing",
+                "Modern Residences", 
+                "Upscale Living",
+                "Quality Homes",
+                "Elite Properties",
+                "Professional Units",
+                "Luxury Available",
+                "Prime Real Estate"
             ],
             descriptions: [
                 `Experience luxury living with premium amenities and convenient location. ${cta.substring(0, 20)}`,
-                `Modern design, exceptional service, and upscale features for discerning residents. Contact us now.`
+                `Modern design, exceptional service, and upscale features for discerning residents. Contact us now.`,
+                `Discover refined living spaces with world-class amenities and professional management services.`,
+                `Unparalleled luxury meets urban convenience. Premium apartments designed for modern professionals.`
             ],
             paths: [
                 "apartments",
@@ -352,11 +382,21 @@ These approaches should be woven into concise, compelling ad copy that respects 
   "headlines": [
     "Luxury Chicago Apartments",
     "Smart Home Urban Living",
-    "Premium Amenities & Views"
+    "Premium Amenities & Views",
+    "Executive Downtown Units",
+    "Modern Professional Space",
+    "Upscale City Residences",
+    "Elite Housing Available",
+    "Prime Location Living",
+    "Quality Urban Homes",
+    "Prestigious Apartments",
+    "Refined City Living"
   ],
   "descriptions": [
     "Experience upscale living with rooftop pool, fitness center & 24/7 concierge. Prime downtown location.",
-    "Modern luxury apartments with smart home technology and stunning Chicago views. Schedule a tour today!"
+    "Modern luxury apartments with smart home technology and stunning Chicago views. Schedule a tour today!",
+    "Premium amenities including state-of-the-art fitness center, rooftop terrace, and professional concierge.",
+    "Discover sophisticated urban living with contemporary design and unparalleled city access. Apply today!"
   ],
   "paths": [
     "luxury-rentals",

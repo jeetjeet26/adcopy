@@ -75,11 +75,11 @@ function createGenerationPrompt(clientInfo, orchestrationResult) {
             role: "system",
             content: `You are an expert Google Ads copywriter specializing in real estate marketing. Your task is to create exactly one Google Ad that follows these strict requirements:
 
-1. Headlines: Create exactly 3 headlines, each maximum 30 characters
-2. Descriptions: Create exactly 2 descriptions, each maximum 90 characters
+1. Headlines: Create exactly 11 headlines, each maximum 30 characters
+2. Descriptions: Create exactly 4 descriptions, each maximum 90 characters
 3. Path fields: Create exactly 2 path fields, each maximum 15 characters
 
-The ad must be compelling, focused on benefits, and include a clear call to action. Format your response as a JSON object with these exact keys: headlines (array of 3 strings), descriptions (array of 2 strings), paths (array of 2 strings).`
+The ad must be compelling, focused on benefits, and include a clear call to action. Format your response as a JSON object with these exact keys: headlines (array of 11 strings), descriptions (array of 4 strings), paths (array of 2 strings).`
         },
         {
             role: "user",
@@ -119,8 +119,8 @@ function parseGeneratedAdCopy(generationResult) {
             
             // Validate and ensure all required fields are present
             return {
-                headlines: validateAndTruncateArray(adCopy.headlines || [], 3, 30),
-                descriptions: validateAndTruncateArray(adCopy.descriptions || [], 2, 90),
+                headlines: validateAndTruncateArray(adCopy.headlines || [], 11, 30),
+                descriptions: validateAndTruncateArray(adCopy.descriptions || [], 4, 90),
                 paths: validateAndTruncateArray(adCopy.paths || [], 2, 15)
             };
         }
@@ -152,8 +152,25 @@ function validateAndTruncateArray(array, count, maxLength) {
 // Get placeholder text
 function getPlaceholder(index, maxLength) {
     const placeholders = {
-        30: [`Headline ${index}`, `Great Service`, `Quality Work`],
-        90: [`Description ${index} - Provide details about your service offering.`, `Professional service with excellent results.`],
+        30: [
+            `Premium Living Space`,
+            `Luxury Apartments Now`,
+            `Modern Urban Homes`,
+            `Executive Residences`,
+            `Downtown Living`,
+            `Upscale Amenities`,
+            `Prime Location Units`,
+            `Quality Craftsmanship`,
+            `Move-In Ready Now`,
+            `Professional Housing`,
+            `Elite Communities`
+        ],
+        90: [
+            `Experience the perfect blend of luxury and convenience in our premium apartments. Schedule a tour today!`,
+            `Discover upscale living with state-of-the-art amenities and prime location. Contact us to learn more.`,
+            `Premium apartments featuring modern design, top amenities, and unbeatable location. Apply now!`,
+            `Elevate your lifestyle with our luxury residences. Professional management and exceptional service.`
+        ],
         15: [`path${index}`, `service`, `contact`]
     };
     
@@ -165,8 +182,25 @@ function getPlaceholder(index, maxLength) {
 // Get fallback ad copy
 function getFallbackAdCopy() {
     return {
-        headlines: ["Premium Service", "Quality Results", "Expert Solutions"],
-        descriptions: ["Professional service with excellent results.", "Contact us today for a free consultation."],
+        headlines: [
+            "Premium Living Space",
+            "Luxury Apartments Now", 
+            "Modern Urban Homes",
+            "Executive Residences",
+            "Downtown Living",
+            "Upscale Amenities",
+            "Prime Location Units",
+            "Quality Craftsmanship", 
+            "Move-In Ready Now",
+            "Professional Housing",
+            "Elite Communities"
+        ],
+        descriptions: [
+            "Experience the perfect blend of luxury and convenience in our premium apartments. Schedule a tour today!",
+            "Discover upscale living with state-of-the-art amenities and prime location. Contact us to learn more.",
+            "Premium apartments featuring modern design, top amenities, and unbeatable location. Apply now!",
+            "Elevate your lifestyle with our luxury residences. Professional management and exceptional service."
+        ],
         paths: ["service", "contact"]
     };
 }

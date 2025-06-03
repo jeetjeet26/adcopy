@@ -6,10 +6,17 @@ A comprehensive web application that helps create Google Ads campaigns with AI-g
 
 - **Campaign Structure Builder**: Create organized Google Ads campaigns with multiple ad groups
 - **AI-Powered Ad Copy Generation**: Automatically generate compelling ad copy based on client information
-- **Keyword Management**: Add and organize keywords with different match types (exact, phrase, broad)
+- **Keyword Management**: Add keywords with different match types for each ad group
+- **AI-Powered Content**: Generate multiple ad variations with 11 headlines and 4 descriptions
 - **Real-time Validation**: Character limits for headlines (30), descriptions (90), and paths (15)
-- **Export Capabilities**: Generate campaign data for import into Google Ads
+- **Campaign Management**: Create multiple campaigns with structured ad groups
+- **Export Functionality**: Export campaigns to CSV format for Google Ads Editor
+- **Professional Interface**: Clean, intuitive design with step-by-step workflow
 - **Dual AI Approach**: Uses GPT-4 for orchestration and GPT-3.5-Turbo for generation
+
+## ✨ Key Features
+
+- **Automated Ad Copy Generation**: Generate professional Google Ads copy with 11 unique headlines and 4 compelling descriptions
 
 ## Setup Instructions
 
@@ -65,11 +72,11 @@ http://localhost:3000
 - Select match types (exact, phrase, broad)
 - Organize keyword targeting
 
-### 4. AI Ad Copy Generation
-- Select campaign and ad group
-- Click "Generate Ad Copy" to create AI-powered content
-- Headlines, descriptions, and paths are automatically generated
-- Edit and refine as needed
+### 4. **Ad Copy Generation**
+   - AI automatically generates optimized ad copy with 11 unique headlines and 4 compelling descriptions
+   - Headlines, descriptions, and paths are automatically generated based on client information
+   - Manual editing and refinement capabilities
+   - Real-time character count validation
 
 ### 5. Export
 - Export campaigns in multiple formats:
