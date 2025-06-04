@@ -86,7 +86,7 @@ class AgenticAdCopyGenerator {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(clientInfo)
+                body: JSON.stringify({ clientInfo })
             });
 
             if (!response.ok) {
@@ -97,7 +97,7 @@ class AgenticAdCopyGenerator {
             const result = await response.json();
             
             // Update UI with generated ad copy
-            this.updateAdCopyUI(result.adCopy);
+            this.updateAdCopyUI(result.data.adCopy);
             
             // Show success message
             this.showSuccess('Ad copy generated successfully!');

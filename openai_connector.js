@@ -357,52 +357,97 @@ Remember:
     }
 
     /**
-     * Get mock response for development/testing
+     * Get mock response for testing without API key
      * @param {string} model - OpenAI model
-     * @param {Array} messages - Messages
+     * @param {Array} messages - Messages array
      * @returns {string} - Mock response
      */
     getMockResponse(model, messages) {
         if (model === this.config.getOrchestrationModel()) {
-            return `Based on the client information, here are the key strategic approaches for creating effective Google Ads:
+            return `Based on the client information provided, here are the key strategic themes for effective Google Ads:
 
-1. Luxury Lifestyle Appeal: Emphasize the premium quality and upscale living experience to attract high-income professionals.
+1. **Luxury Living Experience**: Emphasize premium amenities, high-end finishes, and sophisticated lifestyle
+2. **Professional Convenience**: Highlight location benefits for working professionals, commute advantages
+3. **Exclusive Community**: Focus on the selective nature and quality of residents
+4. **Modern Technology**: Showcase smart home features, modern appliances, tech-enabled living
+5. **Personalized Service**: Emphasize concierge services, responsive management, white-glove experience
 
-2. Location Advantage: Highlight the prime location and its convenience to urban amenities and workplaces.
-
-3. Modern Technology Focus: Feature the smart home technology as a differentiator for tech-savvy professionals.
-
-4. Exclusive Amenities: Showcase the rooftop pool, fitness center, and concierge service as luxury benefits.
-
-5. Professional Prestige: Position the property as a status symbol that reflects the resident's professional success.
-
-These approaches should be woven into concise, compelling ad copy that respects Google Ads character limits while maintaining the sophisticated brand voice.`;
+These themes should resonate with young professionals and high-income individuals seeking luxury living options.`;
         } else {
-            return `{
-  "headlines": [
-    "Luxury Chicago Apartments",
-    "Smart Home Urban Living",
-    "Premium Amenities & Views",
-    "Executive Downtown Units",
-    "Modern Professional Space",
-    "Upscale City Residences",
-    "Elite Housing Available",
-    "Prime Location Living",
-    "Quality Urban Homes",
-    "Prestigious Apartments",
-    "Refined City Living"
-  ],
-  "descriptions": [
-    "Experience upscale living with rooftop pool, fitness center & 24/7 concierge. Prime downtown location.",
-    "Modern luxury apartments with smart home technology and stunning Chicago views. Schedule a tour today!",
-    "Premium amenities including state-of-the-art fitness center, rooftop terrace, and professional concierge.",
-    "Discover sophisticated urban living with contemporary design and unparalleled city access. Apply today!"
-  ],
-  "paths": [
-    "luxury-rentals",
-    "chicago"
-  ]
-}`;
+            return JSON.stringify({
+                headlines: [
+                    "Luxury Apartments Available",
+                    "Premium Living Spaces",
+                    "High-End Rentals",
+                    "Exclusive Apartments",
+                    "Modern Luxury Living",
+                    "Professional Housing",
+                    "Upscale Rentals",
+                    "Elite Apartments",
+                    "Luxury Rentals",
+                    "Premium Locations",
+                    "Schedule Tour Today"
+                ],
+                descriptions: [
+                    "Discover luxury living in our premium apartment community. Professional amenities.",
+                    "High-end apartments with modern finishes. Perfect for discerning professionals.",
+                    "Exclusive rental community with concierge services. Schedule your tour today.",
+                    "Luxury apartments in prime location. Experience sophisticated urban living."
+                ],
+                paths: [
+                    "luxury-rentals",
+                    "schedule-tour"
+                ]
+            });
+        }
+    }
+
+    /**
+     * Test API connection
+     * @returns {Promise<boolean>} - True if connection successful
+     */
+    async testConnection() {
+        try {
+            if (!this.config.hasApiKey()) {
+                // Return true for mock mode
+                return true;
+            }
+
+            // Test with a simple API call
+            const response = await fetch(`${this.config.getBaseUrl()}/chat/completions`, {
+                method: 'POST',
+                headers: this.config.getHeaders(),
+                body: JSON.stringify({
+                    model: 'gpt-3.5-turbo',
+                    messages: [
+                        {
+                            role: 'user',
+                            content: 'Hello'
+                        }
+                    ],
+                    max_tokens: 5
+                })
+            });
+
+            return response.ok;
+        } catch (error) {
+            console.error('OpenAI API connection test failed:', error.message);
+            return false;
+        }
+    }
+
+    /**
+     * Generate a response using OpenAI API with custom messages and model
+     * @param {Array} messages - Array of message objects for the conversation
+     * @param {string} model - The OpenAI model to use (default: gpt-3.5-turbo)
+     * @returns {Promise<string>} - The generated response content
+     */
+    async generateResponse(messages, model = 'gpt-3.5-turbo') {
+        try {
+            return await this.callOpenAI(model, messages);
+        } catch (error) {
+            console.error('Error generating OpenAI response:', error);
+            throw new Error('Failed to generate response from OpenAI');
         }
     }
 }

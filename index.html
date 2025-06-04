@@ -309,6 +309,40 @@
             <!-- Keywords Tab -->
             <div id="keywords-tab" class="tab-content">
                 <h2>Keywords</h2>
+                
+                <!-- AI Keyword Generation Section -->
+                <div style="background-color: #f8f9ff; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                    <h3 style="margin-top: 0; color: #4285f4;">🤖 AI Keyword Generator</h3>
+                    <p style="margin-bottom: 10px; color: #666;">Generate relevant keywords automatically based on your client information using AI analysis and Semrush data.</p>
+                    <button id="generate-keywords-btn" style="background-color: #4285f4; margin-right: 10px;">Generate Keywords <span class="ai-badge">AI</span></button>
+                    <button id="clear-suggestions-btn" style="background-color: #ea4335; display: none;">Clear Suggestions</button>
+                    
+                    <div id="loading-keywords" class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Analyzing client info and generating keywords...</p>
+                    </div>
+                    
+                    <div id="keyword-suggestions" style="display: none; margin-top: 15px;">
+                        <h4>Keyword Suggestions</h4>
+                        <div class="flex-row">
+                            <div class="col-50">
+                                <h5>Primary Keywords (High Volume)</h5>
+                                <div id="primary-keywords" class="keyword-list" style="max-height: 200px; overflow-y: auto;"></div>
+                                
+                                <h5 style="margin-top: 15px;">Long-tail Keywords</h5>
+                                <div id="longtail-keywords" class="keyword-list" style="max-height: 150px; overflow-y: auto;"></div>
+                            </div>
+                            <div class="col-50">
+                                <h5>Low Competition Keywords</h5>
+                                <div id="lowcomp-keywords" class="keyword-list" style="max-height: 200px; overflow-y: auto;"></div>
+                                
+                                <h5 style="margin-top: 15px;">Medium Volume Keywords</h5>
+                                <div id="medium-keywords" class="keyword-list" style="max-height: 150px; overflow-y: auto;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="flex-row">
                     <div class="col-50">
                         <h3>Add Keywords</h3>
@@ -326,7 +360,7 @@
                         </div>
                         <div class="form-group">
                             <label for="keywords-input">Keywords (one per line)</label>
-                            <textarea id="keywords-input" placeholder="Enter keywords, one per line"></textarea>
+                            <textarea id="keywords-input" placeholder="Enter keywords, one per line OR use AI generator above"></textarea>
                         </div>
                         <div class="form-group">
                             <input type="checkbox" id="exact-match" checked>
@@ -551,6 +585,16 @@
         const broadMatchCheckbox = document.getElementById('broad-match');
         const addKeywordsBtn = document.getElementById('add-keywords-btn');
         const keywordListContainer = document.getElementById('keyword-list-container');
+        
+        // AI Keyword Generation elements
+        const generateKeywordsBtn = document.getElementById('generate-keywords-btn');
+        const clearSuggestionsBtn = document.getElementById('clear-suggestions-btn');
+        const loadingKeywords = document.getElementById('loading-keywords');
+        const keywordSuggestions = document.getElementById('keyword-suggestions');
+        const primaryKeywords = document.getElementById('primary-keywords');
+        const longtailKeywords = document.getElementById('longtail-keywords');
+        const lowcompKeywords = document.getElementById('lowcomp-keywords');
+        const mediumKeywords = document.getElementById('medium-keywords');
         
         // Ad Copy elements
         const adCampaignSelect = document.getElementById('ad-campaign-select');
@@ -840,6 +884,94 @@
                 updateKeywordList();
             });
             
+            // AI Keyword Generation
+            generateKeywordsBtn.addEventListener('click', async () => {
+                try {
+                    const clientInfo = getClientInfo();
+                    
+                    // Validate client info
+                    if (!clientInfo.clientName || !clientInfo.industry) {
+                        alert('Please fill out at least the Client Name and Industry in the Client Information tab first.');
+                        return;
+                    }
+                    
+                    // Get selected campaign and ad group context
+                    const campaignId = keywordCampaignSelect.value;
+                    const adGroupId = keywordAdGroupSelect.value;
+                    
+                    let campaignContext = null;
+                    let adGroupContext = null;
+                    
+                    // Include campaign and ad group context if selected
+                    if (campaignId && campaignsData[campaignId]) {
+                        campaignContext = {
+                            id: campaignId,
+                            name: campaignsData[campaignId].name,
+                            objective: campaignsData[campaignId].objective || '',
+                            budget: campaignsData[campaignId].budget || ''
+                        };
+                        
+                        if (adGroupId && campaignsData[campaignId].adGroups && campaignsData[campaignId].adGroups[adGroupId]) {
+                            adGroupContext = {
+                                id: adGroupId,
+                                name: campaignsData[campaignId].adGroups[adGroupId].name,
+                                theme: campaignsData[campaignId].adGroups[adGroupId].theme || '',
+                                targetAudience: campaignsData[campaignId].adGroups[adGroupId].targetAudience || ''
+                            };
+                        }
+                    }
+                    
+                    // Show loading
+                    loadingKeywords.style.display = 'block';
+                    keywordSuggestions.style.display = 'none';
+                    generateKeywordsBtn.disabled = true;
+                    
+                    // Call the keyword generation API with enhanced context
+                    const response = await fetch('/api/generate-keywords', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ 
+                            clientInfo,
+                            campaignContext,
+                            adGroupContext
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        
+                        // Handle specific error types
+                        if (response.status === 503 && errorData.code === 'SEMRUSH_NOT_CONFIGURED') {
+                            throw new Error('Semrush API integration is required for keyword generation.\n\nPlease:\n1. Get a Semrush API key from https://www.semrush.com/api-documentation/\n2. Add SEMRUSH_API_KEY=your_key_here to your .env file\n3. Restart the server');
+                        } else {
+                            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                        }
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        displayKeywordSuggestions(result.data);
+                    } else {
+                        throw new Error(result.error || 'Failed to generate keywords');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error generating keywords:', error);
+                    alert(error.message || 'Failed to generate keywords. Please check your connection and try again.');
+                } finally {
+                    loadingKeywords.style.display = 'none';
+                    generateKeywordsBtn.disabled = false;
+                }
+            });
+            
+            clearSuggestionsBtn.addEventListener('click', () => {
+                keywordSuggestions.style.display = 'none';
+                clearSuggestionsBtn.style.display = 'none';
+            });
+            
             addKeywordsBtn.addEventListener('click', () => {
                 const campaignId = keywordCampaignSelect.value;
                 const adGroupId = keywordAdGroupSelect.value;
@@ -868,6 +1000,125 @@
                 addKeywords(campaignId, adGroupId, keywords, matchTypes);
                 keywordsInput.value = '';
             });
+        }
+        
+        function displayKeywordSuggestions(data) {
+            // Display contextual insights if available
+            if (data.contextualInsights) {
+                const insightsHTML = `
+                    <div style="background-color: #e8f5e8; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+                        <h5 style="margin: 0 0 5px 0; color: #2d5016;">🎯 Campaign Context Insights</h5>
+                        <p style="margin: 0; font-size: 14px; color: #5f6368;">${data.contextualInsights.recommendedFocus}</p>
+                    </div>
+                `;
+                
+                // Insert insights at the beginning of keyword suggestions
+                const keywordSuggestions = document.getElementById('keyword-suggestions');
+                const existingHTML = keywordSuggestions.innerHTML;
+                keywordSuggestions.innerHTML = insightsHTML + existingHTML.replace('<h4>Keyword Suggestions</h4>', '<h4>Keyword Suggestions</h4>');
+            }
+            
+            // Display primary keywords
+            primaryKeywords.innerHTML = '';
+            if (data.recommendations.primaryKeywords && data.recommendations.primaryKeywords.length > 0) {
+                data.recommendations.primaryKeywords.forEach(kw => {
+                    const keywordItem = createKeywordSuggestionItem(kw);
+                    primaryKeywords.appendChild(keywordItem);
+                });
+            } else {
+                primaryKeywords.innerHTML = '<p>No primary keywords found</p>';
+            }
+            
+            // Display long-tail keywords
+            longtailKeywords.innerHTML = '';
+            if (data.recommendations.longTail && data.recommendations.longTail.length > 0) {
+                data.recommendations.longTail.forEach(kw => {
+                    const keywordItem = createKeywordSuggestionItem(kw);
+                    longtailKeywords.appendChild(keywordItem);
+                });
+            } else {
+                longtailKeywords.innerHTML = '<p>No long-tail keywords found</p>';
+            }
+            
+            // Display low competition keywords
+            lowcompKeywords.innerHTML = '';
+            if (data.keywords.lowCompetition && data.keywords.lowCompetition.length > 0) {
+                data.keywords.lowCompetition.slice(0, 15).forEach(kw => {
+                    const keywordItem = createKeywordSuggestionItem(kw);
+                    lowcompKeywords.appendChild(keywordItem);
+                });
+            } else {
+                lowcompKeywords.innerHTML = '<p>No low competition keywords found</p>';
+            }
+            
+            // Display medium volume keywords
+            mediumKeywords.innerHTML = '';
+            if (data.keywords.mediumVolume && data.keywords.mediumVolume.length > 0) {
+                data.keywords.mediumVolume.slice(0, 15).forEach(kw => {
+                    const keywordItem = createKeywordSuggestionItem(kw);
+                    mediumKeywords.appendChild(keywordItem);
+                });
+            } else {
+                mediumKeywords.innerHTML = '<p>No medium volume keywords found</p>';
+            }
+            
+            // Show the suggestions and clear button
+            keywordSuggestions.style.display = 'block';
+            clearSuggestionsBtn.style.display = 'inline-block';
+        }
+        
+        function createKeywordSuggestionItem(keyword) {
+            const item = document.createElement('div');
+            item.className = 'keyword-item';
+            item.style.cursor = 'pointer';
+            item.style.transition = 'background-color 0.2s';
+            
+            item.innerHTML = `
+                <div style="flex: 1;">
+                    <strong>${keyword.keyword}</strong>
+                    <div style="font-size: 12px; color: #666;">
+                        Vol: ${keyword.searchVolume || 'N/A'} | 
+                        CPC: $${keyword.cpc ? keyword.cpc.toFixed(2) : 'N/A'} | 
+                        Comp: ${keyword.competition ? (keyword.competition * 100).toFixed(1) + '%' : 'N/A'}
+                    </div>
+                </div>
+                <button class="add-keyword-suggestion-btn" style="padding: 5px 10px; background-color: #4285f4; color: white; border: none; border-radius: 3px; cursor: pointer;">
+                    Add
+                </button>
+            `;
+            
+            // Add hover effect
+            item.addEventListener('mouseenter', () => {
+                item.style.backgroundColor = '#f0f8ff';
+            });
+            
+            item.addEventListener('mouseleave', () => {
+                item.style.backgroundColor = '';
+            });
+            
+            // Add click handler for adding keyword
+            const addBtn = item.querySelector('.add-keyword-suggestion-btn');
+            addBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                addKeywordToInput(keyword.keyword);
+            });
+            
+            return item;
+        }
+        
+        function addKeywordToInput(keyword) {
+            const currentKeywords = keywordsInput.value.trim();
+            if (currentKeywords) {
+                keywordsInput.value = currentKeywords + '\n' + keyword;
+            } else {
+                keywordsInput.value = keyword;
+            }
+            
+            // Flash the input to show keyword was added
+            keywordsInput.style.backgroundColor = '#e8f5e8';
+            setTimeout(() => {
+                keywordsInput.style.backgroundColor = '';
+            }, 300);
         }
         
         function addKeywords(campaignId, adGroupId, keywords, matchTypes) {

@@ -1,7 +1,7 @@
 {
   "name": "google-ads-campaign-builder",
   "version": "1.0.0",
-  "description": "AI-Powered Google Ads Campaign Builder",
+  "description": "A tool for building Google Ads campaigns with AI-powered ad copy generation",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -10,13 +10,14 @@
   "dependencies": {
     "express": "^4.18.2",
     "cors": "^2.8.5",
+    "body-parser": "^1.20.2",
     "dotenv": "^16.3.1",
     "axios": "^1.6.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
   },
-  "keywords": ["google-ads", "ai", "campaign-builder", "openai"],
+  "keywords": ["google-ads", "marketing", "ai", "copywriting"],
   "author": "",
-  "license": "MIT"
+  "license": "ISC"
 } 
