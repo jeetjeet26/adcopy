@@ -1003,36 +1003,23 @@
         }
         
         function displayKeywordSuggestions(data) {
-            // Display contextual insights if available
-            if (data.contextualInsights) {
-                const insightsHTML = `
-                    <div style="background-color: #e8f5e8; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-                        <h5 style="margin: 0 0 5px 0; color: #2d5016;">🎯 Campaign Context Insights</h5>
-                        <p style="margin: 0; font-size: 14px; color: #5f6368;">${data.contextualInsights.recommendedFocus}</p>
-                    </div>
-                `;
-                
-                // Insert insights at the beginning of keyword suggestions
-                const keywordSuggestions = document.getElementById('keyword-suggestions');
-                const existingHTML = keywordSuggestions.innerHTML;
-                keywordSuggestions.innerHTML = insightsHTML + existingHTML.replace('<h4>Keyword Suggestions</h4>', '<h4>Keyword Suggestions</h4>');
-            }
+            console.log('Displaying keyword suggestions:', data); // Debug log
             
-            // Display primary keywords
+            // Display primary keywords (High Volume)
             primaryKeywords.innerHTML = '';
-            if (data.recommendations.primaryKeywords && data.recommendations.primaryKeywords.length > 0) {
-                data.recommendations.primaryKeywords.forEach(kw => {
+            if (data.keywords && data.keywords.highVolume && data.keywords.highVolume.length > 0) {
+                data.keywords.highVolume.slice(0, 15).forEach(kw => {
                     const keywordItem = createKeywordSuggestionItem(kw);
                     primaryKeywords.appendChild(keywordItem);
                 });
             } else {
-                primaryKeywords.innerHTML = '<p>No primary keywords found</p>';
+                primaryKeywords.innerHTML = '<p>No high volume keywords found</p>';
             }
             
-            // Display long-tail keywords
+            // Display long-tail keywords (use the longTail recommendations, not lowVolume)
             longtailKeywords.innerHTML = '';
-            if (data.recommendations.longTail && data.recommendations.longTail.length > 0) {
-                data.recommendations.longTail.forEach(kw => {
+            if (data.recommendations && data.recommendations.longTail && data.recommendations.longTail.length > 0) {
+                data.recommendations.longTail.slice(0, 15).forEach(kw => {
                     const keywordItem = createKeywordSuggestionItem(kw);
                     longtailKeywords.appendChild(keywordItem);
                 });
@@ -1042,7 +1029,7 @@
             
             // Display low competition keywords
             lowcompKeywords.innerHTML = '';
-            if (data.keywords.lowCompetition && data.keywords.lowCompetition.length > 0) {
+            if (data.keywords && data.keywords.lowCompetition && data.keywords.lowCompetition.length > 0) {
                 data.keywords.lowCompetition.slice(0, 15).forEach(kw => {
                     const keywordItem = createKeywordSuggestionItem(kw);
                     lowcompKeywords.appendChild(keywordItem);
@@ -1053,7 +1040,7 @@
             
             // Display medium volume keywords
             mediumKeywords.innerHTML = '';
-            if (data.keywords.mediumVolume && data.keywords.mediumVolume.length > 0) {
+            if (data.keywords && data.keywords.mediumVolume && data.keywords.mediumVolume.length > 0) {
                 data.keywords.mediumVolume.slice(0, 15).forEach(kw => {
                     const keywordItem = createKeywordSuggestionItem(kw);
                     mediumKeywords.appendChild(keywordItem);

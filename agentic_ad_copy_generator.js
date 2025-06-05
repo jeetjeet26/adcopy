@@ -76,17 +76,43 @@ class AgenticAdCopyGenerator {
             return;
         }
 
+        // Get campaign and ad group context from the global campaignsData
+        let campaignContext = null;
+        let adGroupContext = null;
+        
+        if (window.campaignsData && window.campaignsData[campaignId]) {
+            campaignContext = {
+                id: campaignId,
+                name: window.campaignsData[campaignId].name,
+                objective: window.campaignsData[campaignId].objective || '',
+                budget: window.campaignsData[campaignId].budget || ''
+            };
+            
+            if (adGroupId && window.campaignsData[campaignId].adGroups && window.campaignsData[campaignId].adGroups[adGroupId]) {
+                adGroupContext = {
+                    id: adGroupId,
+                    name: window.campaignsData[campaignId].adGroups[adGroupId].name,
+                    theme: window.campaignsData[campaignId].adGroups[adGroupId].theme || '',
+                    targetAudience: window.campaignsData[campaignId].adGroups[adGroupId].targetAudience || ''
+                };
+            }
+        }
+
         try {
             this.isGenerating = true;
             this.showGeneratingStatus(true);
 
-            // Make API call to backend
+            // Make API call to backend with campaign and ad group context
             const response = await fetch(`${this.apiBaseUrl}/api/generate-ad-copy`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ clientInfo })
+                body: JSON.stringify({ 
+                    clientInfo,
+                    campaignContext,
+                    adGroupContext
+                })
             });
 
             if (!response.ok) {

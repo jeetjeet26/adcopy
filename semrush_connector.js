@@ -194,11 +194,11 @@ Focus on extracting terms that would be valuable for finding relevant keywords i
                 campaignContext: campaignContext,
                 adGroupContext: adGroupContext,
                 keywords: {
-                    highVolume: keywordSuggestions.filter(kw => kw.searchVolume > 1000),
-                    mediumVolume: keywordSuggestions.filter(kw => kw.searchVolume >= 100 && kw.searchVolume <= 1000),
-                    lowVolume: keywordSuggestions.filter(kw => kw.searchVolume < 100),
+                    highVolume: keywordSuggestions.filter(kw => kw.searchVolume > 500),
+                    mediumVolume: keywordSuggestions.filter(kw => kw.searchVolume >= 100 && kw.searchVolume <= 500),
+                    lowVolume: keywordSuggestions.filter(kw => kw.searchVolume < 100 && kw.searchVolume > 0),
                     lowCompetition: keywordSuggestions.filter(kw => kw.competition < 0.3),
-                    all: keywordSuggestions.slice(0, 100) // Limit to top 100
+                    all: keywordSuggestions.slice(0, 100)
                 },
                 recommendations: {
                     primaryKeywords: keywordSuggestions.slice(0, 10),

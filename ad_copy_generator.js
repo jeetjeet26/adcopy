@@ -338,24 +338,183 @@ class AdCopyGenerator {
     }
 
     /**
-     * Truncate text to specified length
+     * Truncate text to specified length with 90%-100% optimization
      * @param {string} text Text to truncate
      * @param {number} maxLength Maximum length
-     * @returns {string} Truncated text
+     * @returns {string} Optimized text within 90%-100% of limit
      */
     truncateToLength(text, maxLength) {
         if (!text) return '';
-        if (text.length <= maxLength) return text;
         
-        // Try to truncate at a space to avoid cutting words
-        let truncated = text.substring(0, maxLength);
-        const lastSpaceIndex = truncated.lastIndexOf(' ');
+        const minLength = Math.ceil(maxLength * 0.9); // 90% of max length
+        const trimmedText = text.trim();
         
-        if (lastSpaceIndex > maxLength * 0.7) {
-            truncated = truncated.substring(0, lastSpaceIndex);
+        // If already in optimal range, return as is
+        if (trimmedText.length >= minLength && trimmedText.length <= maxLength) {
+            return trimmedText;
         }
         
-        return truncated;
+        // If too long, intelligently truncate
+        if (trimmedText.length > maxLength) {
+            // Try to find a good word boundary within the target range
+            let bestCut = maxLength;
+            
+            // Look for word boundaries from maxLength down to minLength
+            for (let i = maxLength; i >= minLength; i--) {
+                if (i < trimmedText.length && (trimmedText[i] === ' ' || trimmedText[i] === '.' || trimmedText[i] === ',')) {
+                    bestCut = i;
+                    break;
+                }
+            }
+            
+            // If we found a good boundary, use it
+            if (bestCut < trimmedText.length) {
+                const result = trimmedText.substring(0, bestCut).trim();
+                if (result.length >= minLength) {
+                    return result;
+                }
+            }
+            
+            // Otherwise, cut at maxLength and remove any partial word
+            let truncated = trimmedText.substring(0, maxLength);
+            const lastSpaceIndex = truncated.lastIndexOf(' ');
+            
+            if (lastSpaceIndex > minLength) {
+                return truncated.substring(0, lastSpaceIndex).trim();
+            }
+            
+            return truncated.trim();
+        }
+        
+        // If too short, extend it strategically
+        if (trimmedText.length < minLength) {
+            let result = trimmedText;
+            const charsNeeded = minLength - trimmedText.length;
+            
+            // Get appropriate extensions based on the type of content
+            const extensions = this.getTargetedExtensions(trimmedText, maxLength, charsNeeded);
+            
+            // Try each extension to see if it gets us into the target range
+            for (const extension of extensions) {
+                const candidate = `${result} ${extension}`.trim();
+                if (candidate.length >= minLength && candidate.length <= maxLength) {
+                    return candidate;
+                }
+                // If this extension would make it too long, skip it
+                if (candidate.length > maxLength) {
+                    continue;
+                }
+            }
+            
+            // If single extensions don't work, try combining short ones
+            if (result.length < minLength) {
+                for (let i = 0; i < extensions.length - 1; i++) {
+                    for (let j = i + 1; j < extensions.length; j++) {
+                        const combined = `${extensions[i]} ${extensions[j]}`;
+                        const candidate = `${result} ${combined}`.trim();
+                        if (candidate.length >= minLength && candidate.length <= maxLength) {
+                            return candidate;
+                        }
+                        if (candidate.length > maxLength) {
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // Last resort: add generic padding words one by one
+            const paddingWords = this.getPaddingWords(maxLength);
+            for (const word of paddingWords) {
+                const candidate = `${result} ${word}`.trim();
+                if (candidate.length <= maxLength) {
+                    result = candidate;
+                    if (result.length >= minLength) {
+                        return result;
+                    }
+                } else {
+                    break;
+                }
+            }
+            
+            // If we still can't reach minLength, return what we have
+            return result;
+        }
+        
+        return trimmedText;
+    }
+
+    /**
+     * Get targeted extensions based on content and requirements
+     * @param {string} text Original text
+     * @param {number} maxLength Maximum character length
+     * @param {number} charsNeeded Characters needed to reach minimum
+     * @returns {Array} Array of appropriate extension phrases
+     */
+    getTargetedExtensions(text, maxLength, charsNeeded) {
+        const lowerText = text.toLowerCase();
+        const extensions = [];
+        
+        if (maxLength === 30) { // Headlines
+            // Short, impactful extensions for headlines
+            if (charsNeeded <= 5) {
+                extensions.push('Now', 'Pro', 'Plus', 'Here', 'Open');
+            } else if (charsNeeded <= 10) {
+                extensions.push('Today', 'Expert', 'Quality', 'Premium', 'Trusted');
+            } else {
+                extensions.push('Available Now', 'Book Today', 'Call Now', 'Visit Us', 'Get Started');
+            }
+            
+            // Context-specific extensions
+            if (lowerText.includes('service')) {
+                extensions.unshift('Pro', 'Expert', 'Quality');
+            }
+            if (lowerText.includes('apartment') || lowerText.includes('home')) {
+                extensions.unshift('Available', 'Ready', 'Open');
+            }
+            
+        } else if (maxLength === 90) { // Descriptions
+            // Meaningful extensions for descriptions
+            if (charsNeeded <= 15) {
+                extensions.push('Contact us today!', 'Learn more now.', 'Book your visit!', 'Call us now.');
+            } else if (charsNeeded <= 25) {
+                extensions.push('Get in touch today!', 'Schedule your visit now.', 'Contact our team today.');
+            } else {
+                extensions.push('Contact us today for more information!', 'Schedule your visit and see the difference.', 'Call us now to learn about our services.');
+            }
+            
+            // Context-specific extensions
+            if (lowerText.includes('quality') || lowerText.includes('premium')) {
+                extensions.unshift('Experience the difference today!', 'See why we are the best choice.');
+            }
+            
+        } else if (maxLength === 15) { // Paths
+            // Short, relevant extensions for paths
+            if (charsNeeded <= 3) {
+                extensions.push('pro', 'top', 'new');
+            } else if (charsNeeded <= 6) {
+                extensions.push('today', 'offers', 'deals');
+            } else {
+                extensions.push('services', 'solutions', 'contact');
+            }
+        }
+        
+        return extensions;
+    }
+
+    /**
+     * Get padding words for last resort extension
+     * @param {number} maxLength Maximum character length
+     * @returns {Array} Array of short padding words
+     */
+    getPaddingWords(maxLength) {
+        if (maxLength === 30) { // Headlines
+            return ['&', 'Pro', 'Plus', 'New', 'Top', 'Best'];
+        } else if (maxLength === 90) { // Descriptions
+            return ['and more', 'with quality', 'plus service', 'and value'];
+        } else if (maxLength === 15) { // Paths
+            return ['pro', 'plus', 'new'];
+        }
+        return ['plus', 'pro'];
     }
 }
 

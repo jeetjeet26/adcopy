@@ -99,10 +99,30 @@ app.post('/api/generate-ad-copy', async (req, res) => {
             throw new AppError(400, 'CLIENT_INFO_REQUIRED', 'Client information is required');
         }
 
-        const clientInfo = req.body.clientInfo;
+        const { clientInfo, campaignContext, adGroupContext } = req.body;
         
-        // Use the OpenAI connector to generate ad copy
-        const adCopy = await openaiConnector.generateAdCopy(clientInfo);
+        let keywordData = null;
+        
+        // Try to get keywords first if Semrush is available
+        if (semrushConnector) {
+            try {
+                console.log('Generating keywords for ad copy context...');
+                keywordData = await semrushConnector.generateKeywordRecommendations(
+                    clientInfo, 
+                    campaignContext, 
+                    adGroupContext
+                );
+                console.log('Keywords generated successfully for ad copy');
+            } catch (error) {
+                console.warn('Failed to generate keywords for ad copy, proceeding without them:', error.message);
+                // Continue without keywords if generation fails
+            }
+        } else {
+            console.log('Semrush not configured, generating ad copy without keyword data');
+        }
+        
+        // Use the OpenAI connector to generate ad copy with keyword context
+        const adCopy = await openaiConnector.generateAdCopy(clientInfo, campaignContext, adGroupContext, keywordData);
         
         res.json({
             success: true,
