@@ -93,32 +93,75 @@ app.get('/api/health', async (req, res) => {
 // API endpoint to generate ad copy
 app.post('/api/generate-ad-copy', async (req, res) => {
     try {
+        console.log('=== AD COPY GENERATION REQUEST ===');
+        console.log('Full request body:', JSON.stringify(req.body, null, 2));
+        console.log('Client info received:', req.body.clientInfo);
+        console.log('Campaign context received:', req.body.campaignContext);
+        console.log('Saved keywords received:', req.body.savedKeywords);
         console.log('Generating ad copy for client:', req.body.clientInfo?.name || 'Unknown');
         
-        if (!req.body.clientInfo) {
-            throw new AppError(400, 'CLIENT_INFO_REQUIRED', 'Client information is required');
-        }
-
-        const { clientInfo, campaignContext, adGroupContext } = req.body;
+        const { clientInfo, campaignContext, adGroupContext, savedKeywords } = req.body;
         
         let keywordData = null;
         
-        // Try to get keywords first if Semrush is available
-        if (semrushConnector) {
-            try {
-                console.log('Generating keywords for ad copy context...');
-                keywordData = await semrushConnector.generateKeywordRecommendations(
-                    clientInfo, 
-                    campaignContext, 
-                    adGroupContext
-                );
-                console.log('Keywords generated successfully for ad copy');
-            } catch (error) {
-                console.warn('Failed to generate keywords for ad copy, proceeding without them:', error.message);
-                // Continue without keywords if generation fails
-            }
+        // Check if this is a unit type campaign with saved keywords
+        console.log('Checking unit type conditions:');
+        console.log('- campaignContext exists:', !!campaignContext);
+        console.log('- campaignContext.isUnitType:', campaignContext?.isUnitType);
+        console.log('- savedKeywords exists:', !!savedKeywords);
+        console.log('- savedKeywords length:', savedKeywords?.length);
+        
+        if (campaignContext && campaignContext.isUnitType && savedKeywords && savedKeywords.length > 0) {
+            console.log('✓ Unit type campaign detected with saved keywords. Using saved keywords for ad copy generation.');
+            
+            // Convert saved keywords to the expected keywordData format
+            const formattedKeywords = savedKeywords.map(kw => ({
+                keyword: kw.text,
+                searchVolume: 1000, // Default values since we don't have real data for saved keywords
+                competition: 0.5,
+                cpc: 1.50,
+                matchType: kw.matchType
+            }));
+            
+            keywordData = {
+                keywords: {
+                    highVolume: formattedKeywords.slice(0, 10),
+                    mediumVolume: formattedKeywords.slice(10, 20),
+                    lowVolume: [],
+                    lowCompetition: formattedKeywords.filter(kw => kw.matchType === 'exact'),
+                    all: formattedKeywords
+                },
+                analysis: {
+                    coreTopics: [adGroupContext.name],
+                    industryTerms: ['real estate', 'property', 'homes'],
+                    seedKeywords: formattedKeywords.slice(0, 5).map(kw => kw.keyword),
+                    targetingInsights: `Keywords focused on ${adGroupContext.name} for unit type campaign`
+                },
+                recommendations: {
+                    primaryKeywords: formattedKeywords.slice(0, 5),
+                    longTail: formattedKeywords.filter(kw => kw.keyword.split(' ').length >= 3),
+                    branded: []
+                }
+            };
         } else {
-            console.log('Semrush not configured, generating ad copy without keyword data');
+            // For non-unit type campaigns or when no saved keywords, generate keywords via Semrush
+            console.log('✗ Not a unit type campaign with saved keywords. Using Semrush keyword generation.');
+            if (semrushConnector) {
+                try {
+                    console.log('Generating keywords for ad copy context...');
+                    keywordData = await semrushConnector.generateKeywordRecommendations(
+                        clientInfo, 
+                        campaignContext, 
+                        adGroupContext
+                    );
+                    console.log('Keywords generated successfully for ad copy');
+                } catch (error) {
+                    console.warn('Failed to generate keywords for ad copy, proceeding without them:', error.message);
+                    // Continue without keywords if generation fails
+                }
+            } else {
+                console.log('Semrush not configured, generating ad copy without keyword data');
+            }
         }
         
         // Use the OpenAI connector to generate ad copy with keyword context
@@ -162,24 +205,26 @@ app.post('/api/generate-keywords', async (req, res) => {
             });
         }
         
-        if (!req.body.clientInfo) {
-            throw new AppError(400, 'CLIENT_INFO_REQUIRED', 'Client information is required');
+        if (!req.body.adGroupContext || !req.body.adGroupContext.name) {
+            throw new AppError(400, 'AD_GROUP_NAME_REQUIRED', 'Ad group name is required for keyword generation');
         }
-
-        const { clientInfo, campaignContext, adGroupContext } = req.body;
-        
+        let { clientInfo, campaignContext, adGroupContext } = req.body;
+        // If this is a unit type campaign, only use adGroupContext.name
+        if (campaignContext && campaignContext.isUnitType) {
+            clientInfo = {};
+            campaignContext = null;
+            adGroupContext = { name: adGroupContext.name };
+        }
         // Generate keyword recommendations using AI analysis + Semrush data with campaign context
         const keywordData = await semrushConnector.generateKeywordRecommendations(
             clientInfo, 
             campaignContext, 
             adGroupContext
         );
-        
         res.json({
             success: true,
             data: keywordData
         });
-        
     } catch (error) {
         console.error('Error generating keywords:', error);
         handleError(error, res);

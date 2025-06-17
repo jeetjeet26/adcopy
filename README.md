@@ -157,23 +157,6 @@ Fill in comprehensive client details:
 | `/api/health` | GET | System health and configuration status |
 | `/` | GET | Serve main application |
 
-## 📁 Project Structure
-
-```
-├── server.js                      # Express server with enhanced API integration
-├── package.json                   # Dependencies and scripts
-├── .env                          # Environment variables (not in repo)
-├── index.html                    # Professional web interface
-├── agentic_ad_copy_generator.js  # Frontend AI integration logic
-├── ad_copy_generator.js          # Rule-based ad generation system
-├── openai_connector.js           # OpenAI API connector with error handling
-├── openai_config.js              # OpenAI configuration management
-├── semrush_connector.js          # Semrush API integration (NEW)
-├── test_semrush.js               # Semrush API testing utilities (NEW)
-├── error_handling.js             # Comprehensive error management
-└── README.md                     # This documentation
-```
-
 ## 🔑 API Configuration
 
 ### **OpenAI API (Required)**

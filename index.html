@@ -310,16 +310,41 @@
             <div id="keywords-tab" class="tab-content">
                 <h2>Keywords</h2>
                 
+                <!-- Campaign & Ad Group Selection Section -->
+                <div style="background-color: #f0f8ff; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                    <h3 style="margin-top: 0; color: #1a73e8;">📋 Step 1: Select Campaign & Ad Group</h3>
+                    <p style="margin-bottom: 15px; color: #666;">Choose your campaign and ad group to generate targeted keywords.</p>
+                    
+                    <div class="flex-row">
+                        <div class="col-50">
+                            <div class="form-group">
+                                <label for="keyword-campaign-select">Campaign *</label>
+                                <select id="keyword-campaign-select">
+                                    <option value="">Select a campaign</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-50">
+                            <div class="form-group">
+                                <label for="keyword-ad-group-select">Ad Group *</label>
+                                <select id="keyword-ad-group-select">
+                                    <option value="">Select an ad group</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- AI Keyword Generation Section -->
                 <div style="background-color: #f8f9ff; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
-                    <h3 style="margin-top: 0; color: #4285f4;">🤖 AI Keyword Generator</h3>
-                    <p style="margin-bottom: 10px; color: #666;">Generate relevant keywords automatically based on your client information using AI analysis and Semrush data.</p>
+                    <h3 style="margin-top: 0; color: #4285f4;">🤖 Step 2: Generate Keywords with AI</h3>
+                    <p style="margin-bottom: 10px; color: #666;">Generate relevant keywords automatically based on your selected campaign and ad group using AI analysis and Semrush data.</p>
                     <button id="generate-keywords-btn" style="background-color: #4285f4; margin-right: 10px;">Generate Keywords <span class="ai-badge">AI</span></button>
                     <button id="clear-suggestions-btn" style="background-color: #ea4335; display: none;">Clear Suggestions</button>
                     
                     <div id="loading-keywords" class="loading">
                         <div class="loading-spinner"></div>
-                        <p>Analyzing client info and generating keywords...</p>
+                        <p>Analyzing campaign and generating keywords...</p>
                     </div>
                     
                     <div id="keyword-suggestions" style="display: none; margin-top: 15px;">
@@ -345,22 +370,10 @@
                 
                 <div class="flex-row">
                     <div class="col-50">
-                        <h3>Add Keywords</h3>
-                        <div class="form-group">
-                            <label for="keyword-campaign-select">Campaign</label>
-                            <select id="keyword-campaign-select">
-                                <option value="">Select a campaign</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="keyword-ad-group-select">Ad Group</label>
-                            <select id="keyword-ad-group-select">
-                                <option value="">Select an ad group</option>
-                            </select>
-                        </div>
+                        <h3>Step 3: Add Keywords</h3>
                         <div class="form-group">
                             <label for="keywords-input">Keywords (one per line)</label>
-                            <textarea id="keywords-input" placeholder="Enter keywords, one per line OR use AI generator above"></textarea>
+                            <textarea id="keywords-input" placeholder="Enter keywords manually OR use AI generator above"></textarea>
                         </div>
                         <div class="form-group">
                             <input type="checkbox" id="exact-match" checked>
@@ -493,18 +506,6 @@
                             <div class="character-count" id="description4-count">0/90</div>
                         </div>
                         
-                        <h4>Path</h4>
-                        <div class="form-group">
-                            <label for="path1">Path 1 (15 char max)</label>
-                            <input type="text" id="path1" maxlength="15">
-                            <div class="character-count" id="path1-count">0/15</div>
-                        </div>
-                        <div class="form-group">
-                            <label for="path2">Path 2 (15 char max)</label>
-                            <input type="text" id="path2" maxlength="15">
-                            <div class="character-count" id="path2-count">0/15</div>
-                        </div>
-                        
                         <button id="save-ad-btn">Save Ad</button>
                         <div id="ad-save-message" class="success"></div>
                     </div>
@@ -616,8 +617,6 @@
         const description2 = document.getElementById('description2');
         const description3 = document.getElementById('description3');
         const description4 = document.getElementById('description4');
-        const path1 = document.getElementById('path1');
-        const path2 = document.getElementById('path2');
         const headline1Count = document.getElementById('headline1-count');
         const headline2Count = document.getElementById('headline2-count');
         const headline3Count = document.getElementById('headline3-count');
@@ -633,8 +632,6 @@
         const description2Count = document.getElementById('description2-count');
         const description3Count = document.getElementById('description3-count');
         const description4Count = document.getElementById('description4-count');
-        const path1Count = document.getElementById('path1-count');
-        const path2Count = document.getElementById('path2-count');
         const saveAdBtn = document.getElementById('save-ad-btn');
         const adSaveMessage = document.getElementById('ad-save-message');
         const adsListContainer = document.getElementById('ads-list-container');
@@ -659,6 +656,7 @@
         
         // Data Storage
         let campaignsData = {};
+        window.campaignsData = campaignsData; // Make it globally accessible
         
         // Initialize the application
         function init() {
@@ -757,7 +755,8 @@
             addCampaignBtn.addEventListener('click', () => {
                 const campaignName = prompt('Enter campaign name:');
                 if (campaignName && campaignName.trim() !== '') {
-                    addCampaign(campaignName.trim());
+                    const isUnitType = confirm('Is this a unit type campaign? (OK = Yes, Cancel = No)');
+                    addCampaign(campaignName.trim(), isUnitType);
                 }
             });
             
@@ -779,13 +778,14 @@
             });
         }
         
-        function addCampaign(name) {
+        function addCampaign(name, isUnitType = false) {
             const campaignId = 'campaign' + (Object.keys(campaignsData).length + 1);
             campaignsData[campaignId] = {
                 name: name,
                 adGroups: {},
                 keywords: {},
-                ads: {}
+                ads: {},
+                isUnitType: isUnitType
             };
             
             saveData();
@@ -837,8 +837,9 @@
                 // Create campaign item
                 const campaignItem = document.createElement('div');
                 campaignItem.className = 'campaign-item';
+                const unitTypeIndicator = campaign.isUnitType ? ' <span style="background: #ffe58f; color: #ad8b00; padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: bold;">UNIT TYPE</span>' : '';
                 campaignItem.innerHTML = `
-                    <div>${campaign.name}</div>
+                    <div>${campaign.name}${unitTypeIndicator}</div>
                     <button class="delete-btn" data-campaign-id="${campaignId}">Delete</button>
                 `;
                 campaignList.appendChild(campaignItem);
@@ -878,38 +879,43 @@
             keywordCampaignSelect.addEventListener('change', () => {
                 updateAdGroupSelect(keywordCampaignSelect.value, keywordAdGroupSelect);
                 updateKeywordList();
+                showUnitTypeNote();
             });
             
             keywordAdGroupSelect.addEventListener('change', () => {
                 updateKeywordList();
+                showUnitTypeNote();
             });
             
             // AI Keyword Generation
             generateKeywordsBtn.addEventListener('click', async () => {
                 try {
-                    const clientInfo = getClientInfo();
-                    
-                    // Validate client info
-                    if (!clientInfo.clientName || !clientInfo.industry) {
-                        alert('Please fill out at least the Client Name and Industry in the Client Information tab first.');
-                        return;
-                    }
-                    
-                    // Get selected campaign and ad group context
                     const campaignId = keywordCampaignSelect.value;
                     const adGroupId = keywordAdGroupSelect.value;
                     
+                    // Validate campaign and ad group selection first
+                    if (!campaignId || !adGroupId) {
+                        alert('Please select both a campaign and ad group before generating keywords.');
+                        return;
+                    }
+                    
+                    const clientInfo = getClientInfo();
                     let campaignContext = null;
                     let adGroupContext = null;
+                    let onlyUseAdGroupName = false;
                     
-                    // Include campaign and ad group context if selected
                     if (campaignId && campaignsData[campaignId]) {
                         campaignContext = {
                             id: campaignId,
                             name: campaignsData[campaignId].name,
                             objective: campaignsData[campaignId].objective || '',
-                            budget: campaignsData[campaignId].budget || ''
+                            budget: campaignsData[campaignId].budget || '',
+                            isUnitType: campaignsData[campaignId].isUnitType || false
                         };
+                        
+                        if (campaignsData[campaignId].isUnitType) {
+                            onlyUseAdGroupName = true;
+                        }
                         
                         if (adGroupId && campaignsData[campaignId].adGroups && campaignsData[campaignId].adGroups[adGroupId]) {
                             adGroupContext = {
@@ -926,17 +932,28 @@
                     keywordSuggestions.style.display = 'none';
                     generateKeywordsBtn.disabled = true;
                     
-                    // Call the keyword generation API with enhanced context
+                    // If unit type, only send ad group name as context
+                    let payload;
+                    if (onlyUseAdGroupName && adGroupContext) {
+                        payload = {
+                            clientInfo: {}, // ignore client info
+                            campaignContext: null, // ignore campaign context
+                            adGroupContext: { name: adGroupContext.name }
+                        };
+                    } else {
+                        payload = {
+                            clientInfo,
+                            campaignContext,
+                            adGroupContext
+                        };
+                    }
+                    
                     const response = await fetch('/api/generate-keywords', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ 
-                            clientInfo,
-                            campaignContext,
-                            adGroupContext
-                        })
+                        body: JSON.stringify(payload)
                     });
                     
                     if (!response.ok) {
@@ -1261,9 +1278,7 @@
                 description1: description1.value,
                 description2: description2.value,
                 description3: description3.value,
-                description4: description4.value,
-                path1: path1.value,
-                path2: path2.value
+                description4: description4.value
             });
             
             saveData();
@@ -1291,27 +1306,6 @@
             description2.value = '';
             description3.value = '';
             description4.value = '';
-            path1.value = '';
-            path2.value = '';
-            
-            // Update character counts
-            updateCharacterCount(headline1, headline1Count);
-            updateCharacterCount(headline2, headline2Count);
-            updateCharacterCount(headline3, headline3Count);
-            updateCharacterCount(headline4, headline4Count);
-            updateCharacterCount(headline5, headline5Count);
-            updateCharacterCount(headline6, headline6Count);
-            updateCharacterCount(headline7, headline7Count);
-            updateCharacterCount(headline8, headline8Count);
-            updateCharacterCount(headline9, headline9Count);
-            updateCharacterCount(headline10, headline10Count);
-            updateCharacterCount(headline11, headline11Count);
-            updateCharacterCount(description1, description1Count);
-            updateCharacterCount(description2, description2Count);
-            updateCharacterCount(description3, description3Count);
-            updateCharacterCount(description4, description4Count);
-            updateCharacterCount(path1, path1Count);
-            updateCharacterCount(path2, path2Count);
         }
         
         function updateAdsList() {
@@ -1390,12 +1384,6 @@
                         </div>
                         <div class="keyword-item">
                             <div><strong>Description 4:</strong> ${ad.description4 || 'N/A'}</div>
-                        </div>
-                        <div class="keyword-item">
-                            <div><strong>Path 1:</strong> ${ad.path1 || 'N/A'}</div>
-                        </div>
-                        <div class="keyword-item">
-                            <div><strong>Path 2:</strong> ${ad.path2 || 'N/A'}</div>
                         </div>
                         <button class="delete-btn" data-ad-index="${i}">Delete Ad</button>
                     </div>
@@ -1527,8 +1515,6 @@
             description2.addEventListener('input', () => updateCharacterCount(description2, description2Count));
             description3.addEventListener('input', () => updateCharacterCount(description3, description3Count));
             description4.addEventListener('input', () => updateCharacterCount(description4, description4Count));
-            path1.addEventListener('input', () => updateCharacterCount(path1, path1Count));
-            path2.addEventListener('input', () => updateCharacterCount(path2, path2Count));
             
             // Initialize counts
             updateCharacterCount(headline1, headline1Count);
@@ -1546,8 +1532,6 @@
             updateCharacterCount(description2, description2Count);
             updateCharacterCount(description3, description3Count);
             updateCharacterCount(description4, description4Count);
-            updateCharacterCount(path1, path1Count);
-            updateCharacterCount(path2, path2Count);
         }
         
         function updateCharacterCount(inputElement, countElement) {
@@ -1574,10 +1558,11 @@
             // Add campaigns to selects
             for (const campaignId in campaignsData) {
                 const campaign = campaignsData[campaignId];
+                const unitTypeIndicator = campaign.isUnitType ? ' (Unit Type)' : '';
                 
                 const option = document.createElement('option');
                 option.value = campaignId;
-                option.textContent = campaign.name;
+                option.textContent = campaign.name + unitTypeIndicator;
                 
                 keywordCampaignSelect.appendChild(option.cloneNode(true));
                 adCampaignSelect.appendChild(option.cloneNode(true));
@@ -1649,9 +1634,33 @@
             const savedCampaignsData = localStorage.getItem('campaignsData');
             if (savedCampaignsData) {
                 campaignsData = JSON.parse(savedCampaignsData);
+                window.campaignsData = campaignsData; // Update global reference
             }
             
             loadClientInfo();
+        }
+        
+        // Add a function to show a note if unit type campaign is selected
+        function showUnitTypeNote() {
+            const campaignId = keywordCampaignSelect.value;
+            const noteId = 'unit-type-note';
+            let note = document.getElementById(noteId);
+            if (campaignId && campaignsData[campaignId] && campaignsData[campaignId].isUnitType) {
+                if (!note) {
+                    note = document.createElement('div');
+                    note.id = noteId;
+                    note.style.background = '#fffbe6';
+                    note.style.border = '1px solid #ffe58f';
+                    note.style.padding = '10px';
+                    note.style.margin = '10px 0';
+                    note.style.borderRadius = '4px';
+                    note.style.color = '#ad8b00';
+                    note.innerHTML = '<b>Unit Type Campaign:</b> Keyword generation will be strictly based on the ad group name (e.g., "Three Bedroom Homes").';
+                    keywordCampaignSelect.parentElement.parentElement.insertBefore(note, keywordCampaignSelect.parentElement.nextSibling);
+                }
+            } else {
+                if (note) note.remove();
+            }
         }
         
         // Initialize the application

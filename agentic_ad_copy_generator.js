@@ -50,9 +50,14 @@ class AgenticAdCopyGenerator {
             return;
         }
 
+        console.log('=== AD COPY GENERATION START ===');
+
         // Get selected campaign and ad group
         const campaignSelect = document.getElementById('ad-campaign-select');
         const adGroupSelect = document.getElementById('ad-group-select');
+        
+        console.log('Campaign select element:', campaignSelect);
+        console.log('Ad group select element:', adGroupSelect);
         
         if (!campaignSelect || !adGroupSelect) {
             this.showError('Please select a campaign and ad group first.');
@@ -62,6 +67,11 @@ class AgenticAdCopyGenerator {
         const campaignId = campaignSelect.value;
         const adGroupId = adGroupSelect.value;
         
+        console.log('Selected campaign ID:', campaignId);
+        console.log('Selected ad group ID:', adGroupId);
+        console.log('window.campaignsData exists:', !!window.campaignsData);
+        console.log('window.campaignsData content:', window.campaignsData);
+        
         if (!campaignId || !adGroupId) {
             this.showError('Please select a campaign and ad group first.');
             return;
@@ -70,31 +80,60 @@ class AgenticAdCopyGenerator {
         // Collect client information
         const clientInfo = this.collectClientInfo();
         
-        // Validate required fields
-        if (!this.validateClientInfo(clientInfo)) {
-            this.showError('Please fill in all required client information fields.');
-            return;
-        }
-
         // Get campaign and ad group context from the global campaignsData
         let campaignContext = null;
         let adGroupContext = null;
+        let savedKeywords = null;
         
+        console.log('Checking if campaign exists in campaignsData...');
         if (window.campaignsData && window.campaignsData[campaignId]) {
+            console.log('✓ Campaign found in campaignsData');
             campaignContext = {
                 id: campaignId,
                 name: window.campaignsData[campaignId].name,
                 objective: window.campaignsData[campaignId].objective || '',
-                budget: window.campaignsData[campaignId].budget || ''
+                budget: window.campaignsData[campaignId].budget || '',
+                isUnitType: window.campaignsData[campaignId].isUnitType || false
             };
             
+            // Debug logging for unit type detection
+            console.log('Campaign data for', campaignId, ':', window.campaignsData[campaignId]);
+            console.log('Campaign context created:', campaignContext);
+            console.log('Is unit type campaign?', campaignContext.isUnitType);
+            
             if (adGroupId && window.campaignsData[campaignId].adGroups && window.campaignsData[campaignId].adGroups[adGroupId]) {
+                console.log('✓ Ad group found in campaignsData');
                 adGroupContext = {
                     id: adGroupId,
                     name: window.campaignsData[campaignId].adGroups[adGroupId].name,
                     theme: window.campaignsData[campaignId].adGroups[adGroupId].theme || '',
                     targetAudience: window.campaignsData[campaignId].adGroups[adGroupId].targetAudience || ''
                 };
+            } else {
+                console.log('✗ Ad group not found. Available ad groups:', window.campaignsData[campaignId].adGroups);
+            }
+            
+            // Get saved keywords for unit type campaigns
+            if (campaignContext.isUnitType && 
+                window.campaignsData[campaignId].keywords && 
+                window.campaignsData[campaignId].keywords[adGroupId]) {
+                savedKeywords = window.campaignsData[campaignId].keywords[adGroupId];
+                console.log('Unit type campaign detected. Using saved keywords:', savedKeywords);
+            } else if (campaignContext.isUnitType) {
+                console.log('Unit type campaign detected but no saved keywords found for adGroupId:', adGroupId);
+                console.log('Available keyword data:', window.campaignsData[campaignId].keywords);
+            }
+        } else {
+            console.log('✗ Campaign not found in campaignsData');
+            console.log('Available campaigns:', Object.keys(window.campaignsData || {}));
+        }
+
+        // For unit type campaigns, we don't need to validate all client info - just need basic context
+        if (!campaignContext || !campaignContext.isUnitType) {
+            // Validate required fields for non-unit type campaigns
+            if (!this.validateClientInfo(clientInfo)) {
+                this.showError('Please fill in all required client information fields.');
+                return;
             }
         }
 
@@ -102,17 +141,35 @@ class AgenticAdCopyGenerator {
             this.isGenerating = true;
             this.showGeneratingStatus(true);
 
+            // Prepare the request payload
+            const requestPayload = { 
+                clientInfo: (campaignContext && campaignContext.isUnitType) ? {} : clientInfo, // Empty client info for unit type
+                campaignContext,
+                adGroupContext
+            };
+            
+            // Debug logging for payload preparation
+            console.log('Preparing request payload...');
+            console.log('Original clientInfo:', clientInfo);
+            console.log('Is unit type?', campaignContext && campaignContext.isUnitType);
+            console.log('Final clientInfo in payload:', requestPayload.clientInfo);
+            console.log('Campaign context in payload:', requestPayload.campaignContext);
+            
+            // Add saved keywords for unit type campaigns
+            if (campaignContext && campaignContext.isUnitType && savedKeywords) {
+                requestPayload.savedKeywords = savedKeywords;
+                console.log('Added saved keywords to payload:', savedKeywords);
+            }
+            
+            console.log('Final request payload:', requestPayload);
+
             // Make API call to backend with campaign and ad group context
             const response = await fetch(`${this.apiBaseUrl}/api/generate-ad-copy`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ 
-                    clientInfo,
-                    campaignContext,
-                    adGroupContext
-                })
+                body: JSON.stringify(requestPayload)
             });
 
             if (!response.ok) {
@@ -196,18 +253,6 @@ class AgenticAdCopyGenerator {
             }
         }
         
-        // Update paths - Fixed to match actual HTML IDs
-        const pathIds = ['path1', 'path2'];
-        for (let i = 0; i < adCopy.paths.length; i++) {
-            const pathInput = document.getElementById(pathIds[i]);
-            if (pathInput) {
-                pathInput.value = adCopy.paths[i];
-                // Trigger input event to update character count
-                const event = new Event('input', { bubbles: true });
-                pathInput.dispatchEvent(event);
-            }
-        }
-        
         // Update the preview
         this.updateAdPreview();
     }
@@ -231,8 +276,6 @@ class AgenticAdCopyGenerator {
         const description2 = document.getElementById('description2').value;
         const description3 = document.getElementById('description3').value;
         const description4 = document.getElementById('description4').value;
-        const path1 = document.getElementById('path1').value;
-        const path2 = document.getElementById('path2').value;
         const websiteUrl = document.getElementById('website-url').value;
 
         const previewContainer = document.getElementById('ad-preview');
@@ -249,7 +292,7 @@ class AgenticAdCopyGenerator {
                         ${headline1 || 'Headline 1'} | ${headline2 || 'Headline 2'} | ${headline3 || 'Headline 3'}
                     </div>
                     <div style="color: #006621; font-size: 14px; margin-bottom: 5px;">
-                        ${domain}/${path1 || 'path1'}/${path2 || 'path2'}
+                        ${domain}
                     </div>
                     <div style="color: #545454; font-size: 14px; line-height: 1.4;">
                         ${description1 || 'Description 1'} ${description2 || 'Description 2'}
