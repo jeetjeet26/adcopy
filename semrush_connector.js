@@ -17,6 +17,56 @@ class SemrushConnector {
      */
     async analyzeClientInfo(clientInfo, campaignContext = null, adGroupContext = null) {
         try {
+            // Check if this is a unit type campaign (empty clientInfo and campaignContext, only adGroupContext.name)
+            const isUnitTypeCampaign = (!clientInfo || Object.keys(clientInfo).length === 0) && 
+                                       !campaignContext && 
+                                       adGroupContext && 
+                                       adGroupContext.name;
+
+            if (isUnitTypeCampaign) {
+                // For unit type campaigns, generate keywords strictly based on ad group name
+                const adGroupName = adGroupContext.name;
+                console.log('Unit type campaign detected. Using ad group name only:', adGroupName);
+                
+                const unitTypePrompt = [
+                    {
+                        role: "system",
+                        content: `You are a keyword research specialist for real estate/property unit type campaigns. Your task is to generate keyword variations and related terms based STRICTLY on the ad group name provided.
+
+For unit type campaigns like "4 bedroom house", "3 bedroom apartment", etc., generate:
+1. Direct variations of the ad group name
+2. Related property search terms
+3. Intent-based variations (for sale, for rent, new, etc.)
+4. Location-agnostic terms that could apply anywhere
+
+Return JSON with:
+- coreTopics: array of 3-5 core property types/categories
+- industryTerms: array of 5-8 real estate related terms
+- seedKeywords: array of 10-15 keyword variations based on the ad group name
+- targetingInsights: brief description of what searchers would be looking for`
+                    },
+                    {
+                        role: "user",
+                        content: `Generate keyword research terms based ONLY on this ad group name: "${adGroupName}"
+
+Focus on creating variations like:
+- Direct matches (e.g., "4 bedroom homes")
+- Property type variations (e.g., "4 bedroom house", "4 bedroom townhouse")
+- Search intent variations (e.g., "4 bedroom homes for sale", "new 4 bedroom houses")
+- Feature variations (e.g., "4 bed 4 bath homes", "four bedroom properties")
+
+Do NOT include any business names, locations, or unrelated terms. Focus strictly on property/unit type keywords.`
+                    }
+                ];
+
+                const analysis = await this.openaiConnector.generateResponse(unitTypePrompt, 'gpt-3.5-turbo');
+                const analysisData = JSON.parse(analysis);
+                
+                console.log('Unit type campaign analysis completed:', analysisData);
+                return analysisData;
+            }
+
+            // Original logic for regular campaigns
             // Build enhanced context for analysis
             let contextInfo = `Client Information:
 - Client Name: ${clientInfo.clientName || 'N/A'}

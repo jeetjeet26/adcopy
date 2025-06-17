@@ -123,48 +123,6 @@ class AdCopyGenerator {
     }
 
     /**
-     * Generate path fields based on client information
-     * @returns {Array} Array of path options
-     */
-    generatePaths() {
-        const paths = [];
-        const industry = this.clientInfo.industry;
-        const location = this.clientInfo.geographicTargeting;
-
-        // Industry-based paths
-        if (industry) {
-            const industryWords = industry.split(' ');
-            if (industryWords.length > 0) {
-                paths.push(this.truncateToLength(industryWords[0].toLowerCase(), 15));
-            }
-            if (industryWords.length > 1) {
-                paths.push(this.truncateToLength(industryWords[1].toLowerCase(), 15));
-            }
-        }
-
-        // Location-based paths
-        if (location) {
-            const locationWords = location.split(' ');
-            if (locationWords.length > 0) {
-                paths.push(this.truncateToLength(locationWords[0].toLowerCase(), 15));
-            }
-            if (locationWords.length > 1) {
-                paths.push(this.truncateToLength(locationWords[1].toLowerCase(), 15));
-            }
-        }
-
-        // Generic paths
-        paths.push('services');
-        paths.push('offers');
-        paths.push('solutions');
-        paths.push('products');
-        paths.push('contact');
-
-        // Return only unique paths
-        return [...new Set(paths)].slice(0, 2);
-    }
-
-    /**
      * Generate complete ad variations
      * @param {number} count Number of ad variations to generate
      * @returns {Array} Array of ad objects
@@ -172,7 +130,6 @@ class AdCopyGenerator {
     generateAds(count = 3) {
         const headlines = this.generateHeadlines();
         const descriptions = this.generateDescriptions();
-        const paths = this.generatePaths();
         const ads = [];
 
         // Create ad variations
@@ -193,8 +150,7 @@ class AdCopyGenerator {
                 descriptions: [
                     descriptions[descriptionIndices[0]],
                     descriptions[descriptionIndices[1]]
-                ],
-                paths: paths.slice(0, 2)
+                ]
             };
 
             ads.push(ad);
@@ -345,102 +301,17 @@ class AdCopyGenerator {
      */
     truncateToLength(text, maxLength) {
         if (!text) return '';
-        
-        const minLength = Math.ceil(maxLength * 0.9); // 90% of max length
-        const trimmedText = text.trim();
-        
-        // If already in optimal range, return as is
-        if (trimmedText.length >= minLength && trimmedText.length <= maxLength) {
+        let trimmedText = text.trim();
+        if (trimmedText.length <= maxLength) {
             return trimmedText;
         }
-        
-        // If too long, intelligently truncate
-        if (trimmedText.length > maxLength) {
-            // Try to find a good word boundary within the target range
-            let bestCut = maxLength;
-            
-            // Look for word boundaries from maxLength down to minLength
-            for (let i = maxLength; i >= minLength; i--) {
-                if (i < trimmedText.length && (trimmedText[i] === ' ' || trimmedText[i] === '.' || trimmedText[i] === ',')) {
-                    bestCut = i;
-                    break;
-                }
-            }
-            
-            // If we found a good boundary, use it
-            if (bestCut < trimmedText.length) {
-                const result = trimmedText.substring(0, bestCut).trim();
-                if (result.length >= minLength) {
-                    return result;
-                }
-            }
-            
-            // Otherwise, cut at maxLength and remove any partial word
-            let truncated = trimmedText.substring(0, maxLength);
-            const lastSpaceIndex = truncated.lastIndexOf(' ');
-            
-            if (lastSpaceIndex > minLength) {
-                return truncated.substring(0, lastSpaceIndex).trim();
-            }
-            
-            return truncated.trim();
+        // Try to cut at a word boundary before maxLength
+        let cut = trimmedText.lastIndexOf(' ', maxLength);
+        if (cut === -1 || cut < maxLength * 0.5) {
+            // If no good word boundary, just hard cut
+            return trimmedText.substring(0, maxLength).trim();
         }
-        
-        // If too short, extend it strategically
-        if (trimmedText.length < minLength) {
-            let result = trimmedText;
-            const charsNeeded = minLength - trimmedText.length;
-            
-            // Get appropriate extensions based on the type of content
-            const extensions = this.getTargetedExtensions(trimmedText, maxLength, charsNeeded);
-            
-            // Try each extension to see if it gets us into the target range
-            for (const extension of extensions) {
-                const candidate = `${result} ${extension}`.trim();
-                if (candidate.length >= minLength && candidate.length <= maxLength) {
-                    return candidate;
-                }
-                // If this extension would make it too long, skip it
-                if (candidate.length > maxLength) {
-                    continue;
-                }
-            }
-            
-            // If single extensions don't work, try combining short ones
-            if (result.length < minLength) {
-                for (let i = 0; i < extensions.length - 1; i++) {
-                    for (let j = i + 1; j < extensions.length; j++) {
-                        const combined = `${extensions[i]} ${extensions[j]}`;
-                        const candidate = `${result} ${combined}`.trim();
-                        if (candidate.length >= minLength && candidate.length <= maxLength) {
-                            return candidate;
-                        }
-                        if (candidate.length > maxLength) {
-                            break;
-                        }
-                    }
-                }
-            }
-            
-            // Last resort: add generic padding words one by one
-            const paddingWords = this.getPaddingWords(maxLength);
-            for (const word of paddingWords) {
-                const candidate = `${result} ${word}`.trim();
-                if (candidate.length <= maxLength) {
-                    result = candidate;
-                    if (result.length >= minLength) {
-                        return result;
-                    }
-                } else {
-                    break;
-                }
-            }
-            
-            // If we still can't reach minLength, return what we have
-            return result;
-        }
-        
-        return trimmedText;
+        return trimmedText.substring(0, cut).trim();
     }
 
     /**
