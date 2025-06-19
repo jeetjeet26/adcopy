@@ -104,15 +104,14 @@ app.post('/api/generate-ad-copy', async (req, res) => {
         
         let keywordData = null;
         
-        // Check if this is a unit type campaign with saved keywords
-        console.log('Checking unit type conditions:');
+        // Check for saved keywords for ALL campaign types
+        console.log('Checking for saved keywords:');
         console.log('- campaignContext exists:', !!campaignContext);
-        console.log('- campaignContext.isUnitType:', campaignContext?.isUnitType);
         console.log('- savedKeywords exists:', !!savedKeywords);
         console.log('- savedKeywords length:', savedKeywords?.length);
         
-        if (campaignContext && campaignContext.isUnitType && savedKeywords && savedKeywords.length > 0) {
-            console.log('✓ Unit type campaign detected with saved keywords. Using saved keywords for ad copy generation.');
+        if (savedKeywords && savedKeywords.length > 0) {
+            console.log('✓ Using saved keywords for ad copy generation.');
             
             // Convert saved keywords to the expected keywordData format
             const formattedKeywords = savedKeywords.map(kw => ({
@@ -132,10 +131,10 @@ app.post('/api/generate-ad-copy', async (req, res) => {
                     all: formattedKeywords
                 },
                 analysis: {
-                    coreTopics: [adGroupContext.name],
-                    industryTerms: ['real estate', 'property', 'homes'],
+                    coreTopics: [adGroupContext?.name || 'General'],
+                    industryTerms: campaignContext?.isUnitType ? ['real estate', 'property', 'homes'] : [clientInfo?.industry || 'business'],
                     seedKeywords: formattedKeywords.slice(0, 5).map(kw => kw.keyword),
-                    targetingInsights: `Keywords focused on ${adGroupContext.name} for unit type campaign`
+                    targetingInsights: `Keywords saved for ${adGroupContext?.name || 'this ad group'}`
                 },
                 recommendations: {
                     primaryKeywords: formattedKeywords.slice(0, 5),
@@ -144,24 +143,13 @@ app.post('/api/generate-ad-copy', async (req, res) => {
                 }
             };
         } else {
-            // For non-unit type campaigns or when no saved keywords, generate keywords via Semrush
-            console.log('✗ Not a unit type campaign with saved keywords. Using Semrush keyword generation.');
-            if (semrushConnector) {
-                try {
-                    console.log('Generating keywords for ad copy context...');
-                    keywordData = await semrushConnector.generateKeywordRecommendations(
-                        clientInfo, 
-                        campaignContext, 
-                        adGroupContext
-                    );
-                    console.log('Keywords generated successfully for ad copy');
-                } catch (error) {
-                    console.warn('Failed to generate keywords for ad copy, proceeding without them:', error.message);
-                    // Continue without keywords if generation fails
-                }
-            } else {
-                console.log('Semrush not configured, generating ad copy without keyword data');
-            }
+            // No saved keywords found - return error
+            console.log('✗ No saved keywords found for ad group');
+            return res.status(400).json({
+                success: false,
+                message: 'No keywords found for this ad group',
+                error: 'Please generate and save keywords for this ad group before creating ad copy. Go to the Keywords tab, generate keywords, and save them first.'
+            });
         }
         
         // Use the OpenAI connector to generate ad copy with keyword context
