@@ -307,6 +307,78 @@
         .add-keyword-btn:hover {
             background-color: #3367d6;
         }
+        
+        /* Campaign Structure Form Styles */
+        .creation-form {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 20px;
+            margin-top: 15px;
+            transition: opacity 0.3s ease;
+        }
+        
+        .creation-form h4 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #4285f4;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .save-btn {
+            background-color: #34a853;
+        }
+        
+        .save-btn:hover {
+            background-color: #2d9146;
+        }
+        
+        .cancel-btn {
+            background-color: #ea4335;
+        }
+        
+        .cancel-btn:hover {
+            background-color: #d62516;
+        }
+        
+        .campaign-list-item {
+            margin-bottom: 15px;
+        }
+        
+        .campaign-header {
+            background-color: #e8f0fe;
+            padding: 12px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .campaign-title {
+            font-weight: bold;
+            color: #1a73e8;
+        }
+        
+        .ad-group-list {
+            margin-left: 20px;
+        }
+        
+        .ad-group-item-new {
+            background-color: #f1fff1;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid #34a853;
+        }
     </style>
 </head>
 <body>
@@ -375,16 +447,60 @@
             <div id="campaign-structure-tab" class="tab-content">
                 <h2>Campaign Structure</h2>
                 <div class="flex-row">
-                    <div class="col-50">
+                    <div style="width: 40%;">
+                        <h3>Create New</h3>
+                        <button id="add-campaign-btn" style="margin-right: 10px;">Add Campaign</button>
+                        <button id="add-ad-group-btn">Add Ad Group</button>
+                        
+                        <!-- Campaign Creation Form -->
+                        <div id="campaign-form" class="creation-form" style="display: none;">
+                            <h4>Create New Campaign</h4>
+                            <div class="form-group">
+                                <label for="campaign-name-input">Campaign Name *</label>
+                                <input type="text" id="campaign-name-input" placeholder="e.g., AMLI Downtown Luxury Apartments">
+                                <div id="campaign-name-error" class="error"></div>
+                            </div>
+                            <div class="form-group">
+                                <input type="checkbox" id="unit-type-checkbox">
+                                <label for="unit-type-checkbox">Unit Type Campaign</label>
+                                <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                                    Check this if the campaign focuses on specific unit types (e.g., "Studio Apartments", "Two Bedroom Homes")
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button id="save-campaign-btn" class="save-btn">Create Campaign</button>
+                                <button id="cancel-campaign-btn" class="cancel-btn">Cancel</button>
+                            </div>
+                            <div id="campaign-form-message" class="success"></div>
+                        </div>
+                        
+                        <!-- Ad Group Creation Form -->
+                        <div id="ad-group-form" class="creation-form" style="display: none;">
+                            <h4>Create New Ad Group</h4>
+                            <div class="form-group">
+                                <label for="parent-campaign-select">Parent Campaign *</label>
+                                <select id="parent-campaign-select">
+                                    <option value="">Select a campaign</option>
+                                </select>
+                                <div id="parent-campaign-error" class="error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="ad-group-name-input">Ad Group Name *</label>
+                                <input type="text" id="ad-group-name-input" placeholder="e.g., Studio Apartments, Downtown Location">
+                                <div id="ad-group-name-error" class="error"></div>
+                            </div>
+                            <div class="form-actions">
+                                <button id="save-ad-group-btn" class="save-btn">Create Ad Group</button>
+                                <button id="cancel-ad-group-btn" class="cancel-btn">Cancel</button>
+                            </div>
+                            <div id="ad-group-form-message" class="success"></div>
+                        </div>
+                    </div>
+                    <div style="width: 60%;">
                         <h3>Campaigns and Ad Groups</h3>
                         <div id="campaign-list">
                             <!-- Campaign items will be added here -->
                         </div>
-                    </div>
-                    <div class="col-50">
-                        <h3>Actions</h3>
-                        <button id="add-campaign-btn">Add Campaign</button>
-                        <button id="add-ad-group-btn">Add Ad Group</button>
                     </div>
                 </div>
                 <div class="nav-buttons">
@@ -683,6 +799,25 @@
         const addAdGroupBtn = document.getElementById('add-ad-group-btn');
         const campaignList = document.getElementById('campaign-list');
         
+        // Campaign form elements
+        const campaignForm = document.getElementById('campaign-form');
+        const campaignNameInput = document.getElementById('campaign-name-input');
+        const unitTypeCheckbox = document.getElementById('unit-type-checkbox');
+        const saveCampaignBtn = document.getElementById('save-campaign-btn');
+        const cancelCampaignBtn = document.getElementById('cancel-campaign-btn');
+        const campaignFormMessage = document.getElementById('campaign-form-message');
+        const campaignNameError = document.getElementById('campaign-name-error');
+        
+        // Ad Group form elements
+        const adGroupForm = document.getElementById('ad-group-form');
+        const parentCampaignSelect = document.getElementById('parent-campaign-select');
+        const adGroupNameInput = document.getElementById('ad-group-name-input');
+        const saveAdGroupBtn = document.getElementById('save-ad-group-btn');
+        const cancelAdGroupBtn = document.getElementById('cancel-ad-group-btn');
+        const adGroupFormMessage = document.getElementById('ad-group-form-message');
+        const parentCampaignError = document.getElementById('parent-campaign-error');
+        const adGroupNameError = document.getElementById('ad-group-name-error');
+        
         // Keywords elements
         const keywordCampaignSelect = document.getElementById('keyword-campaign-select');
         const keywordAdGroupSelect = document.getElementById('keyword-ad-group-select');
@@ -856,30 +991,135 @@
         
         // Campaign Structure
         function setupCampaignStructure() {
+            // Show campaign form
             addCampaignBtn.addEventListener('click', () => {
-                const campaignName = prompt('Enter campaign name:');
-                if (campaignName && campaignName.trim() !== '') {
-                    const isUnitType = confirm('Is this a unit type campaign? (OK = Yes, Cancel = No)');
-                    addCampaign(campaignName.trim(), isUnitType);
-                }
+                hideForms();
+                campaignForm.style.display = 'block';
+                clearCampaignForm();
             });
             
+            // Show ad group form
             addAdGroupBtn.addEventListener('click', () => {
                 if (Object.keys(campaignsData).length === 0) {
                     alert('Please create a campaign first.');
                     return;
                 }
-                
-                const campaignId = prompt('Select campaign ID:\n' + 
-                    Object.keys(campaignsData).map(id => `${id}: ${campaignsData[id].name}`).join('\n'));
-                
-                if (campaignId && campaignsData[campaignId]) {
-                    const adGroupName = prompt('Enter ad group name:');
-                    if (adGroupName && adGroupName.trim() !== '') {
-                        addAdGroup(campaignId, adGroupName.trim());
-                    }
+                hideForms();
+                updateParentCampaignSelect();
+                adGroupForm.style.display = 'block';
+                clearAdGroupForm();
+            });
+            
+            // Campaign form handlers
+            saveCampaignBtn.addEventListener('click', () => {
+                if (validateCampaignForm()) {
+                    const campaignName = campaignNameInput.value.trim();
+                    const isUnitType = unitTypeCheckbox.checked;
+                    addCampaign(campaignName, isUnitType);
+                    showCampaignFormMessage('Campaign created successfully!');
+                    setTimeout(() => {
+                        hideForms();
+                    }, 1500);
                 }
             });
+            
+            cancelCampaignBtn.addEventListener('click', () => {
+                hideForms();
+            });
+            
+            // Ad group form handlers
+            saveAdGroupBtn.addEventListener('click', () => {
+                if (validateAdGroupForm()) {
+                    const campaignId = parentCampaignSelect.value;
+                    const adGroupName = adGroupNameInput.value.trim();
+                    addAdGroup(campaignId, adGroupName);
+                    showAdGroupFormMessage('Ad group created successfully!');
+                    setTimeout(() => {
+                        hideForms();
+                    }, 1500);
+                }
+            });
+            
+            cancelAdGroupBtn.addEventListener('click', () => {
+                hideForms();
+            });
+        }
+        
+        function hideForms() {
+            campaignForm.style.display = 'none';
+            adGroupForm.style.display = 'none';
+            clearFormMessages();
+        }
+        
+        function clearCampaignForm() {
+            campaignNameInput.value = '';
+            unitTypeCheckbox.checked = false;
+            campaignNameError.textContent = '';
+        }
+        
+        function clearAdGroupForm() {
+            parentCampaignSelect.value = '';
+            adGroupNameInput.value = '';
+            parentCampaignError.textContent = '';
+            adGroupNameError.textContent = '';
+        }
+        
+        function clearFormMessages() {
+            campaignFormMessage.textContent = '';
+            adGroupFormMessage.textContent = '';
+        }
+        
+        function validateCampaignForm() {
+            let isValid = true;
+            campaignNameError.textContent = '';
+            
+            if (!campaignNameInput.value.trim()) {
+                campaignNameError.textContent = 'Campaign name is required';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        function validateAdGroupForm() {
+            let isValid = true;
+            parentCampaignError.textContent = '';
+            adGroupNameError.textContent = '';
+            
+            if (!parentCampaignSelect.value) {
+                parentCampaignError.textContent = 'Please select a parent campaign';
+                isValid = false;
+            }
+            
+            if (!adGroupNameInput.value.trim()) {
+                adGroupNameError.textContent = 'Ad group name is required';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        function showCampaignFormMessage(message) {
+            campaignFormMessage.textContent = message;
+        }
+        
+        function showAdGroupFormMessage(message) {
+            adGroupFormMessage.textContent = message;
+        }
+        
+        function updateParentCampaignSelect() {
+            parentCampaignSelect.innerHTML = '<option value="">Select a campaign</option>';
+            
+            for (const campaignId in campaignsData) {
+                const campaign = campaignsData[campaignId];
+                const unitTypeIndicator = campaign.isUnitType ? ' (Unit Type)' : '';
+                
+                const option = document.createElement('option');
+                option.value = campaignId;
+                option.textContent = campaign.name + unitTypeIndicator;
+                
+                parentCampaignSelect.appendChild(option);
+            }
         }
         
         function addCampaign(name, isUnitType = false) {
@@ -917,66 +1157,88 @@
         }
         
         function deleteCampaign(campaignId) {
-            if (confirm(`Are you sure you want to delete the campaign "${campaignsData[campaignId].name}" and all its ad groups?`)) {
-                delete campaignsData[campaignId];
-                saveData();
-                renderCampaigns();
-                updateSelects();
-            }
+            delete campaignsData[campaignId];
+            saveData();
+            renderCampaigns();
+            updateSelects();
         }
         
         function deleteAdGroup(campaignId, adGroupId) {
-            if (confirm(`Are you sure you want to delete the ad group "${campaignsData[campaignId].adGroups[adGroupId].name}"?`)) {
-                delete campaignsData[campaignId].adGroups[adGroupId];
-                saveData();
-                renderCampaigns();
-                updateSelects();
-            }
+            delete campaignsData[campaignId].adGroups[adGroupId];
+            saveData();
+            renderCampaigns();
+            updateSelects();
         }
         
         function renderCampaigns() {
             campaignList.innerHTML = '';
             
+            if (Object.keys(campaignsData).length === 0) {
+                campaignList.innerHTML = '<p style="color: #666; font-style: italic;">No campaigns created yet. Click "Add Campaign" to get started.</p>';
+                return;
+            }
+            
             for (const campaignId in campaignsData) {
                 const campaign = campaignsData[campaignId];
                 
-                // Create campaign item
-                const campaignItem = document.createElement('div');
-                campaignItem.className = 'campaign-item';
+                // Create campaign container
+                const campaignContainer = document.createElement('div');
+                campaignContainer.className = 'campaign-list-item';
+                
+                // Create campaign header
+                const campaignHeader = document.createElement('div');
+                campaignHeader.className = 'campaign-header';
+                
                 const unitTypeIndicator = campaign.isUnitType ? ' <span style="background: #ffe58f; color: #ad8b00; padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: bold;">UNIT TYPE</span>' : '';
-                campaignItem.innerHTML = `
-                    <div>${campaign.name}${unitTypeIndicator}</div>
-                    <button class="delete-btn" data-campaign-id="${campaignId}">Delete</button>
+                
+                campaignHeader.innerHTML = `
+                    <div class="campaign-title">${campaign.name}${unitTypeIndicator}</div>
+                    <button class="delete-btn" data-campaign-id="${campaignId}">Delete Campaign</button>
                 `;
-                campaignList.appendChild(campaignItem);
+                
+                campaignContainer.appendChild(campaignHeader);
                 
                 // Add event listener to delete button
-                campaignItem.querySelector('.delete-btn').addEventListener('click', (e) => {
+                campaignHeader.querySelector('.delete-btn').addEventListener('click', (e) => {
                     e.stopPropagation();
-                    deleteCampaign(campaignId);
+                    if (confirm(`Are you sure you want to delete the campaign "${campaign.name}" and all its ad groups?`)) {
+                        deleteCampaign(campaignId);
+                    }
                 });
                 
+                // Create ad groups container
+                const adGroupsContainer = document.createElement('div');
+                adGroupsContainer.className = 'ad-group-list';
+                
                 // Render ad groups for this campaign
-                if (campaign.adGroups) {
+                if (campaign.adGroups && Object.keys(campaign.adGroups).length > 0) {
                     for (const adGroupId in campaign.adGroups) {
                         const adGroup = campaign.adGroups[adGroupId];
                         
                         // Create ad group item
                         const adGroupItem = document.createElement('div');
-                        adGroupItem.className = 'ad-group-item';
+                        adGroupItem.className = 'ad-group-item-new';
                         adGroupItem.innerHTML = `
                             <div>${adGroup.name}</div>
-                            <button class="delete-btn" data-ad-group-id="${adGroupId}">Delete</button>
+                            <button class="delete-btn" data-ad-group-id="${adGroupId}" style="font-size: 12px; padding: 4px 8px;">Delete</button>
                         `;
-                        campaignList.appendChild(adGroupItem);
                         
                         // Add event listener to delete button
                         adGroupItem.querySelector('.delete-btn').addEventListener('click', (e) => {
                             e.stopPropagation();
-                            deleteAdGroup(campaignId, adGroupId);
+                            if (confirm(`Are you sure you want to delete the ad group "${adGroup.name}"?`)) {
+                                deleteAdGroup(campaignId, adGroupId);
+                            }
                         });
+                        
+                        adGroupsContainer.appendChild(adGroupItem);
                     }
+                } else {
+                    adGroupsContainer.innerHTML = '<p style="color: #666; font-size: 14px; margin: 10px 0;">No ad groups in this campaign</p>';
                 }
+                
+                campaignContainer.appendChild(adGroupsContainer);
+                campaignList.appendChild(campaignContainer);
             }
         }
         
@@ -1223,7 +1485,15 @@
             keywordsTableBody.innerHTML = '';
             
             if (keywords.length === 0) {
-                keywordsTableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px; color: #666;">No keywords found</td></tr>';
+                const noResultsRow = document.createElement('tr');
+                const noResultsCell = document.createElement('td');
+                noResultsCell.setAttribute('colspan', '8');
+                noResultsCell.style.textAlign = 'center';
+                noResultsCell.style.padding = '20px';
+                noResultsCell.style.color = '#666';
+                noResultsCell.textContent = 'No keywords found';
+                noResultsRow.appendChild(noResultsCell);
+                keywordsTableBody.appendChild(noResultsRow);
                 return;
             }
             
@@ -1244,18 +1514,65 @@
                         break;
                 }
                 
-                row.innerHTML = `
-                    <td><span class="keyword-type-badge ${badgeClass}">${kw.type}</span></td>
-                    <td style="font-weight: bold;">${kw.keyword}</td>
-                    <td style="text-align: right;">${kw.searchVolume ? kw.searchVolume.toLocaleString() : 'N/A'}</td>
-                    <td style="text-align: right;">$${kw.cpc ? kw.cpc.toFixed(2) : 'N/A'}</td>
-                    <td style="text-align: right;">${kw.competition ? (kw.competition * 100).toFixed(1) + '%' : 'N/A'}</td>
-                    <td style="text-align: right;">${kw.results ? kw.results.toLocaleString() : 'N/A'}</td>
-                    <td>${kw.intent || 'N/A'}</td>
-                    <td style="text-align: center;">
-                        <button class="add-keyword-btn" onclick="addKeywordToInput('${kw.keyword.replace(/'/g, "\\'")}')">Add</button>
-                    </td>
-                `;
+                // Create type cell
+                const typeCell = document.createElement('td');
+                const typeBadge = document.createElement('span');
+                typeBadge.className = `keyword-type-badge ${badgeClass}`;
+                typeBadge.textContent = kw.type || '';
+                typeCell.appendChild(typeBadge);
+                
+                // Create keyword cell
+                const keywordCell = document.createElement('td');
+                keywordCell.style.fontWeight = 'bold';
+                keywordCell.textContent = kw.keyword || '';
+                
+                // Create search volume cell
+                const searchVolumeCell = document.createElement('td');
+                searchVolumeCell.style.textAlign = 'right';
+                searchVolumeCell.textContent = kw.searchVolume ? kw.searchVolume.toLocaleString() : 'N/A';
+                
+                // Create CPC cell
+                const cpcCell = document.createElement('td');
+                cpcCell.style.textAlign = 'right';
+                cpcCell.textContent = kw.cpc ? `$${kw.cpc.toFixed(2)}` : '$N/A';
+                
+                // Create competition cell
+                const competitionCell = document.createElement('td');
+                competitionCell.style.textAlign = 'right';
+                competitionCell.textContent = kw.competition ? `${(kw.competition * 100).toFixed(1)}%` : 'N/A';
+                
+                // Create results cell
+                const resultsCell = document.createElement('td');
+                resultsCell.style.textAlign = 'right';
+                resultsCell.textContent = kw.results ? kw.results.toLocaleString() : 'N/A';
+                
+                // Create intent cell
+                const intentCell = document.createElement('td');
+                intentCell.textContent = kw.intent || 'N/A';
+                
+                // Create action cell with button
+                const actionCell = document.createElement('td');
+                actionCell.style.textAlign = 'center';
+                const addButton = document.createElement('button');
+                addButton.className = 'add-keyword-btn';
+                addButton.textContent = 'Add';
+                
+                // Add secure event listener instead of onclick
+                addButton.addEventListener('click', function() {
+                    window.addKeywordToInput(kw.keyword || '');
+                });
+                
+                actionCell.appendChild(addButton);
+                
+                // Append all cells to row
+                row.appendChild(typeCell);
+                row.appendChild(keywordCell);
+                row.appendChild(searchVolumeCell);
+                row.appendChild(cpcCell);
+                row.appendChild(competitionCell);
+                row.appendChild(resultsCell);
+                row.appendChild(intentCell);
+                row.appendChild(actionCell);
                 
                 keywordsTableBody.appendChild(row);
             });
@@ -1368,6 +1685,9 @@
                 keywordsInput.style.backgroundColor = '';
             }, 300);
         }
+        
+        // Make addKeywordToInput globally accessible
+        window.addKeywordToInput = addKeywordToInput;
         
         function addKeywords(campaignId, adGroupId, keywords, matchTypes) {
             if (!campaignsData[campaignId].keywords) {
@@ -1761,7 +2081,7 @@
             const clientInfo = getClientInfo();
             
             // CSV Header for ads
-            let csv = 'Campaign,Ad Group,Headline 1,Headline 2,Headline 3,Headline 4,Headline 5,Headline 6,Headline 7,Headline 8,Headline 9,Headline 10,Headline 11,Description 1,Description 2,Description 3,Description 4,Path 1,Path 2,Final URL\n';
+            let csv = 'Campaign,Ad Group,Headline 1,Headline 2,Headline 3,Headline 4,Headline 5,Headline 6,Headline 7,Headline 8,Headline 9,Headline 10,Headline 11,Description 1,Description 2,Description 3,Description 4,Final URL\n';
             
             // Process each ad group
             for (const adGroupId in campaign.adGroups) {
@@ -1771,7 +2091,7 @@
                 // Process ads
                 const ads = campaign.ads && campaign.ads[adGroupId] ? campaign.ads[adGroupId] : [];
                 for (const ad of ads) {
-                    csv += `"${campaign.name}","${adGroupName}","${ad.headline1 || ''}","${ad.headline2 || ''}","${ad.headline3 || ''}","${ad.headline4 || ''}","${ad.headline5 || ''}","${ad.headline6 || ''}","${ad.headline7 || ''}","${ad.headline8 || ''}","${ad.headline9 || ''}","${ad.headline10 || ''}","${ad.headline11 || ''}","${ad.description1 || ''}","${ad.description2 || ''}","${ad.description3 || ''}","${ad.description4 || ''}","${ad.path1 || ''}","${ad.path2 || ''}","${clientInfo.websiteUrl || ''}"\n`;
+                    csv += `"${campaign.name}","${adGroupName}","${ad.headline1 || ''}","${ad.headline2 || ''}","${ad.headline3 || ''}","${ad.headline4 || ''}","${ad.headline5 || ''}","${ad.headline6 || ''}","${ad.headline7 || ''}","${ad.headline8 || ''}","${ad.headline9 || ''}","${ad.headline10 || ''}","${ad.headline11 || ''}","${ad.description1 || ''}","${ad.description2 || ''}","${ad.description3 || ''}","${ad.description4 || ''}","${clientInfo.websiteUrl || ''}"\n`;
                 }
             }
             
@@ -1803,24 +2123,24 @@
             const campaign = campaignsData[campaignId];
             const clientInfo = getClientInfo();
             
-            // CSV Header
-            let csv = 'Campaign,Ad Group,Headline 1,Headline 2,Headline 3,Headline 4,Headline 5,Headline 6,Headline 7,Headline 8,Headline 9,Headline 10,Headline 11,Description 1,Description 2,Description 3,Description 4,Path 1,Path 2,Final URL,Keyword,Match Type\n';
+            // CSV Header - removed Path 1 and Path 2 columns that don't exist
+            let csv = 'Campaign,Ad Group,Headline 1,Headline 2,Headline 3,Headline 4,Headline 5,Headline 6,Headline 7,Headline 8,Headline 9,Headline 10,Headline 11,Description 1,Description 2,Description 3,Description 4,Final URL,Keyword,Match Type\n';
             
             // Process each ad group
             for (const adGroupId in campaign.adGroups) {
                 const adGroup = campaign.adGroups[adGroupId];
                 const adGroupName = adGroup.name;
                 
-                // Process ads
+                // Process ads - removed references to path1 and path2
                 const ads = campaign.ads && campaign.ads[adGroupId] ? campaign.ads[adGroupId] : [];
                 for (const ad of ads) {
-                    csv += `"${campaign.name}","${adGroupName}","${ad.headline1}","${ad.headline2}","${ad.headline3}","${ad.headline4}","${ad.headline5}","${ad.headline6}","${ad.headline7}","${ad.headline8}","${ad.headline9}","${ad.headline10}","${ad.headline11}","${ad.description1}","${ad.description2}","${ad.description3}","${ad.description4}","${ad.path1}","${ad.path2}","${clientInfo.websiteUrl}",,\n`;
+                    csv += `"${campaign.name}","${adGroupName}","${ad.headline1 || ''}","${ad.headline2 || ''}","${ad.headline3 || ''}","${ad.headline4 || ''}","${ad.headline5 || ''}","${ad.headline6 || ''}","${ad.headline7 || ''}","${ad.headline8 || ''}","${ad.headline9 || ''}","${ad.headline10 || ''}","${ad.headline11 || ''}","${ad.description1 || ''}","${ad.description2 || ''}","${ad.description3 || ''}","${ad.description4 || ''}","${clientInfo.websiteUrl || ''}",,\n`;
                 }
                 
-                // Process keywords
+                // Process keywords - fixed column alignment (17 empty columns total: 2 campaign/adgroup + 11 headlines + 4 descriptions + 1 final URL = 18 columns before keyword)
                 const keywords = campaign.keywords && campaign.keywords[adGroupId] ? campaign.keywords[adGroupId] : [];
                 for (const keyword of keywords) {
-                    csv += `"${campaign.name}","${adGroupName}",,,,,,,,,,,,"${clientInfo.websiteUrl}","${keyword.text}","${keyword.matchType}"\n`;
+                    csv += `"${campaign.name}","${adGroupName}",,,,,,,,,,,,,,,,,"${clientInfo.websiteUrl || ''}","${keyword.text}","${keyword.matchType}"\n`;
                 }
             }
             
