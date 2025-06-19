@@ -59,8 +59,8 @@ Do NOT include any business names, locations, or unrelated terms. Focus strictly
                     }
                 ];
 
-                const analysis = await this.openaiConnector.generateResponse(unitTypePrompt, 'gpt-3.5-turbo');
-                const analysisData = JSON.parse(analysis);
+                const analysis = await this.openaiConnector.generateResponse(unitTypePrompt, 'gpt-4o');
+                const analysisData = this.parseJsonResponse(analysis);
                 
                 console.log('Unit type campaign analysis completed:', analysisData);
                 return analysisData;
@@ -129,10 +129,10 @@ Focus on extracting terms that would be valuable for finding relevant keywords i
                 }
             ];
 
-            const analysis = await this.openaiConnector.generateResponse(analysisPrompt, 'gpt-3.5-turbo');
+            const analysis = await this.openaiConnector.generateResponse(analysisPrompt, 'gpt-4o');
             
-            // Parse the JSON response
-            const analysisData = JSON.parse(analysis);
+            // Parse the JSON response - handle both pure JSON and markdown-wrapped JSON
+            const analysisData = this.parseJsonResponse(analysis);
             
             console.log('Enhanced client info analysis completed:', analysisData);
             return analysisData;
@@ -140,6 +140,38 @@ Focus on extracting terms that would be valuable for finding relevant keywords i
         } catch (error) {
             console.error('Error analyzing client info:', error);
             throw new Error('Failed to analyze client information for keyword research');
+        }
+    }
+
+    /**
+     * Parse JSON response from OpenAI, handling both pure JSON and markdown-wrapped JSON
+     * @param {string} response - Raw response from OpenAI
+     * @returns {Object} - Parsed JSON object
+     */
+    parseJsonResponse(response) {
+        try {
+            // First try to parse as pure JSON
+            return JSON.parse(response);
+        } catch (error) {
+            try {
+                // If that fails, try to extract JSON from markdown code blocks
+                const jsonMatch = response.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+                if (jsonMatch && jsonMatch[1]) {
+                    return JSON.parse(jsonMatch[1].trim());
+                }
+                
+                // If no code blocks, try to find JSON object in the response
+                const objectMatch = response.match(/\{[\s\S]*\}/);
+                if (objectMatch) {
+                    return JSON.parse(objectMatch[0]);
+                }
+                
+                throw new Error('No valid JSON found in response');
+            } catch (parseError) {
+                console.error('Failed to parse JSON response:', response);
+                console.error('Parse error:', parseError);
+                throw new Error(`Invalid JSON response: ${parseError.message}`);
+            }
         }
     }
 
@@ -153,7 +185,7 @@ Focus on extracting terms that would be valuable for finding relevant keywords i
     async searchKeywords(keyword, database = 'us', limit = 50) {
         try {
             const params = {
-                type: 'phrase_this',
+                type: 'phrase_all',
                 phrase: keyword,
                 database: database,
                 export_columns: 'Ph,Nq,Cp,Co,Nr,Td',
@@ -183,7 +215,7 @@ Focus on extracting terms that would be valuable for finding relevant keywords i
      * @param {number} limitPerKeyword - Limit per seed keyword
      * @returns {Promise<Array>} - Combined and deduplicated keyword results
      */
-    async getKeywordSuggestions(seedKeywords, database = 'us', limitPerKeyword = 20) {
+    async getKeywordSuggestions(seedKeywords, database = 'us', limitPerKeyword = 50) {
         const allKeywords = [];
         const promises = [];
 
@@ -248,7 +280,7 @@ Focus on extracting terms that would be valuable for finding relevant keywords i
                     mediumVolume: keywordSuggestions.filter(kw => kw.searchVolume >= 100 && kw.searchVolume <= 500),
                     lowVolume: keywordSuggestions.filter(kw => kw.searchVolume < 100 && kw.searchVolume > 0),
                     lowCompetition: keywordSuggestions.filter(kw => kw.competition < 0.3),
-                    all: keywordSuggestions.slice(0, 100)
+                    all: keywordSuggestions.slice(0, 200)
                 },
                 recommendations: {
                     primaryKeywords: keywordSuggestions.slice(0, 10),

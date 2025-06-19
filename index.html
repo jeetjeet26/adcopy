@@ -220,6 +220,93 @@
             margin-bottom: 15px;
             display: none;
         }
+        
+        /* Keywords table styles */
+        #keywords-table {
+            border: none;
+        }
+        
+        #keywords-table th {
+            user-select: none;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #f5f5f5;
+        }
+        
+        #keywords-table th:hover {
+            background-color: #e9ecef;
+        }
+        
+        #keywords-table th.sortable.sorted-asc .sort-arrow {
+            color: #4285f4;
+        }
+        
+        #keywords-table th.sortable.sorted-desc .sort-arrow {
+            color: #4285f4;
+            transform: rotate(180deg);
+        }
+        
+        #keywords-table th.sortable.sorted-asc .sort-arrow::before {
+            content: '↑';
+        }
+        
+        #keywords-table th.sortable.sorted-desc .sort-arrow::before {
+            content: '↓';
+        }
+        
+        #keywords-table tbody tr {
+            border-bottom: 1px solid #eee;
+        }
+        
+        #keywords-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        #keywords-table tbody td {
+            padding: 8px 10px;
+            border-right: 1px solid #eee;
+        }
+        
+        .keyword-type-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .keyword-type-primary {
+            background-color: #4285f4;
+        }
+        
+        .keyword-type-longtail {
+            background-color: #34a853;
+        }
+        
+        .keyword-type-lowcomp {
+            background-color: #fbbc05;
+            color: #333;
+        }
+        
+        .keyword-type-medium {
+            background-color: #ea4335;
+        }
+        
+        .add-keyword-btn {
+            padding: 4px 8px;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .add-keyword-btn:hover {
+            background-color: #3367d6;
+        }
     </style>
 </head>
 <body>
@@ -349,21 +436,40 @@
                     
                     <div id="keyword-suggestions" style="display: none; margin-top: 15px;">
                         <h4>Keyword Suggestions</h4>
-                        <div class="flex-row">
-                            <div class="col-50">
-                                <h5>Primary Keywords (High Volume)</h5>
-                                <div id="primary-keywords" class="keyword-list" style="max-height: 200px; overflow-y: auto;"></div>
-                                
-                                <h5 style="margin-top: 15px;">Long-tail Keywords</h5>
-                                <div id="longtail-keywords" class="keyword-list" style="max-height: 150px; overflow-y: auto;"></div>
-                            </div>
-                            <div class="col-50">
-                                <h5>Low Competition Keywords</h5>
-                                <div id="lowcomp-keywords" class="keyword-list" style="max-height: 200px; overflow-y: auto;"></div>
-                                
-                                <h5 style="margin-top: 15px;">Medium Volume Keywords</h5>
-                                <div id="medium-keywords" class="keyword-list" style="max-height: 150px; overflow-y: auto;"></div>
-                            </div>
+                        <div style="overflow-x: auto; max-height: 500px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px;">
+                            <table id="keywords-table" style="width: 100%; border-collapse: collapse; margin-top: 0;">
+                                <thead>
+                                    <tr style="background-color: #f5f5f5; border-bottom: 2px solid #ddd;">
+                                        <th class="sortable" data-sort="type" style="padding: 10px; text-align: left; cursor: pointer; border-right: 1px solid #ddd;">
+                                            Type <span class="sort-arrow">↕</span>
+                                        </th>
+                                        <th class="sortable" data-sort="keyword" style="padding: 10px; text-align: left; cursor: pointer; border-right: 1px solid #ddd;">
+                                            Keyword <span class="sort-arrow">↕</span>
+                                        </th>
+                                        <th class="sortable" data-sort="searchVolume" style="padding: 10px; text-align: right; cursor: pointer; border-right: 1px solid #ddd;">
+                                            Search Volume <span class="sort-arrow">↕</span>
+                                        </th>
+                                        <th class="sortable" data-sort="cpc" style="padding: 10px; text-align: right; cursor: pointer; border-right: 1px solid #ddd;">
+                                            CPC <span class="sort-arrow">↕</span>
+                                        </th>
+                                        <th class="sortable" data-sort="competition" style="padding: 10px; text-align: right; cursor: pointer; border-right: 1px solid #ddd;">
+                                            Competition <span class="sort-arrow">↕</span>
+                                        </th>
+                                        <th class="sortable" data-sort="results" style="padding: 10px; text-align: right; cursor: pointer; border-right: 1px solid #ddd;">
+                                            Results <span class="sort-arrow">↕</span>
+                                        </th>
+                                        <th class="sortable" data-sort="intent" style="padding: 10px; text-align: left; cursor: pointer; border-right: 1px solid #ddd;">
+                                            Intent <span class="sort-arrow">↕</span>
+                                        </th>
+                                        <th style="padding: 10px; text-align: center;">
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="keywords-table-body">
+                                    <!-- Keywords will be populated here -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -592,10 +698,8 @@
         const clearSuggestionsBtn = document.getElementById('clear-suggestions-btn');
         const loadingKeywords = document.getElementById('loading-keywords');
         const keywordSuggestions = document.getElementById('keyword-suggestions');
-        const primaryKeywords = document.getElementById('primary-keywords');
-        const longtailKeywords = document.getElementById('longtail-keywords');
-        const lowcompKeywords = document.getElementById('lowcomp-keywords');
-        const mediumKeywords = document.getElementById('medium-keywords');
+        const keywordsTable = document.getElementById('keywords-table');
+        const keywordsTableBody = document.getElementById('keywords-table-body');
         
         // Ad Copy elements
         const adCampaignSelect = document.getElementById('ad-campaign-select');
@@ -780,12 +884,14 @@
         
         function addCampaign(name, isUnitType = false) {
             const campaignId = 'campaign' + (Object.keys(campaignsData).length + 1);
+            const clientInfo = getClientInfo();
             campaignsData[campaignId] = {
                 name: name,
                 adGroups: {},
                 keywords: {},
                 ads: {},
-                isUnitType: isUnitType
+                isUnitType: isUnitType,
+                budget: clientInfo.budget || ''
             };
             
             saveData();
@@ -918,12 +1024,44 @@
                         }
                         
                         if (adGroupId && campaignsData[campaignId].adGroups && campaignsData[campaignId].adGroups[adGroupId]) {
+                            const adGroup = campaignsData[campaignId].adGroups[adGroupId];
+                            
+                            // DEBUG: Log clientInfo to see its structure
+                            console.log('=== DEBUG CLIENT INFO ===');
+                            console.log('clientInfo object:', clientInfo);
+                            console.log('clientInfo keys:', Object.keys(clientInfo));
+                            console.log('uniqueSellingPoints:', clientInfo.uniqueSellingPoints);
+                            console.log('brandVoice:', clientInfo.brandVoice);
+                            console.log('industry:', clientInfo.industry);
+                            console.log('targetAudience:', clientInfo.targetAudience);
+                            console.log('========================');
+                            
+                            // Create theme from client info if not set at ad group level
+                            let theme = adGroup.theme || '';
+                            if (!theme) {
+                                const themeParts = [];
+                                if (clientInfo.uniqueSellingPoints) themeParts.push(clientInfo.uniqueSellingPoints);
+                                if (clientInfo.brandVoice) themeParts.push(clientInfo.brandVoice);
+                                if (clientInfo.industry) themeParts.push(clientInfo.industry);
+                                if (adGroup.name) themeParts.push(`focused on ${adGroup.name}`);
+                                theme = themeParts.join(', ');
+                            }
+                            
+                            console.log('=== DEBUG THEME BUILDING ===');
+                            console.log('adGroup.theme:', adGroup.theme);
+                            console.log('computed theme:', theme);
+                            console.log('============================');
+                            
                             adGroupContext = {
                                 id: adGroupId,
-                                name: campaignsData[campaignId].adGroups[adGroupId].name,
-                                theme: campaignsData[campaignId].adGroups[adGroupId].theme || '',
-                                targetAudience: campaignsData[campaignId].adGroups[adGroupId].targetAudience || ''
+                                name: adGroup.name,
+                                theme: theme,
+                                targetAudience: adGroup.targetAudience || clientInfo.targetAudience || ''
                             };
+                            
+                            console.log('=== DEBUG FINAL ADGROUP CONTEXT ===');
+                            console.log('adGroupContext:', adGroupContext);
+                            console.log('===================================');
                         }
                     }
                     
@@ -1019,56 +1157,162 @@
             });
         }
         
+        let currentSortColumn = '';
+        let currentSortDirection = 'asc';
+        let allKeywordsData = [];
+
         function displayKeywordSuggestions(data) {
             console.log('Displaying keyword suggestions:', data); // Debug log
             
-            // Display primary keywords (High Volume)
-            primaryKeywords.innerHTML = '';
+            // Collect all keywords with their types
+            allKeywordsData = [];
+            
+            // Add primary keywords (High Volume)
             if (data.keywords && data.keywords.highVolume && data.keywords.highVolume.length > 0) {
-                data.keywords.highVolume.slice(0, 15).forEach(kw => {
-                    const keywordItem = createKeywordSuggestionItem(kw);
-                    primaryKeywords.appendChild(keywordItem);
+                data.keywords.highVolume.slice(0, 20).forEach(kw => {
+                    allKeywordsData.push({...kw, type: 'Primary'});
                 });
-            } else {
-                primaryKeywords.innerHTML = '<p>No high volume keywords found</p>';
             }
             
-            // Display long-tail keywords (use the longTail recommendations, not lowVolume)
-            longtailKeywords.innerHTML = '';
+            // Add long-tail keywords
             if (data.recommendations && data.recommendations.longTail && data.recommendations.longTail.length > 0) {
-                data.recommendations.longTail.slice(0, 15).forEach(kw => {
-                    const keywordItem = createKeywordSuggestionItem(kw);
-                    longtailKeywords.appendChild(keywordItem);
+                data.recommendations.longTail.slice(0, 20).forEach(kw => {
+                    allKeywordsData.push({...kw, type: 'Long-tail'});
                 });
-            } else {
-                longtailKeywords.innerHTML = '<p>No long-tail keywords found</p>';
             }
             
-            // Display low competition keywords
-            lowcompKeywords.innerHTML = '';
+            // Add low competition keywords
             if (data.keywords && data.keywords.lowCompetition && data.keywords.lowCompetition.length > 0) {
-                data.keywords.lowCompetition.slice(0, 15).forEach(kw => {
-                    const keywordItem = createKeywordSuggestionItem(kw);
-                    lowcompKeywords.appendChild(keywordItem);
+                data.keywords.lowCompetition.slice(0, 20).forEach(kw => {
+                    allKeywordsData.push({...kw, type: 'Low Competition'});
                 });
-            } else {
-                lowcompKeywords.innerHTML = '<p>No low competition keywords found</p>';
             }
             
-            // Display medium volume keywords
-            mediumKeywords.innerHTML = '';
+            // Add medium volume keywords
             if (data.keywords && data.keywords.mediumVolume && data.keywords.mediumVolume.length > 0) {
-                data.keywords.mediumVolume.slice(0, 15).forEach(kw => {
-                    const keywordItem = createKeywordSuggestionItem(kw);
-                    mediumKeywords.appendChild(keywordItem);
+                data.keywords.mediumVolume.slice(0, 20).forEach(kw => {
+                    allKeywordsData.push({...kw, type: 'Medium Volume'});
                 });
-            } else {
-                mediumKeywords.innerHTML = '<p>No medium volume keywords found</p>';
             }
+            
+            // Remove duplicates based on keyword text
+            const uniqueKeywords = [];
+            const seenKeywords = new Set();
+            
+            allKeywordsData.forEach(kw => {
+                if (!seenKeywords.has(kw.keyword.toLowerCase())) {
+                    seenKeywords.add(kw.keyword.toLowerCase());
+                    uniqueKeywords.push(kw);
+                }
+            });
+            
+            allKeywordsData = uniqueKeywords;
+            
+            // Populate the table
+            populateKeywordsTable(allKeywordsData);
+            
+            // Setup sorting
+            setupTableSorting();
             
             // Show the suggestions and clear button
             keywordSuggestions.style.display = 'block';
             clearSuggestionsBtn.style.display = 'inline-block';
+        }
+
+        function populateKeywordsTable(keywords) {
+            keywordsTableBody.innerHTML = '';
+            
+            if (keywords.length === 0) {
+                keywordsTableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px; color: #666;">No keywords found</td></tr>';
+                return;
+            }
+            
+            keywords.forEach(kw => {
+                const row = document.createElement('tr');
+                
+                // Get type badge class
+                let badgeClass = 'keyword-type-primary';
+                switch(kw.type) {
+                    case 'Long-tail':
+                        badgeClass = 'keyword-type-longtail';
+                        break;
+                    case 'Low Competition':
+                        badgeClass = 'keyword-type-lowcomp';
+                        break;
+                    case 'Medium Volume':
+                        badgeClass = 'keyword-type-medium';
+                        break;
+                }
+                
+                row.innerHTML = `
+                    <td><span class="keyword-type-badge ${badgeClass}">${kw.type}</span></td>
+                    <td style="font-weight: bold;">${kw.keyword}</td>
+                    <td style="text-align: right;">${kw.searchVolume ? kw.searchVolume.toLocaleString() : 'N/A'}</td>
+                    <td style="text-align: right;">$${kw.cpc ? kw.cpc.toFixed(2) : 'N/A'}</td>
+                    <td style="text-align: right;">${kw.competition ? (kw.competition * 100).toFixed(1) + '%' : 'N/A'}</td>
+                    <td style="text-align: right;">${kw.results ? kw.results.toLocaleString() : 'N/A'}</td>
+                    <td>${kw.intent || 'N/A'}</td>
+                    <td style="text-align: center;">
+                        <button class="add-keyword-btn" onclick="addKeywordToInput('${kw.keyword.replace(/'/g, "\\'")}')">Add</button>
+                    </td>
+                `;
+                
+                keywordsTableBody.appendChild(row);
+            });
+        }
+
+        function setupTableSorting() {
+            const sortableHeaders = document.querySelectorAll('#keywords-table th.sortable');
+            
+            sortableHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    const sortBy = this.getAttribute('data-sort');
+                    
+                    // Toggle sort direction if clicking the same column
+                    if (currentSortColumn === sortBy) {
+                        currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        currentSortColumn = sortBy;
+                        currentSortDirection = 'asc';
+                    }
+                    
+                    // Update sort indicators
+                    sortableHeaders.forEach(h => {
+                        h.classList.remove('sorted-asc', 'sorted-desc');
+                        h.querySelector('.sort-arrow').textContent = '↕';
+                    });
+                    
+                    this.classList.add(`sorted-${currentSortDirection}`);
+                    this.querySelector('.sort-arrow').textContent = currentSortDirection === 'asc' ? '↑' : '↓';
+                    
+                    // Sort the data
+                    const sortedData = [...allKeywordsData].sort((a, b) => {
+                        let aVal = a[sortBy];
+                        let bVal = b[sortBy];
+                        
+                        // Handle different data types
+                        if (sortBy === 'searchVolume' || sortBy === 'results') {
+                            aVal = aVal || 0;
+                            bVal = bVal || 0;
+                        } else if (sortBy === 'cpc' || sortBy === 'competition') {
+                            aVal = aVal || 0;
+                            bVal = bVal || 0;
+                        } else {
+                            aVal = (aVal || '').toString().toLowerCase();
+                            bVal = (bVal || '').toString().toLowerCase();
+                        }
+                        
+                        if (currentSortDirection === 'asc') {
+                            return aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
+                        } else {
+                            return aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
+                        }
+                    });
+                    
+                    // Re-populate table with sorted data
+                    populateKeywordsTable(sortedData);
+                });
+            });
         }
         
         function createKeywordSuggestionItem(keyword) {
@@ -1437,10 +1681,9 @@
             
             switch (format) {
                 case 'csv':
-                    exportData = generateCSV(campaignId);
-                    fileName = `${campaign.name.replace(/\s+/g, '_')}_google_ads.csv`;
-                    mimeType = 'text/csv';
-                    break;
+                    // Generate separate CSV files for ads and keywords
+                    generateSeparateCSVExport(campaignId);
+                    return;
                 case 'excel':
                     alert('Excel export is not implemented in this version.');
                     return;
@@ -1468,6 +1711,92 @@
             
             // Automatically click the link to start download
             a.click();
+        }
+        
+        function generateSeparateCSVExport(campaignId) {
+            const campaign = campaignsData[campaignId];
+            const clientInfo = getClientInfo();
+            
+            // Generate ads CSV
+            const adsCSV = generateAdsCSV(campaignId);
+            
+            // Generate keywords CSV
+            const keywordsCSV = generateKeywordsCSV(campaignId);
+            
+            // Create separate download links for each CSV
+            const campaignNameClean = campaign.name.replace(/\s+/g, '_');
+            
+            // Create ads CSV download
+            const adsBlob = new Blob([adsCSV], { type: 'text/csv' });
+            const adsUrl = URL.createObjectURL(adsBlob);
+            const adsLink = document.createElement('a');
+            adsLink.href = adsUrl;
+            adsLink.download = `${campaignNameClean}_ads.csv`;
+            adsLink.textContent = `Download ${campaignNameClean}_ads.csv`;
+            adsLink.style.display = 'block';
+            adsLink.style.marginBottom = '10px';
+            
+            // Create keywords CSV download
+            const keywordsBlob = new Blob([keywordsCSV], { type: 'text/csv' });
+            const keywordsUrl = URL.createObjectURL(keywordsBlob);
+            const keywordsLink = document.createElement('a');
+            keywordsLink.href = keywordsUrl;
+            keywordsLink.download = `${campaignNameClean}_keywords.csv`;
+            keywordsLink.textContent = `Download ${campaignNameClean}_keywords.csv`;
+            keywordsLink.style.display = 'block';
+            keywordsLink.style.marginBottom = '10px';
+            
+            // Show download links
+            exportResult.innerHTML = '<h4>Download your CSV files:</h4>';
+            exportResult.appendChild(adsLink);
+            exportResult.appendChild(keywordsLink);
+            
+            // Automatically start downloads
+            setTimeout(() => adsLink.click(), 100);
+            setTimeout(() => keywordsLink.click(), 500);
+        }
+        
+        function generateAdsCSV(campaignId) {
+            const campaign = campaignsData[campaignId];
+            const clientInfo = getClientInfo();
+            
+            // CSV Header for ads
+            let csv = 'Campaign,Ad Group,Headline 1,Headline 2,Headline 3,Headline 4,Headline 5,Headline 6,Headline 7,Headline 8,Headline 9,Headline 10,Headline 11,Description 1,Description 2,Description 3,Description 4,Path 1,Path 2,Final URL\n';
+            
+            // Process each ad group
+            for (const adGroupId in campaign.adGroups) {
+                const adGroup = campaign.adGroups[adGroupId];
+                const adGroupName = adGroup.name;
+                
+                // Process ads
+                const ads = campaign.ads && campaign.ads[adGroupId] ? campaign.ads[adGroupId] : [];
+                for (const ad of ads) {
+                    csv += `"${campaign.name}","${adGroupName}","${ad.headline1 || ''}","${ad.headline2 || ''}","${ad.headline3 || ''}","${ad.headline4 || ''}","${ad.headline5 || ''}","${ad.headline6 || ''}","${ad.headline7 || ''}","${ad.headline8 || ''}","${ad.headline9 || ''}","${ad.headline10 || ''}","${ad.headline11 || ''}","${ad.description1 || ''}","${ad.description2 || ''}","${ad.description3 || ''}","${ad.description4 || ''}","${ad.path1 || ''}","${ad.path2 || ''}","${clientInfo.websiteUrl || ''}"\n`;
+                }
+            }
+            
+            return csv;
+        }
+        
+        function generateKeywordsCSV(campaignId) {
+            const campaign = campaignsData[campaignId];
+            
+            // CSV Header for keywords
+            let csv = 'Campaign,Ad Group,Keyword,Match Type\n';
+            
+            // Process each ad group
+            for (const adGroupId in campaign.adGroups) {
+                const adGroup = campaign.adGroups[adGroupId];
+                const adGroupName = adGroup.name;
+                
+                // Process keywords
+                const keywords = campaign.keywords && campaign.keywords[adGroupId] ? campaign.keywords[adGroupId] : [];
+                for (const keyword of keywords) {
+                    csv += `"${campaign.name}","${adGroupName}","${keyword.text}","${keyword.matchType}"\n`;
+                }
+            }
+            
+            return csv;
         }
         
         function generateCSV(campaignId) {

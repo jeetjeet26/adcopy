@@ -267,13 +267,33 @@ KEYWORD INTEGRATION REQUIREMENTS:
         }
 
         const systemContent = isUnitType
-            ? `You are an expert Google Ads copywriter specializing in unit type campaigns for real estate/property listings. Your task is to create exactly one Google Ad that follows these strict requirements:
+            ? `You are an expert Google Ads copywriter specializing in unit type campaigns for real estate/property listings. Your task is to create exactly one Google Ad using a TWO-PASS GENERATION process:
 
 CRITICAL CHARACTER COUNT REQUIREMENTS:
-1. Headlines: Create exactly 11 headlines, each between 27-30 characters (aim for 90%-100% of the 30-character limit)
-2. Descriptions: Create exactly 4 descriptions, each between 81-90 characters (aim for 90%-100% of the 90-character limit)
+1. Headlines: Create exactly 11 headlines, each EXACTLY 28-30 characters long
+2. Descriptions: Create exactly 4 descriptions, each EXACTLY 85-90 characters long
+3. Count every character including spaces, punctuation, and special characters
+4. If a headline is 31+ characters, shorten it by removing or replacing words
+5. If a headline is under 28 characters, add relevant words to reach the target
+6. If a description is 91+ characters, shorten it strategically
+7. If a description is under 85 characters, expand it with relevant content
 
-CHARACTER COUNT IS CRITICAL - spaces count as characters. Always aim to use 90%-100% of available characters to maximize impact.
+EXAMPLES OF PROPER LENGTH HEADLINES:
+- "Luxury Apartments Available" (27 chars) ✓
+- "Beachside Living in Costa Mesa" (30 chars) ✓
+- "Studio & 1BR Units Open Today" (29 chars) ✓
+- "Modern Amenities Await You" (26 chars) ✗ TOO SHORT
+- "Experience Premium Beachside Living" (35 chars) ✗ TOO LONG
+
+EXAMPLES OF PROPER LENGTH DESCRIPTIONS:
+- "Live the beach life in our luxury apartments with modern amenities. Contact us today!" (86 chars) ✓
+- "Bloom offers a range of studios & 1-2 bedroom apartments for the urban professional." (85 chars) ✓
+
+TWO-PASS GENERATION PROCESS:
+STEP 1: Generate your headlines and descriptions normally
+STEP 2: Count characters in each headline and description
+STEP 3: Revise any content over limits or under minimums
+STEP 4: Verify final character counts are within required ranges
 
 CRITICAL UNIT TYPE REQUIREMENTS:
 - Base copy ONLY on the saved keywords and ad group name (property type)
@@ -282,14 +302,37 @@ CRITICAL UNIT TYPE REQUIREMENTS:
 - Use the saved keywords as PRIMARY DRIVERS of your copy
 - Create copy that appeals to property searchers for this unit type
 - The ad must be compelling, focused on property benefits, and include a clear call to action
-- Format your response as a JSON object with these exact keys: headlines (array of 11 strings), descriptions (array of 4 strings)`
-            : `You are an expert Google Ads copywriter specializing in keyword-driven ad copy creation. Your task is to create exactly one Google Ad that follows these strict requirements:
+- Format your response as a JSON object with these exact keys: headlines (array of 11 strings), descriptions (array of 4 strings)
+
+MANDATORY: Every headline must be exactly 28-30 characters. Every description must be exactly 85-90 characters.`
+            : `You are an expert Google Ads copywriter specializing in keyword-driven ad copy creation. Your task is to create exactly one Google Ad using a TWO-PASS GENERATION process:
 
 CRITICAL CHARACTER COUNT REQUIREMENTS:
-1. Headlines: Create exactly 11 headlines, each between 27-30 characters (aim for 90%-100% of the 30-character limit)
-2. Descriptions: Create exactly 4 descriptions, each between 81-90 characters (aim for 90%-100% of the 90-character limit)
+1. Headlines: Create exactly 11 headlines, each EXACTLY 28-30 characters long
+2. Descriptions: Create exactly 4 descriptions, each EXACTLY 85-90 characters long
+3. Count every character including spaces, punctuation, and special characters
+4. If a headline is 31+ characters, shorten it by removing or replacing words
+5. If a headline is under 28 characters, add relevant words to reach the target
+6. If a description is 91+ characters, shorten it strategically
+7. If a description is under 85 characters, expand it with relevant content
 
-CHARACTER COUNT IS CRITICAL - spaces count as characters. Always aim to use 90%-100% of available characters to maximize impact.
+EXAMPLES OF PROPER LENGTH HEADLINES:
+- "Luxury Apartments Available" (27 chars) ✗ TOO SHORT - ADD WORDS
+- "Beachside Living in Costa Mesa" (30 chars) ✓ PERFECT
+- "Studio & 1BR Units Open Today" (29 chars) ✓ PERFECT
+- "Modern Amenities Await You Now" (30 chars) ✓ PERFECT
+- "Experience Premium Beachside Living Today" (41 chars) ✗ TOO LONG - REMOVE WORDS
+
+EXAMPLES OF PROPER LENGTH DESCRIPTIONS:
+- "Live the beach life in our luxury apartments with modern amenities. Contact us today!" (86 chars) ✓
+- "Bloom offers a range of studios & 1-2 bedroom apartments for the urban professional." (85 chars) ✓
+- "Experience effortless luxury living at Bloom. Ideal for young professionals. Contact us!" (89 chars) ✓
+
+TWO-PASS GENERATION PROCESS:
+STEP 1: Generate your headlines and descriptions normally
+STEP 2: Count characters in each headline and description
+STEP 3: Revise any content over limits or under minimums  
+STEP 4: Verify final character counts are within required ranges
 
 ${keywordData ? 'CRITICAL KEYWORD REQUIREMENTS:' : 'CONTENT REQUIREMENTS:'}
 ${keywordData ? '- Incorporate the provided keywords as PRIMARY DRIVERS of your copy' : '- Focus on client information and benefits'}
@@ -297,10 +340,12 @@ ${keywordData ? '- Use high-volume keywords in headlines when possible' : '- Cre
 ${keywordData ? '- Include medium-volume keywords in descriptions naturally' : '- Include clear call to action'}
 ${keywordData ? '- Ensure keywords flow naturally with brand voice and messaging' : '- Maintain professional tone'}
 - The ad must be compelling, focused on benefits, and include a clear call to action
-- Format your response as a JSON object with these exact keys: headlines (array of 11 strings), descriptions (array of 4 strings)`;
+- Format your response as a JSON object with these exact keys: headlines (array of 11 strings), descriptions (array of 4 strings)
+
+MANDATORY: Every headline must be exactly 28-30 characters. Every description must be exactly 85-90 characters.`;
 
         const userContent = isUnitType
-            ? `Create one Google Ad for this unit type campaign:
+            ? `Create one Google Ad for this unit type campaign using the TWO-PASS GENERATION process:
 
 ${contextInfo}${keywordInstructions}
 
@@ -309,15 +354,26 @@ ${orchestrationResult}
 
 IMPORTANT: This is a unit type campaign. Use the saved keywords as the primary foundation for your ad copy. Focus on property features and benefits that would appeal to anyone searching for this property type. DO NOT include business names or client-specific information.
 
-MANDATORY CHARACTER COUNT REQUIREMENTS (spaces count as characters):
-- Each headline must be 27-30 characters (aim for 90%-100% of 30-character limit)
-- Each description must be 81-90 characters (aim for 90%-100% of 90-character limit)
+TWO-PASS GENERATION PROCESS:
+STEP 1: Generate initial headlines and descriptions based on the context above
+STEP 2: Count characters in each piece of copy (including spaces and punctuation)
+STEP 3: Revise any content that doesn't meet character requirements:
+   - Headlines under 28 chars: Add relevant words (location, benefits, CTAs)
+   - Headlines over 30 chars: Remove unnecessary words or use shorter synonyms
+   - Descriptions under 85 chars: Add compelling details or stronger CTAs
+   - Descriptions over 90 chars: Remove redundant words or shorten phrases
+STEP 4: Verify final counts are within required ranges
+
+MANDATORY CHARACTER COUNT REQUIREMENTS:
+- Each headline must be EXACTLY 28-30 characters 
+- Each description must be EXACTLY 85-90 characters
+- Count every character including spaces and punctuation
 - Format as JSON with keys: headlines, descriptions
 - Incorporate saved keywords naturally and strategically
 - Focus on property benefits and search intent
 
-REMEMBER: Longer copy within the allowed limits performs better - aim to use as much of the available character space as possible while maintaining quality and readability.`
-            : `Create one Google Ad based on this information:
+VERIFICATION: Before submitting, mentally count characters in each headline and description to ensure they meet requirements.`
+            : `Create one Google Ad based on this information using the TWO-PASS GENERATION process:
 
 ${contextInfo}${keywordInstructions}
 
@@ -326,14 +382,25 @@ ${orchestrationResult}
 
 ${keywordData ? 'IMPORTANT: Use the keywords listed above as the primary foundation for your ad copy. These represent actual search terms your audience uses.' : ''}
 
-MANDATORY CHARACTER COUNT REQUIREMENTS (spaces count as characters):
-- Each headline must be 27-30 characters (aim for 90%-100% of 30-character limit)
-- Each description must be 81-90 characters (aim for 90%-100% of 90-character limit)
+TWO-PASS GENERATION PROCESS:
+STEP 1: Generate initial headlines and descriptions based on the context above
+STEP 2: Count characters in each piece of copy (including spaces and punctuation)
+STEP 3: Revise any content that doesn't meet character requirements:
+   - Headlines under 28 chars: Add relevant words (benefits, location, urgency)
+   - Headlines over 30 chars: Remove unnecessary words or use shorter synonyms
+   - Descriptions under 85 chars: Add compelling details or stronger CTAs
+   - Descriptions over 90 chars: Remove redundant words or shorten phrases
+STEP 4: Verify final counts are within required ranges
+
+MANDATORY CHARACTER COUNT REQUIREMENTS:
+- Each headline must be EXACTLY 28-30 characters
+- Each description must be EXACTLY 85-90 characters 
+- Count every character including spaces and punctuation
 - Format as JSON with keys: headlines, descriptions
 - Include the call to action
 ${keywordData ? '- Incorporate keywords naturally and strategically' : '- Focus on benefits and client value proposition'}
 
-REMEMBER: Longer copy within the allowed limits performs better - aim to use as much of the available character space as possible while maintaining quality and readability.`;
+VERIFICATION: Before submitting, mentally count characters in each headline and description to ensure they meet requirements.`;
 
         return [
             {

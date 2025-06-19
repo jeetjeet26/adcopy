@@ -103,11 +103,24 @@ class AgenticAdCopyGenerator {
             
             if (adGroupId && window.campaignsData[campaignId].adGroups && window.campaignsData[campaignId].adGroups[adGroupId]) {
                 console.log('✓ Ad group found in campaignsData');
+                const adGroup = window.campaignsData[campaignId].adGroups[adGroupId];
+                
+                // Create theme from client info if not set at ad group level
+                let theme = adGroup.theme || '';
+                if (!theme) {
+                    const themeParts = [];
+                    if (clientInfo.uniqueSellingPoints) themeParts.push(clientInfo.uniqueSellingPoints);
+                    if (clientInfo.brandVoice) themeParts.push(clientInfo.brandVoice);
+                    if (clientInfo.industry) themeParts.push(clientInfo.industry);
+                    if (adGroup.name) themeParts.push(`focused on ${adGroup.name}`);
+                    theme = themeParts.join(', ');
+                }
+                
                 adGroupContext = {
                     id: adGroupId,
-                    name: window.campaignsData[campaignId].adGroups[adGroupId].name,
-                    theme: window.campaignsData[campaignId].adGroups[adGroupId].theme || '',
-                    targetAudience: window.campaignsData[campaignId].adGroups[adGroupId].targetAudience || ''
+                    name: adGroup.name,
+                    theme: theme,
+                    targetAudience: adGroup.targetAudience || clientInfo.targetAudience || ''
                 };
             } else {
                 console.log('✗ Ad group not found. Available ad groups:', window.campaignsData[campaignId].adGroups);
