@@ -5,10 +5,10 @@
 
 class OpenAIConfig {
     constructor() {
-        this.apiKey = ""; // Will be provided by user
+        this.apiKey = process.env.OPENAI_API_KEY || ""; // Read from environment variables
         this.orchestrationModel = "gpt-4"; // For managing the process
-        this.generationModel = "gpt-3.5-turbo"; // For generating ad copy
-        this.maxTokens = 500;
+        this.generationModel = "gpt-4"; // For generating ad copy
+        this.maxTokens = 1000;
         this.temperature = 0.7;
         this.baseUrl = "https://api.openai.com/v1";
     }

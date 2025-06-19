@@ -220,6 +220,93 @@
             margin-bottom: 15px;
             display: none;
         }
+        
+        /* Keywords table styles */
+        #keywords-table {
+            border: none;
+        }
+        
+        #keywords-table th {
+            user-select: none;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #f5f5f5;
+        }
+        
+        #keywords-table th:hover {
+            background-color: #e9ecef;
+        }
+        
+        #keywords-table th.sortable.sorted-asc .sort-arrow {
+            color: #4285f4;
+        }
+        
+        #keywords-table th.sortable.sorted-desc .sort-arrow {
+            color: #4285f4;
+            transform: rotate(180deg);
+        }
+        
+        #keywords-table th.sortable.sorted-asc .sort-arrow::before {
+            content: '↑';
+        }
+        
+        #keywords-table th.sortable.sorted-desc .sort-arrow::before {
+            content: '↓';
+        }
+        
+        #keywords-table tbody tr {
+            border-bottom: 1px solid #eee;
+        }
+        
+        #keywords-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        #keywords-table tbody td {
+            padding: 8px 10px;
+            border-right: 1px solid #eee;
+        }
+        
+        .keyword-type-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .keyword-type-primary {
+            background-color: #4285f4;
+        }
+        
+        .keyword-type-longtail {
+            background-color: #34a853;
+        }
+        
+        .keyword-type-lowcomp {
+            background-color: #fbbc05;
+            color: #333;
+        }
+        
+        .keyword-type-medium {
+            background-color: #ea4335;
+        }
+        
+        .add-keyword-btn {
+            padding: 4px 8px;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .add-keyword-btn:hover {
+            background-color: #3367d6;
+        }
     </style>
 </head>
 <body>
@@ -309,24 +396,90 @@
             <!-- Keywords Tab -->
             <div id="keywords-tab" class="tab-content">
                 <h2>Keywords</h2>
+                
+                <!-- Campaign & Ad Group Selection Section -->
+                <div style="background-color: #f0f8ff; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                    <h3 style="margin-top: 0; color: #1a73e8;">📋 Step 1: Select Campaign & Ad Group</h3>
+                    <p style="margin-bottom: 15px; color: #666;">Choose your campaign and ad group to generate targeted keywords.</p>
+                    
+                    <div class="flex-row">
+                        <div class="col-50">
+                            <div class="form-group">
+                                <label for="keyword-campaign-select">Campaign *</label>
+                                <select id="keyword-campaign-select">
+                                    <option value="">Select a campaign</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-50">
+                            <div class="form-group">
+                                <label for="keyword-ad-group-select">Ad Group *</label>
+                                <select id="keyword-ad-group-select">
+                                    <option value="">Select an ad group</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI Keyword Generation Section -->
+                <div style="background-color: #f8f9ff; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                    <h3 style="margin-top: 0; color: #4285f4;">🤖 Step 2: Generate Keywords with AI</h3>
+                    <p style="margin-bottom: 10px; color: #666;">Generate relevant keywords automatically based on your selected campaign and ad group using AI analysis and Semrush data.</p>
+                    <button id="generate-keywords-btn" style="background-color: #4285f4; margin-right: 10px;">Generate Keywords <span class="ai-badge">AI</span></button>
+                    <button id="clear-suggestions-btn" style="background-color: #ea4335; display: none;">Clear Suggestions</button>
+                    
+                    <div id="loading-keywords" class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Analyzing campaign and generating keywords...</p>
+                    </div>
+                    
+                    <div id="keyword-suggestions" style="display: none; margin-top: 15px;">
+                        <h4>Keyword Suggestions</h4>
+                        <div style="overflow-x: auto; max-height: 500px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px;">
+                            <table id="keywords-table" style="width: 100%; border-collapse: collapse; margin-top: 0;">
+                                <thead>
+                                    <tr style="background-color: #f5f5f5; border-bottom: 2px solid #ddd;">
+                                        <th class="sortable" data-sort="type" style="padding: 10px; text-align: left; cursor: pointer; border-right: 1px solid #ddd;">
+                                            Type <span class="sort-arrow">↕</span>
+                                        </th>
+                                        <th class="sortable" data-sort="keyword" style="padding: 10px; text-align: left; cursor: pointer; border-right: 1px solid #ddd;">
+                                            Keyword <span class="sort-arrow">↕</span>
+                                        </th>
+                                        <th class="sortable" data-sort="searchVolume" style="padding: 10px; text-align: right; cursor: pointer; border-right: 1px solid #ddd;">
+                                            Search Volume <span class="sort-arrow">↕</span>
+                                        </th>
+                                        <th class="sortable" data-sort="cpc" style="padding: 10px; text-align: right; cursor: pointer; border-right: 1px solid #ddd;">
+                                            CPC <span class="sort-arrow">↕</span>
+                                        </th>
+                                        <th class="sortable" data-sort="competition" style="padding: 10px; text-align: right; cursor: pointer; border-right: 1px solid #ddd;">
+                                            Competition <span class="sort-arrow">↕</span>
+                                        </th>
+                                        <th class="sortable" data-sort="results" style="padding: 10px; text-align: right; cursor: pointer; border-right: 1px solid #ddd;">
+                                            Results <span class="sort-arrow">↕</span>
+                                        </th>
+                                        <th class="sortable" data-sort="intent" style="padding: 10px; text-align: left; cursor: pointer; border-right: 1px solid #ddd;">
+                                            Intent <span class="sort-arrow">↕</span>
+                                        </th>
+                                        <th style="padding: 10px; text-align: center;">
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="keywords-table-body">
+                                    <!-- Keywords will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="flex-row">
                     <div class="col-50">
-                        <h3>Add Keywords</h3>
-                        <div class="form-group">
-                            <label for="keyword-campaign-select">Campaign</label>
-                            <select id="keyword-campaign-select">
-                                <option value="">Select a campaign</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="keyword-ad-group-select">Ad Group</label>
-                            <select id="keyword-ad-group-select">
-                                <option value="">Select an ad group</option>
-                            </select>
-                        </div>
+                        <h3>Step 3: Add Keywords</h3>
                         <div class="form-group">
                             <label for="keywords-input">Keywords (one per line)</label>
-                            <textarea id="keywords-input" placeholder="Enter keywords, one per line"></textarea>
+                            <textarea id="keywords-input" placeholder="Enter keywords manually OR use AI generator above"></textarea>
                         </div>
                         <div class="form-group">
                             <input type="checkbox" id="exact-match" checked>
@@ -396,6 +549,46 @@
                             <input type="text" id="headline3" maxlength="30">
                             <div class="character-count" id="headline3-count">0/30</div>
                         </div>
+                        <div class="form-group">
+                            <label for="headline4">Headline 4 (30 char max)</label>
+                            <input type="text" id="headline4" maxlength="30">
+                            <div class="character-count" id="headline4-count">0/30</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="headline5">Headline 5 (30 char max)</label>
+                            <input type="text" id="headline5" maxlength="30">
+                            <div class="character-count" id="headline5-count">0/30</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="headline6">Headline 6 (30 char max)</label>
+                            <input type="text" id="headline6" maxlength="30">
+                            <div class="character-count" id="headline6-count">0/30</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="headline7">Headline 7 (30 char max)</label>
+                            <input type="text" id="headline7" maxlength="30">
+                            <div class="character-count" id="headline7-count">0/30</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="headline8">Headline 8 (30 char max)</label>
+                            <input type="text" id="headline8" maxlength="30">
+                            <div class="character-count" id="headline8-count">0/30</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="headline9">Headline 9 (30 char max)</label>
+                            <input type="text" id="headline9" maxlength="30">
+                            <div class="character-count" id="headline9-count">0/30</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="headline10">Headline 10 (30 char max)</label>
+                            <input type="text" id="headline10" maxlength="30">
+                            <div class="character-count" id="headline10-count">0/30</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="headline11">Headline 11 (30 char max)</label>
+                            <input type="text" id="headline11" maxlength="30">
+                            <div class="character-count" id="headline11-count">0/30</div>
+                        </div>
                         
                         <h4>Descriptions</h4>
                         <div class="form-group">
@@ -408,17 +601,15 @@
                             <textarea id="description2" maxlength="90"></textarea>
                             <div class="character-count" id="description2-count">0/90</div>
                         </div>
-                        
-                        <h4>Path</h4>
                         <div class="form-group">
-                            <label for="path1">Path 1 (15 char max)</label>
-                            <input type="text" id="path1" maxlength="15">
-                            <div class="character-count" id="path1-count">0/15</div>
+                            <label for="description3">Description 3 (90 char max)</label>
+                            <textarea id="description3" maxlength="90"></textarea>
+                            <div class="character-count" id="description3-count">0/90</div>
                         </div>
                         <div class="form-group">
-                            <label for="path2">Path 2 (15 char max)</label>
-                            <input type="text" id="path2" maxlength="15">
-                            <div class="character-count" id="path2-count">0/15</div>
+                            <label for="description4">Description 4 (90 char max)</label>
+                            <textarea id="description4" maxlength="90"></textarea>
+                            <div class="character-count" id="description4-count">0/90</div>
                         </div>
                         
                         <button id="save-ad-btn">Save Ad</button>
@@ -502,6 +693,14 @@
         const addKeywordsBtn = document.getElementById('add-keywords-btn');
         const keywordListContainer = document.getElementById('keyword-list-container');
         
+        // AI Keyword Generation elements
+        const generateKeywordsBtn = document.getElementById('generate-keywords-btn');
+        const clearSuggestionsBtn = document.getElementById('clear-suggestions-btn');
+        const loadingKeywords = document.getElementById('loading-keywords');
+        const keywordSuggestions = document.getElementById('keyword-suggestions');
+        const keywordsTable = document.getElementById('keywords-table');
+        const keywordsTableBody = document.getElementById('keywords-table-body');
+        
         // Ad Copy elements
         const adCampaignSelect = document.getElementById('ad-campaign-select');
         const adGroupSelect = document.getElementById('ad-group-select');
@@ -510,17 +709,33 @@
         const headline1 = document.getElementById('headline1');
         const headline2 = document.getElementById('headline2');
         const headline3 = document.getElementById('headline3');
+        const headline4 = document.getElementById('headline4');
+        const headline5 = document.getElementById('headline5');
+        const headline6 = document.getElementById('headline6');
+        const headline7 = document.getElementById('headline7');
+        const headline8 = document.getElementById('headline8');
+        const headline9 = document.getElementById('headline9');
+        const headline10 = document.getElementById('headline10');
+        const headline11 = document.getElementById('headline11');
         const description1 = document.getElementById('description1');
         const description2 = document.getElementById('description2');
-        const path1 = document.getElementById('path1');
-        const path2 = document.getElementById('path2');
+        const description3 = document.getElementById('description3');
+        const description4 = document.getElementById('description4');
         const headline1Count = document.getElementById('headline1-count');
         const headline2Count = document.getElementById('headline2-count');
         const headline3Count = document.getElementById('headline3-count');
+        const headline4Count = document.getElementById('headline4-count');
+        const headline5Count = document.getElementById('headline5-count');
+        const headline6Count = document.getElementById('headline6-count');
+        const headline7Count = document.getElementById('headline7-count');
+        const headline8Count = document.getElementById('headline8-count');
+        const headline9Count = document.getElementById('headline9-count');
+        const headline10Count = document.getElementById('headline10-count');
+        const headline11Count = document.getElementById('headline11-count');
         const description1Count = document.getElementById('description1-count');
         const description2Count = document.getElementById('description2-count');
-        const path1Count = document.getElementById('path1-count');
-        const path2Count = document.getElementById('path2-count');
+        const description3Count = document.getElementById('description3-count');
+        const description4Count = document.getElementById('description4-count');
         const saveAdBtn = document.getElementById('save-ad-btn');
         const adSaveMessage = document.getElementById('ad-save-message');
         const adsListContainer = document.getElementById('ads-list-container');
@@ -545,6 +760,7 @@
         
         // Data Storage
         let campaignsData = {};
+        window.campaignsData = campaignsData; // Make it globally accessible
         
         // Initialize the application
         function init() {
@@ -643,7 +859,8 @@
             addCampaignBtn.addEventListener('click', () => {
                 const campaignName = prompt('Enter campaign name:');
                 if (campaignName && campaignName.trim() !== '') {
-                    addCampaign(campaignName.trim());
+                    const isUnitType = confirm('Is this a unit type campaign? (OK = Yes, Cancel = No)');
+                    addCampaign(campaignName.trim(), isUnitType);
                 }
             });
             
@@ -665,13 +882,16 @@
             });
         }
         
-        function addCampaign(name) {
+        function addCampaign(name, isUnitType = false) {
             const campaignId = 'campaign' + (Object.keys(campaignsData).length + 1);
+            const clientInfo = getClientInfo();
             campaignsData[campaignId] = {
                 name: name,
                 adGroups: {},
                 keywords: {},
-                ads: {}
+                ads: {},
+                isUnitType: isUnitType,
+                budget: clientInfo.budget || ''
             };
             
             saveData();
@@ -723,8 +943,9 @@
                 // Create campaign item
                 const campaignItem = document.createElement('div');
                 campaignItem.className = 'campaign-item';
+                const unitTypeIndicator = campaign.isUnitType ? ' <span style="background: #ffe58f; color: #ad8b00; padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: bold;">UNIT TYPE</span>' : '';
                 campaignItem.innerHTML = `
-                    <div>${campaign.name}</div>
+                    <div>${campaign.name}${unitTypeIndicator}</div>
                     <button class="delete-btn" data-campaign-id="${campaignId}">Delete</button>
                 `;
                 campaignList.appendChild(campaignItem);
@@ -764,10 +985,146 @@
             keywordCampaignSelect.addEventListener('change', () => {
                 updateAdGroupSelect(keywordCampaignSelect.value, keywordAdGroupSelect);
                 updateKeywordList();
+                showUnitTypeNote();
             });
             
             keywordAdGroupSelect.addEventListener('change', () => {
                 updateKeywordList();
+                showUnitTypeNote();
+            });
+            
+            // AI Keyword Generation
+            generateKeywordsBtn.addEventListener('click', async () => {
+                try {
+                    const campaignId = keywordCampaignSelect.value;
+                    const adGroupId = keywordAdGroupSelect.value;
+                    
+                    // Validate campaign and ad group selection first
+                    if (!campaignId || !adGroupId) {
+                        alert('Please select both a campaign and ad group before generating keywords.');
+                        return;
+                    }
+                    
+                    const clientInfo = getClientInfo();
+                    let campaignContext = null;
+                    let adGroupContext = null;
+                    let onlyUseAdGroupName = false;
+                    
+                    if (campaignId && campaignsData[campaignId]) {
+                        campaignContext = {
+                            id: campaignId,
+                            name: campaignsData[campaignId].name,
+                            objective: campaignsData[campaignId].objective || '',
+                            budget: campaignsData[campaignId].budget || '',
+                            isUnitType: campaignsData[campaignId].isUnitType || false
+                        };
+                        
+                        if (campaignsData[campaignId].isUnitType) {
+                            onlyUseAdGroupName = true;
+                        }
+                        
+                        if (adGroupId && campaignsData[campaignId].adGroups && campaignsData[campaignId].adGroups[adGroupId]) {
+                            const adGroup = campaignsData[campaignId].adGroups[adGroupId];
+                            
+                            // DEBUG: Log clientInfo to see its structure
+                            console.log('=== DEBUG CLIENT INFO ===');
+                            console.log('clientInfo object:', clientInfo);
+                            console.log('clientInfo keys:', Object.keys(clientInfo));
+                            console.log('uniqueSellingPoints:', clientInfo.uniqueSellingPoints);
+                            console.log('brandVoice:', clientInfo.brandVoice);
+                            console.log('industry:', clientInfo.industry);
+                            console.log('targetAudience:', clientInfo.targetAudience);
+                            console.log('========================');
+                            
+                            // Create theme from client info if not set at ad group level
+                            let theme = adGroup.theme || '';
+                            if (!theme) {
+                                const themeParts = [];
+                                if (clientInfo.uniqueSellingPoints) themeParts.push(clientInfo.uniqueSellingPoints);
+                                if (clientInfo.brandVoice) themeParts.push(clientInfo.brandVoice);
+                                if (clientInfo.industry) themeParts.push(clientInfo.industry);
+                                if (adGroup.name) themeParts.push(`focused on ${adGroup.name}`);
+                                theme = themeParts.join(', ');
+                            }
+                            
+                            console.log('=== DEBUG THEME BUILDING ===');
+                            console.log('adGroup.theme:', adGroup.theme);
+                            console.log('computed theme:', theme);
+                            console.log('============================');
+                            
+                            adGroupContext = {
+                                id: adGroupId,
+                                name: adGroup.name,
+                                theme: theme,
+                                targetAudience: adGroup.targetAudience || clientInfo.targetAudience || ''
+                            };
+                            
+                            console.log('=== DEBUG FINAL ADGROUP CONTEXT ===');
+                            console.log('adGroupContext:', adGroupContext);
+                            console.log('===================================');
+                        }
+                    }
+                    
+                    // Show loading
+                    loadingKeywords.style.display = 'block';
+                    keywordSuggestions.style.display = 'none';
+                    generateKeywordsBtn.disabled = true;
+                    
+                    // If unit type, only send ad group name as context
+                    let payload;
+                    if (onlyUseAdGroupName && adGroupContext) {
+                        payload = {
+                            clientInfo: {}, // ignore client info
+                            campaignContext: null, // ignore campaign context
+                            adGroupContext: { name: adGroupContext.name }
+                        };
+                    } else {
+                        payload = {
+                            clientInfo,
+                            campaignContext,
+                            adGroupContext
+                        };
+                    }
+                    
+                    const response = await fetch('/api/generate-keywords', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        
+                        // Handle specific error types
+                        if (response.status === 503 && errorData.code === 'SEMRUSH_NOT_CONFIGURED') {
+                            throw new Error('Semrush API integration is required for keyword generation.\n\nPlease:\n1. Get a Semrush API key from https://www.semrush.com/api-documentation/\n2. Add SEMRUSH_API_KEY=your_key_here to your .env file\n3. Restart the server');
+                        } else {
+                            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                        }
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        displayKeywordSuggestions(result.data);
+                    } else {
+                        throw new Error(result.error || 'Failed to generate keywords');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error generating keywords:', error);
+                    alert(error.message || 'Failed to generate keywords. Please check your connection and try again.');
+                } finally {
+                    loadingKeywords.style.display = 'none';
+                    generateKeywordsBtn.disabled = false;
+                }
+            });
+            
+            clearSuggestionsBtn.addEventListener('click', () => {
+                keywordSuggestions.style.display = 'none';
+                clearSuggestionsBtn.style.display = 'none';
             });
             
             addKeywordsBtn.addEventListener('click', () => {
@@ -798,6 +1155,218 @@
                 addKeywords(campaignId, adGroupId, keywords, matchTypes);
                 keywordsInput.value = '';
             });
+        }
+        
+        let currentSortColumn = '';
+        let currentSortDirection = 'asc';
+        let allKeywordsData = [];
+
+        function displayKeywordSuggestions(data) {
+            console.log('Displaying keyword suggestions:', data); // Debug log
+            
+            // Collect all keywords with their types
+            allKeywordsData = [];
+            
+            // Add primary keywords (High Volume)
+            if (data.keywords && data.keywords.highVolume && data.keywords.highVolume.length > 0) {
+                data.keywords.highVolume.slice(0, 20).forEach(kw => {
+                    allKeywordsData.push({...kw, type: 'Primary'});
+                });
+            }
+            
+            // Add long-tail keywords
+            if (data.recommendations && data.recommendations.longTail && data.recommendations.longTail.length > 0) {
+                data.recommendations.longTail.slice(0, 20).forEach(kw => {
+                    allKeywordsData.push({...kw, type: 'Long-tail'});
+                });
+            }
+            
+            // Add low competition keywords
+            if (data.keywords && data.keywords.lowCompetition && data.keywords.lowCompetition.length > 0) {
+                data.keywords.lowCompetition.slice(0, 20).forEach(kw => {
+                    allKeywordsData.push({...kw, type: 'Low Competition'});
+                });
+            }
+            
+            // Add medium volume keywords
+            if (data.keywords && data.keywords.mediumVolume && data.keywords.mediumVolume.length > 0) {
+                data.keywords.mediumVolume.slice(0, 20).forEach(kw => {
+                    allKeywordsData.push({...kw, type: 'Medium Volume'});
+                });
+            }
+            
+            // Remove duplicates based on keyword text
+            const uniqueKeywords = [];
+            const seenKeywords = new Set();
+            
+            allKeywordsData.forEach(kw => {
+                if (!seenKeywords.has(kw.keyword.toLowerCase())) {
+                    seenKeywords.add(kw.keyword.toLowerCase());
+                    uniqueKeywords.push(kw);
+                }
+            });
+            
+            allKeywordsData = uniqueKeywords;
+            
+            // Populate the table
+            populateKeywordsTable(allKeywordsData);
+            
+            // Setup sorting
+            setupTableSorting();
+            
+            // Show the suggestions and clear button
+            keywordSuggestions.style.display = 'block';
+            clearSuggestionsBtn.style.display = 'inline-block';
+        }
+
+        function populateKeywordsTable(keywords) {
+            keywordsTableBody.innerHTML = '';
+            
+            if (keywords.length === 0) {
+                keywordsTableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px; color: #666;">No keywords found</td></tr>';
+                return;
+            }
+            
+            keywords.forEach(kw => {
+                const row = document.createElement('tr');
+                
+                // Get type badge class
+                let badgeClass = 'keyword-type-primary';
+                switch(kw.type) {
+                    case 'Long-tail':
+                        badgeClass = 'keyword-type-longtail';
+                        break;
+                    case 'Low Competition':
+                        badgeClass = 'keyword-type-lowcomp';
+                        break;
+                    case 'Medium Volume':
+                        badgeClass = 'keyword-type-medium';
+                        break;
+                }
+                
+                row.innerHTML = `
+                    <td><span class="keyword-type-badge ${badgeClass}">${kw.type}</span></td>
+                    <td style="font-weight: bold;">${kw.keyword}</td>
+                    <td style="text-align: right;">${kw.searchVolume ? kw.searchVolume.toLocaleString() : 'N/A'}</td>
+                    <td style="text-align: right;">$${kw.cpc ? kw.cpc.toFixed(2) : 'N/A'}</td>
+                    <td style="text-align: right;">${kw.competition ? (kw.competition * 100).toFixed(1) + '%' : 'N/A'}</td>
+                    <td style="text-align: right;">${kw.results ? kw.results.toLocaleString() : 'N/A'}</td>
+                    <td>${kw.intent || 'N/A'}</td>
+                    <td style="text-align: center;">
+                        <button class="add-keyword-btn" onclick="addKeywordToInput('${kw.keyword.replace(/'/g, "\\'")}')">Add</button>
+                    </td>
+                `;
+                
+                keywordsTableBody.appendChild(row);
+            });
+        }
+
+        function setupTableSorting() {
+            const sortableHeaders = document.querySelectorAll('#keywords-table th.sortable');
+            
+            sortableHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    const sortBy = this.getAttribute('data-sort');
+                    
+                    // Toggle sort direction if clicking the same column
+                    if (currentSortColumn === sortBy) {
+                        currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        currentSortColumn = sortBy;
+                        currentSortDirection = 'asc';
+                    }
+                    
+                    // Update sort indicators
+                    sortableHeaders.forEach(h => {
+                        h.classList.remove('sorted-asc', 'sorted-desc');
+                        h.querySelector('.sort-arrow').textContent = '↕';
+                    });
+                    
+                    this.classList.add(`sorted-${currentSortDirection}`);
+                    this.querySelector('.sort-arrow').textContent = currentSortDirection === 'asc' ? '↑' : '↓';
+                    
+                    // Sort the data
+                    const sortedData = [...allKeywordsData].sort((a, b) => {
+                        let aVal = a[sortBy];
+                        let bVal = b[sortBy];
+                        
+                        // Handle different data types
+                        if (sortBy === 'searchVolume' || sortBy === 'results') {
+                            aVal = aVal || 0;
+                            bVal = bVal || 0;
+                        } else if (sortBy === 'cpc' || sortBy === 'competition') {
+                            aVal = aVal || 0;
+                            bVal = bVal || 0;
+                        } else {
+                            aVal = (aVal || '').toString().toLowerCase();
+                            bVal = (bVal || '').toString().toLowerCase();
+                        }
+                        
+                        if (currentSortDirection === 'asc') {
+                            return aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
+                        } else {
+                            return aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
+                        }
+                    });
+                    
+                    // Re-populate table with sorted data
+                    populateKeywordsTable(sortedData);
+                });
+            });
+        }
+        
+        function createKeywordSuggestionItem(keyword) {
+            const item = document.createElement('div');
+            item.className = 'keyword-item';
+            item.style.cursor = 'pointer';
+            item.style.transition = 'background-color 0.2s';
+            
+            item.innerHTML = `
+                <div style="flex: 1;">
+                    <strong>${keyword.keyword}</strong>
+                    <div style="font-size: 12px; color: #666;">
+                        Vol: ${keyword.searchVolume || 'N/A'} | 
+                        CPC: $${keyword.cpc ? keyword.cpc.toFixed(2) : 'N/A'} | 
+                        Comp: ${keyword.competition ? (keyword.competition * 100).toFixed(1) + '%' : 'N/A'}
+                    </div>
+                </div>
+                <button class="add-keyword-suggestion-btn" style="padding: 5px 10px; background-color: #4285f4; color: white; border: none; border-radius: 3px; cursor: pointer;">
+                    Add
+                </button>
+            `;
+            
+            // Add hover effect
+            item.addEventListener('mouseenter', () => {
+                item.style.backgroundColor = '#f0f8ff';
+            });
+            
+            item.addEventListener('mouseleave', () => {
+                item.style.backgroundColor = '';
+            });
+            
+            // Add click handler for adding keyword
+            const addBtn = item.querySelector('.add-keyword-suggestion-btn');
+            addBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                addKeywordToInput(keyword.keyword);
+            });
+            
+            return item;
+        }
+        
+        function addKeywordToInput(keyword) {
+            const currentKeywords = keywordsInput.value.trim();
+            if (currentKeywords) {
+                keywordsInput.value = currentKeywords + '\n' + keyword;
+            } else {
+                keywordsInput.value = keyword;
+            }
+            
+            // Flash the input to show keyword was added
+            keywordsInput.style.backgroundColor = '#e8f5e8';
+            setTimeout(() => {
+                keywordsInput.style.backgroundColor = '';
+            }, 300);
         }
         
         function addKeywords(campaignId, adGroupId, keywords, matchTypes) {
@@ -942,10 +1511,18 @@
                 headline1: headline1.value,
                 headline2: headline2.value,
                 headline3: headline3.value,
+                headline4: headline4.value,
+                headline5: headline5.value,
+                headline6: headline6.value,
+                headline7: headline7.value,
+                headline8: headline8.value,
+                headline9: headline9.value,
+                headline10: headline10.value,
+                headline11: headline11.value,
                 description1: description1.value,
                 description2: description2.value,
-                path1: path1.value,
-                path2: path2.value
+                description3: description3.value,
+                description4: description4.value
             });
             
             saveData();
@@ -961,19 +1538,18 @@
             headline1.value = '';
             headline2.value = '';
             headline3.value = '';
+            headline4.value = '';
+            headline5.value = '';
+            headline6.value = '';
+            headline7.value = '';
+            headline8.value = '';
+            headline9.value = '';
+            headline10.value = '';
+            headline11.value = '';
             description1.value = '';
             description2.value = '';
-            path1.value = '';
-            path2.value = '';
-            
-            // Update character counts
-            updateCharacterCount(headline1, headline1Count);
-            updateCharacterCount(headline2, headline2Count);
-            updateCharacterCount(headline3, headline3Count);
-            updateCharacterCount(description1, description1Count);
-            updateCharacterCount(description2, description2Count);
-            updateCharacterCount(path1, path1Count);
-            updateCharacterCount(path2, path2Count);
+            description3.value = '';
+            description4.value = '';
         }
         
         function updateAdsList() {
@@ -1018,16 +1594,40 @@
                             <div><strong>Headline 3:</strong> ${ad.headline3 || 'N/A'}</div>
                         </div>
                         <div class="keyword-item">
+                            <div><strong>Headline 4:</strong> ${ad.headline4 || 'N/A'}</div>
+                        </div>
+                        <div class="keyword-item">
+                            <div><strong>Headline 5:</strong> ${ad.headline5 || 'N/A'}</div>
+                        </div>
+                        <div class="keyword-item">
+                            <div><strong>Headline 6:</strong> ${ad.headline6 || 'N/A'}</div>
+                        </div>
+                        <div class="keyword-item">
+                            <div><strong>Headline 7:</strong> ${ad.headline7 || 'N/A'}</div>
+                        </div>
+                        <div class="keyword-item">
+                            <div><strong>Headline 8:</strong> ${ad.headline8 || 'N/A'}</div>
+                        </div>
+                        <div class="keyword-item">
+                            <div><strong>Headline 9:</strong> ${ad.headline9 || 'N/A'}</div>
+                        </div>
+                        <div class="keyword-item">
+                            <div><strong>Headline 10:</strong> ${ad.headline10 || 'N/A'}</div>
+                        </div>
+                        <div class="keyword-item">
+                            <div><strong>Headline 11:</strong> ${ad.headline11 || 'N/A'}</div>
+                        </div>
+                        <div class="keyword-item">
                             <div><strong>Description 1:</strong> ${ad.description1}</div>
                         </div>
                         <div class="keyword-item">
                             <div><strong>Description 2:</strong> ${ad.description2 || 'N/A'}</div>
                         </div>
                         <div class="keyword-item">
-                            <div><strong>Path 1:</strong> ${ad.path1 || 'N/A'}</div>
+                            <div><strong>Description 3:</strong> ${ad.description3 || 'N/A'}</div>
                         </div>
                         <div class="keyword-item">
-                            <div><strong>Path 2:</strong> ${ad.path2 || 'N/A'}</div>
+                            <div><strong>Description 4:</strong> ${ad.description4 || 'N/A'}</div>
                         </div>
                         <button class="delete-btn" data-ad-index="${i}">Delete Ad</button>
                     </div>
@@ -1081,10 +1681,9 @@
             
             switch (format) {
                 case 'csv':
-                    exportData = generateCSV(campaignId);
-                    fileName = `${campaign.name.replace(/\s+/g, '_')}_google_ads.csv`;
-                    mimeType = 'text/csv';
-                    break;
+                    // Generate separate CSV files for ads and keywords
+                    generateSeparateCSVExport(campaignId);
+                    return;
                 case 'excel':
                     alert('Excel export is not implemented in this version.');
                     return;
@@ -1114,12 +1713,55 @@
             a.click();
         }
         
-        function generateCSV(campaignId) {
+        function generateSeparateCSVExport(campaignId) {
             const campaign = campaignsData[campaignId];
             const clientInfo = getClientInfo();
             
-            // CSV Header
-            let csv = 'Campaign,Ad Group,Headline 1,Headline 2,Headline 3,Description 1,Description 2,Path 1,Path 2,Final URL,Keyword,Match Type\n';
+            // Generate ads CSV
+            const adsCSV = generateAdsCSV(campaignId);
+            
+            // Generate keywords CSV
+            const keywordsCSV = generateKeywordsCSV(campaignId);
+            
+            // Create separate download links for each CSV
+            const campaignNameClean = campaign.name.replace(/\s+/g, '_');
+            
+            // Create ads CSV download
+            const adsBlob = new Blob([adsCSV], { type: 'text/csv' });
+            const adsUrl = URL.createObjectURL(adsBlob);
+            const adsLink = document.createElement('a');
+            adsLink.href = adsUrl;
+            adsLink.download = `${campaignNameClean}_ads.csv`;
+            adsLink.textContent = `Download ${campaignNameClean}_ads.csv`;
+            adsLink.style.display = 'block';
+            adsLink.style.marginBottom = '10px';
+            
+            // Create keywords CSV download
+            const keywordsBlob = new Blob([keywordsCSV], { type: 'text/csv' });
+            const keywordsUrl = URL.createObjectURL(keywordsBlob);
+            const keywordsLink = document.createElement('a');
+            keywordsLink.href = keywordsUrl;
+            keywordsLink.download = `${campaignNameClean}_keywords.csv`;
+            keywordsLink.textContent = `Download ${campaignNameClean}_keywords.csv`;
+            keywordsLink.style.display = 'block';
+            keywordsLink.style.marginBottom = '10px';
+            
+            // Show download links
+            exportResult.innerHTML = '<h4>Download your CSV files:</h4>';
+            exportResult.appendChild(adsLink);
+            exportResult.appendChild(keywordsLink);
+            
+            // Automatically start downloads
+            setTimeout(() => adsLink.click(), 100);
+            setTimeout(() => keywordsLink.click(), 500);
+        }
+        
+        function generateAdsCSV(campaignId) {
+            const campaign = campaignsData[campaignId];
+            const clientInfo = getClientInfo();
+            
+            // CSV Header for ads
+            let csv = 'Campaign,Ad Group,Headline 1,Headline 2,Headline 3,Headline 4,Headline 5,Headline 6,Headline 7,Headline 8,Headline 9,Headline 10,Headline 11,Description 1,Description 2,Description 3,Description 4,Path 1,Path 2,Final URL\n';
             
             // Process each ad group
             for (const adGroupId in campaign.adGroups) {
@@ -1129,13 +1771,56 @@
                 // Process ads
                 const ads = campaign.ads && campaign.ads[adGroupId] ? campaign.ads[adGroupId] : [];
                 for (const ad of ads) {
-                    csv += `"${campaign.name}","${adGroupName}","${ad.headline1}","${ad.headline2}","${ad.headline3}","${ad.description1}","${ad.description2}","${ad.path1}","${ad.path2}","${clientInfo.websiteUrl}",,\n`;
+                    csv += `"${campaign.name}","${adGroupName}","${ad.headline1 || ''}","${ad.headline2 || ''}","${ad.headline3 || ''}","${ad.headline4 || ''}","${ad.headline5 || ''}","${ad.headline6 || ''}","${ad.headline7 || ''}","${ad.headline8 || ''}","${ad.headline9 || ''}","${ad.headline10 || ''}","${ad.headline11 || ''}","${ad.description1 || ''}","${ad.description2 || ''}","${ad.description3 || ''}","${ad.description4 || ''}","${ad.path1 || ''}","${ad.path2 || ''}","${clientInfo.websiteUrl || ''}"\n`;
+                }
+            }
+            
+            return csv;
+        }
+        
+        function generateKeywordsCSV(campaignId) {
+            const campaign = campaignsData[campaignId];
+            
+            // CSV Header for keywords
+            let csv = 'Campaign,Ad Group,Keyword,Match Type\n';
+            
+            // Process each ad group
+            for (const adGroupId in campaign.adGroups) {
+                const adGroup = campaign.adGroups[adGroupId];
+                const adGroupName = adGroup.name;
+                
+                // Process keywords
+                const keywords = campaign.keywords && campaign.keywords[adGroupId] ? campaign.keywords[adGroupId] : [];
+                for (const keyword of keywords) {
+                    csv += `"${campaign.name}","${adGroupName}","${keyword.text}","${keyword.matchType}"\n`;
+                }
+            }
+            
+            return csv;
+        }
+        
+        function generateCSV(campaignId) {
+            const campaign = campaignsData[campaignId];
+            const clientInfo = getClientInfo();
+            
+            // CSV Header
+            let csv = 'Campaign,Ad Group,Headline 1,Headline 2,Headline 3,Headline 4,Headline 5,Headline 6,Headline 7,Headline 8,Headline 9,Headline 10,Headline 11,Description 1,Description 2,Description 3,Description 4,Path 1,Path 2,Final URL,Keyword,Match Type\n';
+            
+            // Process each ad group
+            for (const adGroupId in campaign.adGroups) {
+                const adGroup = campaign.adGroups[adGroupId];
+                const adGroupName = adGroup.name;
+                
+                // Process ads
+                const ads = campaign.ads && campaign.ads[adGroupId] ? campaign.ads[adGroupId] : [];
+                for (const ad of ads) {
+                    csv += `"${campaign.name}","${adGroupName}","${ad.headline1}","${ad.headline2}","${ad.headline3}","${ad.headline4}","${ad.headline5}","${ad.headline6}","${ad.headline7}","${ad.headline8}","${ad.headline9}","${ad.headline10}","${ad.headline11}","${ad.description1}","${ad.description2}","${ad.description3}","${ad.description4}","${ad.path1}","${ad.path2}","${clientInfo.websiteUrl}",,\n`;
                 }
                 
                 // Process keywords
                 const keywords = campaign.keywords && campaign.keywords[adGroupId] ? campaign.keywords[adGroupId] : [];
                 for (const keyword of keywords) {
-                    csv += `"${campaign.name}","${adGroupName}",,,,,,,,"${clientInfo.websiteUrl}","${keyword.text}","${keyword.matchType}"\n`;
+                    csv += `"${campaign.name}","${adGroupName}",,,,,,,,,,,,"${clientInfo.websiteUrl}","${keyword.text}","${keyword.matchType}"\n`;
                 }
             }
             
@@ -1147,19 +1832,35 @@
             headline1.addEventListener('input', () => updateCharacterCount(headline1, headline1Count));
             headline2.addEventListener('input', () => updateCharacterCount(headline2, headline2Count));
             headline3.addEventListener('input', () => updateCharacterCount(headline3, headline3Count));
+            headline4.addEventListener('input', () => updateCharacterCount(headline4, headline4Count));
+            headline5.addEventListener('input', () => updateCharacterCount(headline5, headline5Count));
+            headline6.addEventListener('input', () => updateCharacterCount(headline6, headline6Count));
+            headline7.addEventListener('input', () => updateCharacterCount(headline7, headline7Count));
+            headline8.addEventListener('input', () => updateCharacterCount(headline8, headline8Count));
+            headline9.addEventListener('input', () => updateCharacterCount(headline9, headline9Count));
+            headline10.addEventListener('input', () => updateCharacterCount(headline10, headline10Count));
+            headline11.addEventListener('input', () => updateCharacterCount(headline11, headline11Count));
             description1.addEventListener('input', () => updateCharacterCount(description1, description1Count));
             description2.addEventListener('input', () => updateCharacterCount(description2, description2Count));
-            path1.addEventListener('input', () => updateCharacterCount(path1, path1Count));
-            path2.addEventListener('input', () => updateCharacterCount(path2, path2Count));
+            description3.addEventListener('input', () => updateCharacterCount(description3, description3Count));
+            description4.addEventListener('input', () => updateCharacterCount(description4, description4Count));
             
             // Initialize counts
             updateCharacterCount(headline1, headline1Count);
             updateCharacterCount(headline2, headline2Count);
             updateCharacterCount(headline3, headline3Count);
+            updateCharacterCount(headline4, headline4Count);
+            updateCharacterCount(headline5, headline5Count);
+            updateCharacterCount(headline6, headline6Count);
+            updateCharacterCount(headline7, headline7Count);
+            updateCharacterCount(headline8, headline8Count);
+            updateCharacterCount(headline9, headline9Count);
+            updateCharacterCount(headline10, headline10Count);
+            updateCharacterCount(headline11, headline11Count);
             updateCharacterCount(description1, description1Count);
             updateCharacterCount(description2, description2Count);
-            updateCharacterCount(path1, path1Count);
-            updateCharacterCount(path2, path2Count);
+            updateCharacterCount(description3, description3Count);
+            updateCharacterCount(description4, description4Count);
         }
         
         function updateCharacterCount(inputElement, countElement) {
@@ -1186,10 +1887,11 @@
             // Add campaigns to selects
             for (const campaignId in campaignsData) {
                 const campaign = campaignsData[campaignId];
+                const unitTypeIndicator = campaign.isUnitType ? ' (Unit Type)' : '';
                 
                 const option = document.createElement('option');
                 option.value = campaignId;
-                option.textContent = campaign.name;
+                option.textContent = campaign.name + unitTypeIndicator;
                 
                 keywordCampaignSelect.appendChild(option.cloneNode(true));
                 adCampaignSelect.appendChild(option.cloneNode(true));
@@ -1261,9 +1963,33 @@
             const savedCampaignsData = localStorage.getItem('campaignsData');
             if (savedCampaignsData) {
                 campaignsData = JSON.parse(savedCampaignsData);
+                window.campaignsData = campaignsData; // Update global reference
             }
             
             loadClientInfo();
+        }
+        
+        // Add a function to show a note if unit type campaign is selected
+        function showUnitTypeNote() {
+            const campaignId = keywordCampaignSelect.value;
+            const noteId = 'unit-type-note';
+            let note = document.getElementById(noteId);
+            if (campaignId && campaignsData[campaignId] && campaignsData[campaignId].isUnitType) {
+                if (!note) {
+                    note = document.createElement('div');
+                    note.id = noteId;
+                    note.style.background = '#fffbe6';
+                    note.style.border = '1px solid #ffe58f';
+                    note.style.padding = '10px';
+                    note.style.margin = '10px 0';
+                    note.style.borderRadius = '4px';
+                    note.style.color = '#ad8b00';
+                    note.innerHTML = '<b>Unit Type Campaign:</b> Keyword generation will be strictly based on the ad group name (e.g., "Three Bedroom Homes").';
+                    keywordCampaignSelect.parentElement.parentElement.insertBefore(note, keywordCampaignSelect.parentElement.nextSibling);
+                }
+            } else {
+                if (note) note.remove();
+            }
         }
         
         // Initialize the application

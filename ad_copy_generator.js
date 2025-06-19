@@ -58,13 +58,13 @@ class AdCopyGenerator {
             headlines.push(this.createBenefitHeadline(usp));
         }
 
-        // Ensure we have at least 3 headlines
-        while (headlines.length < 3) {
+        // Ensure we have at least 11 headlines
+        while (headlines.length < 11) {
             headlines.push(this.getGenericHeadline(industry));
         }
 
-        // Return only unique headlines
-        return [...new Set(headlines)].slice(0, 15);
+        // Return only unique headlines, up to 11
+        return [...new Set(headlines)].slice(0, 11);
     }
 
     /**
@@ -111,55 +111,15 @@ class AdCopyGenerator {
         // Generic descriptions based on industry
         descriptions.push(this.truncateToLength(`Looking for quality ${industry}? We offer the best solutions tailored to your needs. ${cta || 'Contact us today!'}`, 90));
         
-        // Add more generic descriptions if needed
-        if (descriptions.length < 2) {
-            descriptions.push(this.truncateToLength(`Premium ${industry} services with exceptional customer satisfaction. ${cta || 'Get in touch now!'}`, 90));
-        }
+        // Add more descriptions for variety
+        descriptions.push(this.truncateToLength(`Premium ${industry} services with exceptional customer satisfaction. ${cta || 'Get in touch now!'}`, 90));
+        
+        descriptions.push(this.truncateToLength(`Professional ${industry} solutions designed to exceed your expectations. ${cta || 'Learn more today!'}`, 90));
+        
+        descriptions.push(this.truncateToLength(`Trusted ${industry} provider with proven results and outstanding service quality. ${cta || 'Contact us!'}`, 90));
 
-        // Return only unique descriptions
+        // Return exactly 4 unique descriptions
         return [...new Set(descriptions)].slice(0, 4);
-    }
-
-    /**
-     * Generate path fields based on client information
-     * @returns {Array} Array of path options
-     */
-    generatePaths() {
-        const paths = [];
-        const industry = this.clientInfo.industry;
-        const location = this.clientInfo.geographicTargeting;
-
-        // Industry-based paths
-        if (industry) {
-            const industryWords = industry.split(' ');
-            if (industryWords.length > 0) {
-                paths.push(this.truncateToLength(industryWords[0].toLowerCase(), 15));
-            }
-            if (industryWords.length > 1) {
-                paths.push(this.truncateToLength(industryWords[1].toLowerCase(), 15));
-            }
-        }
-
-        // Location-based paths
-        if (location) {
-            const locationWords = location.split(' ');
-            if (locationWords.length > 0) {
-                paths.push(this.truncateToLength(locationWords[0].toLowerCase(), 15));
-            }
-            if (locationWords.length > 1) {
-                paths.push(this.truncateToLength(locationWords[1].toLowerCase(), 15));
-            }
-        }
-
-        // Generic paths
-        paths.push('services');
-        paths.push('offers');
-        paths.push('solutions');
-        paths.push('products');
-        paths.push('contact');
-
-        // Return only unique paths
-        return [...new Set(paths)].slice(0, 2);
     }
 
     /**
@@ -170,7 +130,6 @@ class AdCopyGenerator {
     generateAds(count = 3) {
         const headlines = this.generateHeadlines();
         const descriptions = this.generateDescriptions();
-        const paths = this.generatePaths();
         const ads = [];
 
         // Create ad variations
@@ -191,8 +150,7 @@ class AdCopyGenerator {
                 descriptions: [
                     descriptions[descriptionIndices[0]],
                     descriptions[descriptionIndices[1]]
-                ],
-                paths: paths.slice(0, 2)
+                ]
             };
 
             ads.push(ad);
@@ -302,10 +260,18 @@ class AdCopyGenerator {
             `Quality ${industry} Services`,
             `${industry} Experts`,
             `Professional ${industry}`,
-            `Trusted ${industry} Solutions`
+            `Trusted ${industry} Solutions`,
+            `Premium ${industry} Options`,
+            `Elite ${industry} Services`,
+            `Leading ${industry} Company`,
+            `Best ${industry} Results`,
+            `Certified ${industry} Pro`,
+            `Award-Winning ${industry}`
         ];
         
-        return templates[Math.floor(Math.random() * templates.length)];
+        // Cycle through templates to ensure variety
+        const index = Math.floor(Math.random() * templates.length);
+        return this.truncateToLength(templates[index], 30);
     }
 
     /**
@@ -328,24 +294,98 @@ class AdCopyGenerator {
     }
 
     /**
-     * Truncate text to specified length
+     * Truncate text to specified length with 90%-100% optimization
      * @param {string} text Text to truncate
      * @param {number} maxLength Maximum length
-     * @returns {string} Truncated text
+     * @returns {string} Optimized text within 90%-100% of limit
      */
     truncateToLength(text, maxLength) {
         if (!text) return '';
-        if (text.length <= maxLength) return text;
+        let trimmedText = text.trim();
+        if (trimmedText.length <= maxLength) {
+            return trimmedText;
+        }
+        // Try to cut at a word boundary before maxLength
+        let cut = trimmedText.lastIndexOf(' ', maxLength);
+        if (cut === -1 || cut < maxLength * 0.5) {
+            // If no good word boundary, just hard cut
+            return trimmedText.substring(0, maxLength).trim();
+        }
+        return trimmedText.substring(0, cut).trim();
+    }
+
+    /**
+     * Get targeted extensions based on content and requirements
+     * @param {string} text Original text
+     * @param {number} maxLength Maximum character length
+     * @param {number} charsNeeded Characters needed to reach minimum
+     * @returns {Array} Array of appropriate extension phrases
+     */
+    getTargetedExtensions(text, maxLength, charsNeeded) {
+        const lowerText = text.toLowerCase();
+        const extensions = [];
         
-        // Try to truncate at a space to avoid cutting words
-        let truncated = text.substring(0, maxLength);
-        const lastSpaceIndex = truncated.lastIndexOf(' ');
-        
-        if (lastSpaceIndex > maxLength * 0.7) {
-            truncated = truncated.substring(0, lastSpaceIndex);
+        if (maxLength === 30) { // Headlines
+            // Short, impactful extensions for headlines
+            if (charsNeeded <= 5) {
+                extensions.push('Now', 'Pro', 'Plus', 'Here', 'Open');
+            } else if (charsNeeded <= 10) {
+                extensions.push('Today', 'Expert', 'Quality', 'Premium', 'Trusted');
+            } else {
+                extensions.push('Available Now', 'Book Today', 'Call Now', 'Visit Us', 'Get Started');
+            }
+            
+            // Context-specific extensions
+            if (lowerText.includes('service')) {
+                extensions.unshift('Pro', 'Expert', 'Quality');
+            }
+            if (lowerText.includes('apartment') || lowerText.includes('home')) {
+                extensions.unshift('Available', 'Ready', 'Open');
+            }
+            
+        } else if (maxLength === 90) { // Descriptions
+            // Meaningful extensions for descriptions
+            if (charsNeeded <= 15) {
+                extensions.push('Contact us today!', 'Learn more now.', 'Book your visit!', 'Call us now.');
+            } else if (charsNeeded <= 25) {
+                extensions.push('Get in touch today!', 'Schedule your visit now.', 'Contact our team today.');
+            } else {
+                extensions.push('Contact us today for more information!', 'Schedule your visit and see the difference.', 'Call us now to learn about our services.');
+            }
+            
+            // Context-specific extensions
+            if (lowerText.includes('quality') || lowerText.includes('premium')) {
+                extensions.unshift('Experience the difference today!', 'See why we are the best choice.');
+            }
+            
+        } else if (maxLength === 15) { // Paths
+            // Short, relevant extensions for paths
+            if (charsNeeded <= 3) {
+                extensions.push('pro', 'top', 'new');
+            } else if (charsNeeded <= 6) {
+                extensions.push('today', 'offers', 'deals');
+            } else {
+                extensions.push('services', 'solutions', 'contact');
+            }
         }
         
-        return truncated;
+        return extensions;
+    }
+
+    /**
+     * Get padding words for last resort extension
+     * @param {number} maxLength Maximum character length
+     * @returns {Array} Array of short padding words
+     */
+    getPaddingWords(maxLength) {
+        if (maxLength === 30) { // Headlines
+            return ['&', 'Pro', 'Plus', 'New', 'Top', 'Best'];
+        } else if (maxLength === 90) { // Descriptions
+            return ['and more', 'with quality', 'plus service', 'and value'];
+        } else if (maxLength === 15) { // Paths
+            return ['pro', 'plus', 'new'];
+        }
+        return ['plus', 'pro'];
     }
 }
 
