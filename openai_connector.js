@@ -52,10 +52,38 @@ class OpenAIConnector {
         // Check if this is a unit type campaign (empty clientInfo)
         const isUnitType = !clientInfo || Object.keys(clientInfo).length === 0;
         
+        // Check if this is a General Search campaign (isUnitType=false) with Location ad group
+        const isGeneralSearch = campaignContext && 
+                               campaignContext.isUnitType === false && 
+                               adGroupContext && 
+                               adGroupContext.name === 'Location';
+        
         // Build context information
         let contextInfo = '';
         
-        if (isUnitType) {
+        if (isGeneralSearch) {
+            // For General Search campaigns, focus on client info and location targeting
+            contextInfo = `GENERAL SEARCH CAMPAIGN - Location-Based Targeting
+
+Client Information:
+- Client Name: ${clientInfo.clientName || clientInfo.name || 'Property Management'}
+- Industry: ${clientInfo.industry || 'Real Estate'}
+- Geographic Targeting: ${clientInfo.geographicTargeting || 'Metropolitan Area'}
+- Target Audience: ${clientInfo.targetAudience || 'Apartment/Home Seekers'}
+- Unique Selling Points: ${clientInfo.uniqueSellingPoints || 'Quality Living'}
+- Brand Voice: ${clientInfo.brandVoice || 'Professional and welcoming'}
+- Call to Action: ${clientInfo.callToAction || 'Contact us today'}
+- Budget: ${clientInfo.budget || 'Competitive pricing'}
+
+Campaign Context:
+- Campaign Name: ${campaignContext.name}
+- Campaign Objective: ${campaignContext.objective || 'Drive location-based leads'}
+- Campaign Budget: ${campaignContext.budget || 'Not specified'}
+
+Ad Group Context:
+- Ad Group Name: ${adGroupContext.name} (Location-focused)
+- Target Focus: Location-based apartment/home search intent`;
+        } else if (isUnitType) {
             // For unit type campaigns, focus only on campaign and ad group context
             contextInfo = `UNIT TYPE CAMPAIGN - Ad Group Based Keywords Only
 
@@ -130,7 +158,23 @@ ${keywordData.analysis ? `
 ` : 'No analysis available'}`;
         }
 
-        const systemContent = isUnitType
+        const systemContent = isGeneralSearch
+            ? `You are an expert Google Ads strategist specializing in General Search location-based real estate campaigns. Your task is to analyze client information, saved keywords, and location context to create a strategic plan for generating highly effective Google Ads copy.
+
+CRITICAL: This is a General Search campaign targeting location-based apartment/home seekers. The saved keywords should focus on the 4 main classifications:
+1. **Location** - Direct location-based terms
+2. **New Apts** - New apartment/property related terms  
+3. **Near** - Proximity-based terms (near, close to, by)
+4. **Access To** - Access/connectivity terms (access to, walking distance to, minutes from)
+
+Focus on:
+1. Using the saved location-based keywords as the PRIMARY DRIVER of your strategy
+2. Creating messaging that targets searchers looking for properties in specific locations
+3. Incorporating client name, amenities, price point, and nearby locations naturally
+4. Balancing keyword optimization with compelling location-based benefits
+5. Ensuring the copy appeals to apartment/home seekers in the target geographic area
+6. Highlighting proximity to schools, public works, amenities, and key locations`
+            : isUnitType
             ? `You are an expert Google Ads strategist specializing in unit type campaigns (e.g., "3 bedroom homes", "luxury apartments"). Your task is to analyze the ad group name, saved keywords, and campaign context to create a strategic plan for generating highly effective Google Ads copy.
 
 CRITICAL: This is a unit type campaign where the keywords are based ONLY on the ad group name (property type). DO NOT reference any client-specific information or business names. Focus purely on the property type and related search terms.
@@ -152,7 +196,21 @@ Focus on:
 4. Balancing keyword optimization with compelling benefit-driven copy
 5. Ensuring campaign and ad group alignment with keyword strategy`;
 
-        const userContent = isUnitType
+        const userContent = isGeneralSearch
+            ? `Create a strategic approach for Google Ads copy for this General Search location-based campaign:
+
+${contextInfo}${keywordInfo}
+
+IMPORTANT: This is a General Search campaign targeting location-based searches. Base your strategy on the client information and saved location-based keywords that cover the 4 main classifications:
+1. **Location** - Direct location terms (e.g., "apartments downtown [city]")
+2. **New Apts** - New construction terms (e.g., "new apartments [location]")
+3. **Near** - Proximity terms (e.g., "apartments near [landmark]")
+4. **Access To** - Connectivity terms (e.g., "walking distance to [transit]")
+
+Focus on creating messaging that appeals to apartment/home seekers looking for properties in the specific geographic area, highlighting proximity to schools, amenities, public works, and key locations.
+
+Provide a strategic approach that identifies 3-5 key themes or angles to highlight, considering the saved location-based keywords as the primary driver alongside client unique selling points and geographic advantages. Do not write the actual ad copy yet.`
+            : isUnitType
             ? `Create a strategic approach for Google Ads copy for this unit type campaign:
 
 ${contextInfo}${keywordInfo}
@@ -193,10 +251,33 @@ Provide a strategic approach that identifies 3-5 key themes or angles to highlig
         // Check if this is a unit type campaign (empty clientInfo)
         const isUnitType = !clientInfo || Object.keys(clientInfo).length === 0;
         
+        // Check if this is a General Search campaign (isUnitType=false) with Location ad group
+        const isGeneralSearch = campaignContext && 
+                               campaignContext.isUnitType === false && 
+                               adGroupContext && 
+                               adGroupContext.name === 'Location';
+        
         // Build context information
         let contextInfo = '';
         
-        if (isUnitType) {
+        if (isGeneralSearch) {
+            // For General Search campaigns, focus on client info and location targeting
+            contextInfo = `GENERAL SEARCH CAMPAIGN - Location-Based Targeting
+
+Client Information:
+- Client Name: ${clientInfo.clientName || clientInfo.name || 'Property Management'}
+- Geographic Targeting: ${clientInfo.geographicTargeting || 'Metropolitan Area'}
+- Industry: ${clientInfo.industry || 'Real Estate'}
+- Unique Selling Points: ${clientInfo.uniqueSellingPoints || 'Quality Living'}
+- Call to Action: ${clientInfo.callToAction || 'Contact us today'}
+
+Campaign Context:
+- Campaign Name: ${campaignContext.name}
+- Campaign Objective: ${campaignContext.objective || 'Drive location-based leads'}
+
+Ad Group Context:
+- Ad Group Name: ${adGroupContext.name} (Location-focused)`;
+        } else if (isUnitType) {
             // For unit type campaigns, focus only on campaign and ad group context
             contextInfo = `UNIT TYPE CAMPAIGN - Property Keywords Only
 
@@ -266,15 +347,48 @@ KEYWORD INTEGRATION REQUIREMENTS:
 5. Ensure keywords align with the ${isUnitType ? 'property type and search intent' : "client's brand voice and messaging"}`;
         }
 
-        const systemContent = isUnitType
-            ? `You are an expert Google Ads copywriter specializing in unit type campaigns for real estate/property listings. Your task is to create exactly one Google Ad using a TWO-PASS GENERATION process:
+        const systemContent = isGeneralSearch
+            ? `You are an expert Google Ads copywriter specializing in General Search location-based real estate campaigns. Your task is to create exactly one Google Ad using a TWO-PASS GENERATION process:
 
 CRITICAL CHARACTER COUNT REQUIREMENTS:
-1. Headlines: Create exactly 11 headlines, each EXACTLY 28-30 characters long
+1. Headlines: Create exactly 15 headlines, each EXACTLY 25-30 characters long
 2. Descriptions: Create exactly 4 descriptions, each EXACTLY 85-90 characters long
 3. Count every character including spaces, punctuation, and special characters
 4. If a headline is 31+ characters, shorten it by removing or replacing words
-5. If a headline is under 28 characters, add relevant words to reach the target
+5. If a headline is under 25 characters, add relevant words to reach the target
+6. If a description is 91+ characters, shorten it strategically
+7. If a description is under 85 characters, expand it with relevant content
+
+TWO-PASS GENERATION PROCESS:
+STEP 1: Generate your headlines and descriptions normally
+STEP 2: Count characters in each headline and description
+STEP 3: Revise any content over limits or under minimums
+STEP 4: Verify final character counts are within required ranges
+
+CRITICAL GENERAL SEARCH REQUIREMENTS:
+- Base copy on client information and saved location-based keywords covering the 4 classifications:
+  1. **Location** - Direct location terms
+  2. **New Apts** - New apartment/property terms
+  3. **Near** - Proximity terms (near, close to, by)
+  4. **Access To** - Connectivity terms (access to, walking distance to)
+- Include client name, geographic location, and key amenities naturally
+- Focus on location benefits, proximity to schools/amenities/public works
+- Use saved keywords as PRIMARY DRIVERS of your copy
+- Create copy that appeals to apartment/home seekers in the target location
+- Highlight unique selling points and geographic advantages
+- Include compelling call to action related to location/touring
+- Format your response as a JSON object with these exact keys: headlines (array of 15 strings), descriptions (array of 4 strings)
+
+MANDATORY: Every headline must be exactly 25-30 characters. Every description must be exactly 85-90 characters.`
+            : isUnitType
+            ? `You are an expert Google Ads copywriter specializing in unit type campaigns for real estate/property listings. Your task is to create exactly one Google Ad using a TWO-PASS GENERATION process:
+
+CRITICAL CHARACTER COUNT REQUIREMENTS:
+1. Headlines: Create exactly 15 headlines, each EXACTLY 25-30 characters long
+2. Descriptions: Create exactly 4 descriptions, each EXACTLY 85-90 characters long
+3. Count every character including spaces, punctuation, and special characters
+4. If a headline is 31+ characters, shorten it by removing or replacing words
+5. If a headline is under 25 characters, add relevant words to reach the target
 6. If a description is 91+ characters, shorten it strategically
 7. If a description is under 85 characters, expand it with relevant content
 
@@ -282,7 +396,7 @@ EXAMPLES OF PROPER LENGTH HEADLINES:
 - "Luxury Apartments Available" (27 chars) ✓
 - "Beachside Living in Costa Mesa" (30 chars) ✓
 - "Studio & 1BR Units Open Today" (29 chars) ✓
-- "Modern Amenities Await You" (26 chars) ✗ TOO SHORT
+- "Modern Amenities Await You" (26 chars) ✓
 - "Experience Premium Beachside Living" (35 chars) ✗ TOO LONG
 
 EXAMPLES OF PROPER LENGTH DESCRIPTIONS:
@@ -302,22 +416,22 @@ CRITICAL UNIT TYPE REQUIREMENTS:
 - Use the saved keywords as PRIMARY DRIVERS of your copy
 - Create copy that appeals to property searchers for this unit type
 - The ad must be compelling, focused on property benefits, and include a clear call to action
-- Format your response as a JSON object with these exact keys: headlines (array of 11 strings), descriptions (array of 4 strings)
+- Format your response as a JSON object with these exact keys: headlines (array of 15 strings), descriptions (array of 4 strings)
 
-MANDATORY: Every headline must be exactly 28-30 characters. Every description must be exactly 85-90 characters.`
+MANDATORY: Every headline must be exactly 25-30 characters. Every description must be exactly 85-90 characters.`
             : `You are an expert Google Ads copywriter specializing in keyword-driven ad copy creation. Your task is to create exactly one Google Ad using a TWO-PASS GENERATION process:
 
 CRITICAL CHARACTER COUNT REQUIREMENTS:
-1. Headlines: Create exactly 11 headlines, each EXACTLY 28-30 characters long
+1. Headlines: Create exactly 15 headlines, each EXACTLY 25-30 characters long
 2. Descriptions: Create exactly 4 descriptions, each EXACTLY 85-90 characters long
 3. Count every character including spaces, punctuation, and special characters
 4. If a headline is 31+ characters, shorten it by removing or replacing words
-5. If a headline is under 28 characters, add relevant words to reach the target
+5. If a headline is under 25 characters, add relevant words to reach the target
 6. If a description is 91+ characters, shorten it strategically
 7. If a description is under 85 characters, expand it with relevant content
 
 EXAMPLES OF PROPER LENGTH HEADLINES:
-- "Luxury Apartments Available" (27 chars) ✗ TOO SHORT - ADD WORDS
+- "Luxury Apartments Available" (27 chars) ✓ PERFECT
 - "Beachside Living in Costa Mesa" (30 chars) ✓ PERFECT
 - "Studio & 1BR Units Open Today" (29 chars) ✓ PERFECT
 - "Modern Amenities Await You Now" (30 chars) ✓ PERFECT
@@ -340,11 +454,46 @@ ${keywordData ? '- Use high-volume keywords in headlines when possible' : '- Cre
 ${keywordData ? '- Include medium-volume keywords in descriptions naturally' : '- Include clear call to action'}
 ${keywordData ? '- Ensure keywords flow naturally with brand voice and messaging' : '- Maintain professional tone'}
 - The ad must be compelling, focused on benefits, and include a clear call to action
-- Format your response as a JSON object with these exact keys: headlines (array of 11 strings), descriptions (array of 4 strings)
+- Format your response as a JSON object with these exact keys: headlines (array of 15 strings), descriptions (array of 4 strings)
 
-MANDATORY: Every headline must be exactly 28-30 characters. Every description must be exactly 85-90 characters.`;
+MANDATORY: Every headline must be exactly 25-30 characters. Every description must be exactly 85-90 characters.`;
 
-        const userContent = isUnitType
+        const userContent = isGeneralSearch
+            ? `Create one Google Ad for this General Search location-based campaign using the TWO-PASS GENERATION process:
+
+${contextInfo}${keywordInstructions}
+
+Strategic approach from our marketing team:
+${orchestrationResult}
+
+IMPORTANT: This is a General Search campaign targeting location-based searches. Use the client information and saved location-based keywords that cover the 4 main classifications:
+1. **Location** - Direct location terms (e.g., "apartments downtown [city]")
+2. **New Apts** - New construction terms (e.g., "new apartments [location]")
+3. **Near** - Proximity terms (e.g., "apartments near [landmark]")
+4. **Access To** - Connectivity terms (e.g., "walking distance to [transit]")
+
+Focus on creating copy that appeals to apartment/home seekers looking for properties in the specific geographic area, highlighting proximity to schools, amenities, public works, and key locations.
+
+TWO-PASS GENERATION PROCESS:
+STEP 1: Generate initial headlines and descriptions based on the context above
+STEP 2: Count characters in each piece of copy (including spaces and punctuation)
+STEP 3: Revise any content that doesn't meet character requirements:
+   - Headlines under 25 chars: Add relevant words (location, benefits, CTAs)
+   - Headlines over 30 chars: Remove unnecessary words or use shorter synonyms
+   - Descriptions under 85 chars: Add compelling details or stronger CTAs
+   - Descriptions over 90 chars: Remove redundant words or shorten phrases
+STEP 4: Verify final counts are within required ranges
+
+MANDATORY CHARACTER COUNT REQUIREMENTS:
+- Each headline must be EXACTLY 25-30 characters 
+- Each description must be EXACTLY 85-90 characters
+- Count every character including spaces and punctuation
+- Format as JSON with keys: headlines, descriptions
+- Incorporate saved location-based keywords naturally and strategically
+- Focus on location benefits and geographic advantages
+
+VERIFICATION: Before submitting, mentally count characters in each headline and description to ensure they meet requirements.`
+            : isUnitType
             ? `Create one Google Ad for this unit type campaign using the TWO-PASS GENERATION process:
 
 ${contextInfo}${keywordInstructions}
@@ -358,14 +507,14 @@ TWO-PASS GENERATION PROCESS:
 STEP 1: Generate initial headlines and descriptions based on the context above
 STEP 2: Count characters in each piece of copy (including spaces and punctuation)
 STEP 3: Revise any content that doesn't meet character requirements:
-   - Headlines under 28 chars: Add relevant words (location, benefits, CTAs)
+   - Headlines under 25 chars: Add relevant words (location, benefits, CTAs)
    - Headlines over 30 chars: Remove unnecessary words or use shorter synonyms
    - Descriptions under 85 chars: Add compelling details or stronger CTAs
    - Descriptions over 90 chars: Remove redundant words or shorten phrases
 STEP 4: Verify final counts are within required ranges
 
 MANDATORY CHARACTER COUNT REQUIREMENTS:
-- Each headline must be EXACTLY 28-30 characters 
+- Each headline must be EXACTLY 25-30 characters 
 - Each description must be EXACTLY 85-90 characters
 - Count every character including spaces and punctuation
 - Format as JSON with keys: headlines, descriptions
@@ -386,14 +535,14 @@ TWO-PASS GENERATION PROCESS:
 STEP 1: Generate initial headlines and descriptions based on the context above
 STEP 2: Count characters in each piece of copy (including spaces and punctuation)
 STEP 3: Revise any content that doesn't meet character requirements:
-   - Headlines under 28 chars: Add relevant words (benefits, location, urgency)
+   - Headlines under 25 chars: Add relevant words (benefits, location, urgency)
    - Headlines over 30 chars: Remove unnecessary words or use shorter synonyms
    - Descriptions under 85 chars: Add compelling details or stronger CTAs
    - Descriptions over 90 chars: Remove redundant words or shorten phrases
 STEP 4: Verify final counts are within required ranges
 
 MANDATORY CHARACTER COUNT REQUIREMENTS:
-- Each headline must be EXACTLY 28-30 characters
+- Each headline must be EXACTLY 25-30 characters
 - Each description must be EXACTLY 85-90 characters 
 - Count every character including spaces and punctuation
 - Format as JSON with keys: headlines, descriptions
@@ -464,7 +613,7 @@ VERIFICATION: Before submitting, mentally count characters in each headline and 
                 
                 // Validate and ensure all required fields are present
                 return {
-                    headlines: this.validateAndOptimizeArray(adCopy.headlines || [], 11, 30),
+                    headlines: this.validateAndOptimizeArray(adCopy.headlines || [], 15, 30),
                     descriptions: this.validateAndOptimizeArray(adCopy.descriptions || [], 4, 90)
                 };
             }
@@ -511,7 +660,7 @@ VERIFICATION: Before submitting, mentally count characters in each headline and 
 
         // No path extraction
         return {
-            headlines: this.validateAndOptimizeArray(headlines, 11, 30),
+            headlines: this.validateAndOptimizeArray(headlines, 15, 30),
             descriptions: this.validateAndOptimizeArray(descriptions, 4, 90)
         };
     }

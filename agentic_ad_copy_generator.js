@@ -235,8 +235,8 @@ class AgenticAdCopyGenerator {
         console.log('Headlines:', adCopy.headlines);
         console.log('Descriptions:', adCopy.descriptions);
         
-        // Update headlines - Updated to handle 11 headlines
-        const headlineIds = ['headline1', 'headline2', 'headline3', 'headline4', 'headline5', 'headline6', 'headline7', 'headline8', 'headline9', 'headline10', 'headline11'];
+        // Update headlines - Updated to handle 15 headlines
+        const headlineIds = ['headline1', 'headline2', 'headline3', 'headline4', 'headline5', 'headline6', 'headline7', 'headline8', 'headline9', 'headline10', 'headline11', 'headline12', 'headline13', 'headline14', 'headline15'];
         for (let i = 0; i < adCopy.headlines.length && i < headlineIds.length; i++) {
             const headlineInput = document.getElementById(headlineIds[i]);
             if (headlineInput) {
@@ -270,7 +270,7 @@ class AgenticAdCopyGenerator {
     }
 
     /**
-     * Update ad preview
+     * Update ad preview with current form values and determine availability
      */
     updateAdPreview() {
         const headline1 = document.getElementById('headline1').value;
@@ -284,6 +284,10 @@ class AgenticAdCopyGenerator {
         const headline9 = document.getElementById('headline9').value;
         const headline10 = document.getElementById('headline10').value;
         const headline11 = document.getElementById('headline11').value;
+        const headline12 = document.getElementById('headline12').value;
+        const headline13 = document.getElementById('headline13').value;
+        const headline14 = document.getElementById('headline14').value;
+        const headline15 = document.getElementById('headline15').value;
         const description1 = document.getElementById('description1').value;
         const description2 = document.getElementById('description2').value;
         const description3 = document.getElementById('description3').value;
@@ -295,9 +299,9 @@ class AgenticAdCopyGenerator {
             const domain = this.extractDomain(websiteUrl);
             
             // Count total available headlines and descriptions
-            const availableHeadlines = [headline1, headline2, headline3, headline4, headline5, headline6, headline7, headline8, headline9, headline10, headline11].filter(h => h && h.trim()).length;
+            const availableHeadlines = [headline1, headline2, headline3, headline4, headline5, headline6, headline7, headline8, headline9, headline10, headline11, headline12, headline13, headline14, headline15].filter(h => h && h.trim()).length;
             const availableDescriptions = [description1, description2, description3, description4].filter(d => d && d.trim()).length;
-            
+
             previewContainer.innerHTML = `
                 <div style="border: 1px solid #ddd; padding: 15px; border-radius: 4px; background-color: #fff;">
                     <div style="color: #1a73e8; font-size: 18px; font-weight: bold; margin-bottom: 5px;">

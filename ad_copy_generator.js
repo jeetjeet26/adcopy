@@ -58,13 +58,13 @@ class AdCopyGenerator {
             headlines.push(this.createBenefitHeadline(usp));
         }
 
-        // Ensure we have at least 11 headlines
-        while (headlines.length < 11) {
+        // Ensure we have at least 15 headlines
+        while (headlines.length < 15) {
             headlines.push(this.getGenericHeadline(industry));
         }
 
-        // Return only unique headlines, up to 11
-        return [...new Set(headlines)].slice(0, 11);
+        // Return only unique headlines, up to 15
+        return [...new Set(headlines)].slice(0, 15);
     }
 
     /**

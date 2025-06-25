@@ -1,5 +1,226 @@
 # CHANGELOG
 
+## Version 2.2.0 - General Search Campaign Implementation
+*Released: December 2024*
+
+### 🎯 New Feature: General Search Campaigns
+
+#### **General Search Campaign Type**
+- **Location-Based Targeting**: Converted regular campaigns (isUnitType=false) to specialized General Search campaigns
+- **Automatic "Location" Ad Group**: Automatically creates a "Location" ad group when creating regular campaigns
+- **4 Keyword Classifications**: Specialized keyword generation covering Location, New Apts, Near, and Access To categories
+- **Geographic Focus**: Keywords target apartment/home seekers in specific locations with proximity-based search terms
+
+#### **Advanced Location-Based Keyword Generation**
+- **Location Classification**: Direct location-based terms (e.g., "apartments downtown San Diego")
+- **New Apts Classification**: New construction-focused terms (e.g., "new apartments [location]")
+- **Near Classification**: Proximity-based terms (e.g., "apartments near [landmark]")
+- **Access To Classification**: Connectivity terms (e.g., "walking distance to [transit]")
+- **Comprehensive Coverage**: Keywords covering client name, price point, amenities, and nearby locations
+
+#### **Smart Location Analysis**
+- **AI-Powered Location Targeting**: Specialized prompts for generating location-specific keywords
+- **Geographic Context Awareness**: Keywords consider nearby schools, public works, and amenities
+- **Market-Specific Optimization**: Terms tailored to local search patterns and user intent
+- **Multi-Layered Approach**: Keywords targeting different aspects of location-based searches
+
+### 🛠️ Technical Implementation
+
+#### **Campaign Structure Updates**
+- **Automatic Ad Group Creation**: `addCampaign()` function now auto-creates "Location" ad group for regular campaigns
+- **Campaign Type Detection**: Enhanced logic to differentiate between Unit Type and General Search campaigns
+- **UI Notifications**: Smart campaign type indicators with helpful descriptions for users
+
+#### **Keyword Generation Engine**
+- **Location-Focused Analysis**: `analyzeClientInfo()` in SemrushConnector now handles General Search campaigns
+- **Geographic Prompt Engineering**: Specialized AI prompts for location-based keyword generation
+- **4-Category Keyword Coverage**: Systematic approach ensuring all location classifications are covered
+- **Client Information Integration**: Keywords incorporate geographic targeting, amenities, and unique selling points
+
+#### **Ad Copy Generation Enhancement**
+- **General Search Orchestration**: Enhanced `createOrchestrationPrompt()` with location-based strategy
+- **Location-Focused Copy Generation**: Specialized prompts for location-based ad copy creation
+- **Geographic Advantage Highlighting**: Copy emphasizes proximity to schools, amenities, and key locations
+- **4-Classification Integration**: Ad copy naturally incorporates all keyword classifications
+
+### 📊 Campaign Type Features
+
+#### **General Search Campaign Workflow**
+1. **Campaign Creation**: Create regular campaign (checkbox unchecked)
+2. **Automatic Setup**: "Location" ad group created automatically
+3. **Keyword Generation**: AI generates location-based keywords in 4 classifications
+4. **Ad Copy Creation**: Location-focused ad copy leveraging saved keywords
+
+#### **Enhanced User Experience**
+- **Smart Campaign Indicators**: Visual indicators showing campaign type and behavior
+- **Context-Aware Messaging**: UI provides relevant guidance based on campaign type
+- **Location-Focused Workflow**: Streamlined process for location-based campaigns
+- **Clear Differentiation**: Obvious distinction between Unit Type and General Search campaigns
+
+### 🎨 UI/UX Improvements
+
+#### **Campaign Type Clarity**
+- **Enhanced Descriptions**: Updated checkbox description to clarify campaign types
+- **Smart Notifications**: Dynamic campaign type notes in keyword generation section
+- **Visual Indicators**: Color-coded campaign type badges and notifications
+- **Workflow Guidance**: Clear instructions for each campaign type's intended use
+
+#### **Location Campaign Support**
+- **Automatic Ad Group Display**: "Location" ad group appears immediately after campaign creation
+- **Geographic Targeting Notes**: Special indicators for location-focused campaigns
+- **Keyword Classification Education**: UI educates users about the 4 keyword classifications
+
+### 🔧 File Updates
+
+#### **Enhanced Files**
+- `index.html` - Updated campaign creation workflow and UI notifications
+  - Modified campaign creation form description
+  - Enhanced `addCampaign()` function for automatic "Location" ad group creation
+  - Updated `showUnitTypeNote()` function for General Search campaign indicators
+  
+- `semrush_connector.js` - Added General Search campaign keyword generation
+  - New `isGeneralSearchCampaign` detection logic
+  - Specialized location-based keyword generation prompts
+  - 4-classification keyword coverage system
+  
+- `openai_connector.js` - Enhanced ad copy generation for location campaigns
+  - Added `isGeneralSearch` campaign detection
+  - Location-focused orchestration and generation prompts
+  - Geographic advantage highlighting in ad copy strategy
+
+### 🚀 Benefits for Users
+
+#### **Location-Based Marketing**
+- **Targeted Local Campaigns**: Perfect for real estate and location-specific businesses
+- **Comprehensive Location Coverage**: Keywords covering all aspects of location-based searches
+- **Geographic Advantage Highlighting**: Ad copy emphasizes proximity and location benefits
+- **Local Search Optimization**: Better performance in location-based search results
+
+#### **Streamlined Workflow**
+- **Automatic Setup**: No manual ad group creation needed for location campaigns
+- **Guided Process**: Clear indicators and instructions for each campaign type
+- **Comprehensive Coverage**: Systematic approach ensuring all location aspects are covered
+- **Professional Results**: AI-generated content optimized for location-based searches
+
+---
+
+## Version 2.1.0 - Keyword Coverage Analysis & Data Visualization
+*Released: December 2024*
+
+### 🎯 New Feature: Advanced Keyword Coverage Analysis
+
+#### **Real-Time Keyword Coverage Monitoring**
+- **Intelligent Coverage Analysis**: Comprehensive analysis of how well ad copy covers saved keywords for both campaign types
+- **Interactive Data Visualization**: Professional Chart.js-powered doughnut charts showing coverage breakdown
+- **Multi-Level Coverage Detection**: Analyzes both exact keyword matches and partial coverage (individual word matching)
+- **Real-Time Updates**: Live analysis that updates as you type ad copy with debounced performance optimization
+- **Section-Specific Tracking**: Identifies exactly where keywords appear (headlines vs descriptions)
+
+#### **Smart Coverage Metrics**
+- **Overall Coverage Score**: Weighted percentage showing campaign keyword optimization
+- **Coverage Categories**: Clear categorization of keywords as Fully Covered, Partially Covered, or Missing
+- **Performance-Based Color Coding**: Visual feedback with green (80%+), orange (60-79%), and red (<60%) scoring
+- **Match Type Awareness**: Analysis considers exact, phrase, and broad match keyword types
+- **Actionable Insights**: Detailed breakdown showing which specific ad sections contain each keyword
+
+#### **Professional UI Components**
+- **Modern Design**: Clean, professional interface integrated seamlessly into the ad copy tab
+- **Responsive Visualization**: Chart.js-powered interactive doughnut chart with hover tooltips
+- **Detailed Metrics Panel**: Real-time counters for total, covered, partial, and missing keywords
+- **Keyword Detail List**: Color-coded list showing coverage status for each individual keyword
+- **Refresh Control**: Manual refresh button for on-demand analysis updates
+
+#### **Advanced Analysis Logic**
+- **Fuzzy Matching Algorithm**: Intelligent partial matching when keywords aren't found exactly
+- **Context-Aware Analysis**: Different analysis approaches for unit type vs. regular campaigns
+- **Coverage Percentage Calculation**: Sophisticated scoring that weights full coverage over partial
+- **Performance Optimization**: Debounced input monitoring to prevent excessive recalculations
+
+### 🛠️ Technical Implementation
+
+#### **Frontend Enhancements**
+- **Chart.js Integration**: Added Chart.js CDN for professional data visualization
+- **Real-Time Analysis Engine**: JavaScript functions for live keyword coverage analysis
+- **Responsive Design**: CSS improvements for proper layout across different screen sizes
+- **Event-Driven Updates**: Smart event listeners that trigger analysis at optimal times
+
+#### **New Analysis Functions**
+- `updateKeywordCoverageAnalysis()` - Main orchestration function for coverage analysis
+- `analyzeKeywordCoverage()` - Core algorithm for keyword matching and scoring
+- `findKeywordInSections()` - Utility for identifying where keywords appear in ad copy
+- `displayCoverageResults()` - UI update function for showing analysis results
+- `updateCoverageChart()` - Chart.js integration for visual data representation
+
+#### **Performance Optimizations**
+- **Debounced Input Monitoring**: 500ms debounce on input changes to prevent excessive API calls
+- **Efficient DOM Updates**: Selective updates only when campaign/ad group selection changes
+- **Chart Memory Management**: Proper cleanup of Chart.js instances to prevent memory leaks
+- **Conditional Rendering**: Analysis only displays when relevant keywords are available
+
+### 📊 Coverage Analysis Features
+
+#### **Three-Tier Coverage System**
+1. **Fully Covered (Green)**: Keywords that appear exactly in the ad copy
+2. **Partially Covered (Orange)**: Keywords where 50%+ of individual words appear
+3. **Not Covered (Red)**: Keywords with <50% word coverage
+
+#### **Smart Coverage Scoring**
+- **Weighted Algorithm**: Full coverage = 100%, partial coverage = 50% weight
+- **Overall Score**: `(Fully Covered + (Partially Covered × 0.5)) / Total Keywords × 100`
+- **Visual Feedback**: Dynamic color changes based on performance thresholds
+- **Actionable Metrics**: Clear counters showing exactly what needs improvement
+
+#### **Section-Specific Analysis**
+- **Headline Tracking**: Identifies which headlines contain which keywords
+- **Description Analysis**: Tracks keyword usage across all description fields
+- **Cross-Reference Display**: Shows users exactly where each keyword appears
+- **Gap Identification**: Highlights keywords missing from ad copy for optimization
+
+### 🎨 User Experience Improvements
+
+#### **Intuitive Workflow Integration**
+- **Seamless Integration**: Analysis appears automatically when selecting campaigns with keywords
+- **Non-Intrusive Design**: Only displays when relevant, staying hidden otherwise
+- **Clear Visual Hierarchy**: Professional layout that guides user attention effectively
+- **Actionable Feedback**: Specific guidance on which keywords need attention
+
+#### **Professional Data Presentation**
+- **Interactive Charts**: Hover effects and tooltips for detailed information
+- **Color-Coded Status**: Immediate visual understanding of coverage status
+- **Detailed Breakdowns**: Comprehensive lists showing individual keyword performance
+- **Performance Indicators**: Clear metrics that marketers can track and optimize
+
+### 🔧 File Updates
+
+#### **Enhanced Files**
+- `index.html` - Major additions for keyword coverage analysis UI and functionality
+  - Added 133 lines of CSS for professional coverage analysis styling
+  - Integrated Chart.js CDN for data visualization capabilities
+  - Added comprehensive coverage analysis UI section
+  - Implemented 180+ lines of JavaScript for analysis functionality
+
+### 🚀 Benefits for Users
+
+#### **Marketing Optimization**
+- **Data-Driven Insights**: Clear visibility into keyword usage across ad copy
+- **Performance Optimization**: Immediate feedback on keyword coverage gaps
+- **Quality Assurance**: Ensures important keywords aren't missed in ad copy
+- **ROI Improvement**: Better keyword coverage typically leads to higher click-through rates
+
+#### **Workflow Efficiency**
+- **Real-Time Feedback**: Instant analysis as users create ad copy
+- **Visual Clarity**: Charts and color coding make analysis immediately understandable
+- **Time Savings**: Quick identification of optimization opportunities
+- **Professional Results**: Ensures comprehensive keyword coverage in campaigns
+
+#### **Campaign Management**
+- **Coverage Tracking**: Monitor keyword usage across different campaign types
+- **Optimization Guidance**: Clear direction on which areas need improvement
+- **Quality Control**: Systematic approach to ensuring keyword coverage
+- **Performance Monitoring**: Track improvements in keyword integration over time
+
+---
+
 ## Version 2.0.0 - Semrush Integration & Advanced Features Release
 *Released: December 2024*
 
@@ -174,6 +395,34 @@ This release transforms the Google Ads Campaign Builder from a simple AI tool in
 - Basic CSV export functionality
 - Simple client information forms
 - Character limit validation for Google Ads requirements
+
+---
+
+*For technical support or feature requests, please visit our GitHub repository: https://github.com/jeetjeet26/adcopy*
+
+## [Latest] - 2024-01-15
+
+### Enhanced Headline Generation for Improved Ad Copy Quality
+
+#### ✨ Major Improvements
+- **Increased Headline Count**: Expanded from 11 to 15 headlines per ad group for better variety and testing options
+- **Relaxed Character Constraints**: Updated headline character limits from 28-30 to 25-30 characters for more creative flexibility
+- **Enhanced UI Feedback**: Improved character count validation with color-coded feedback (green for optimal 25-30 range, orange for acceptable 20-24, red for over-limit)
+- **Updated AI Prompts**: Modified OpenAI prompts to generate 15 headlines with the new character constraints
+- **Better Export Support**: Updated CSV export to include all 15 headline fields for Google Ads Editor compatibility
+
+#### 🔧 Technical Updates
+- Extended HTML form to support 15 headline inputs with proper validation
+- Updated JavaScript DOM handling for all 15 headline fields
+- Modified ad copy generation logic to ensure 15 quality headlines
+- Enhanced character count validation for better user experience
+- Updated agentic ad copy generator to populate all 15 headline fields
+
+#### 📈 Benefits
+- More headline variations for better A/B testing opportunities
+- Improved ad copy quality with relaxed character constraints
+- Better user experience with enhanced visual feedback
+- Full compatibility with Google Ads Editor for seamless imports
 
 ---
 

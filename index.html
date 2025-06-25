@@ -379,6 +379,132 @@
             align-items: center;
             border-left: 3px solid #34a853;
         }
+        
+        /* Keyword Coverage Analysis Styles */
+        .coverage-analysis {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .coverage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .coverage-title {
+            color: #4285f4;
+            margin: 0;
+            font-size: 18px;
+        }
+        
+        .coverage-score {
+            background: linear-gradient(135deg, #4285f4, #34a853);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .coverage-content {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .coverage-chart {
+            flex: 1;
+            max-width: 400px;
+        }
+        
+        .coverage-details {
+            flex: 1;
+        }
+        
+        .coverage-metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .metric-label {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .metric-value {
+            font-weight: bold;
+            color: #4285f4;
+        }
+        
+        .coverage-keywords {
+            margin-top: 15px;
+        }
+        
+        .keyword-coverage-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 10px;
+            margin: 3px 0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .keyword-covered {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .keyword-partial {
+            background-color: #fff3e0;
+            color: #ef6c00;
+        }
+        
+        .keyword-missing {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        
+        .coverage-status {
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .status-covered {
+            background-color: #4caf50;
+        }
+        
+        .status-partial {
+            background-color: #ff9800;
+        }
+        
+        .status-missing {
+            background-color: #f44336;
+        }
+        
+        .refresh-analysis-btn {
+            background-color: #34a853;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .refresh-analysis-btn:hover {
+            background-color: #2d9146;
+        }
     </style>
 </head>
 <body>
@@ -464,7 +590,7 @@
                                 <input type="checkbox" id="unit-type-checkbox">
                                 <label for="unit-type-checkbox">Unit Type Campaign</label>
                                 <div style="font-size: 12px; color: #666; margin-top: 5px;">
-                                    Check this if the campaign focuses on specific unit types (e.g., "Studio Apartments", "Two Bedroom Homes")
+                                    Check this if the campaign focuses on specific unit types (e.g., "Studio Apartments", "Two Bedroom Homes"). Leave unchecked for General Search campaigns with location-based targeting.
                                 </div>
                             </div>
                             <div class="form-actions">
@@ -651,59 +777,79 @@
                         
                         <h4>Headlines</h4>
                         <div class="form-group">
-                            <label for="headline1">Headline 1 (30 char max)</label>
+                            <label for="headline1">Headline 1 (25-30 chars)</label>
                             <input type="text" id="headline1" maxlength="30">
                             <div class="character-count" id="headline1-count">0/30</div>
                         </div>
                         <div class="form-group">
-                            <label for="headline2">Headline 2 (30 char max)</label>
+                            <label for="headline2">Headline 2 (25-30 chars)</label>
                             <input type="text" id="headline2" maxlength="30">
                             <div class="character-count" id="headline2-count">0/30</div>
                         </div>
                         <div class="form-group">
-                            <label for="headline3">Headline 3 (30 char max)</label>
+                            <label for="headline3">Headline 3 (25-30 chars)</label>
                             <input type="text" id="headline3" maxlength="30">
                             <div class="character-count" id="headline3-count">0/30</div>
                         </div>
                         <div class="form-group">
-                            <label for="headline4">Headline 4 (30 char max)</label>
+                            <label for="headline4">Headline 4 (25-30 chars)</label>
                             <input type="text" id="headline4" maxlength="30">
                             <div class="character-count" id="headline4-count">0/30</div>
                         </div>
                         <div class="form-group">
-                            <label for="headline5">Headline 5 (30 char max)</label>
+                            <label for="headline5">Headline 5 (25-30 chars)</label>
                             <input type="text" id="headline5" maxlength="30">
                             <div class="character-count" id="headline5-count">0/30</div>
                         </div>
                         <div class="form-group">
-                            <label for="headline6">Headline 6 (30 char max)</label>
+                            <label for="headline6">Headline 6 (25-30 chars)</label>
                             <input type="text" id="headline6" maxlength="30">
                             <div class="character-count" id="headline6-count">0/30</div>
                         </div>
                         <div class="form-group">
-                            <label for="headline7">Headline 7 (30 char max)</label>
+                            <label for="headline7">Headline 7 (25-30 chars)</label>
                             <input type="text" id="headline7" maxlength="30">
                             <div class="character-count" id="headline7-count">0/30</div>
                         </div>
                         <div class="form-group">
-                            <label for="headline8">Headline 8 (30 char max)</label>
+                            <label for="headline8">Headline 8 (25-30 chars)</label>
                             <input type="text" id="headline8" maxlength="30">
                             <div class="character-count" id="headline8-count">0/30</div>
                         </div>
                         <div class="form-group">
-                            <label for="headline9">Headline 9 (30 char max)</label>
+                            <label for="headline9">Headline 9 (25-30 chars)</label>
                             <input type="text" id="headline9" maxlength="30">
                             <div class="character-count" id="headline9-count">0/30</div>
                         </div>
                         <div class="form-group">
-                            <label for="headline10">Headline 10 (30 char max)</label>
+                            <label for="headline10">Headline 10 (25-30 chars)</label>
                             <input type="text" id="headline10" maxlength="30">
                             <div class="character-count" id="headline10-count">0/30</div>
                         </div>
                         <div class="form-group">
-                            <label for="headline11">Headline 11 (30 char max)</label>
+                            <label for="headline11">Headline 11 (25-30 chars)</label>
                             <input type="text" id="headline11" maxlength="30">
                             <div class="character-count" id="headline11-count">0/30</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="headline12">Headline 12 (25-30 chars)</label>
+                            <input type="text" id="headline12" maxlength="30">
+                            <div class="character-count" id="headline12-count">0/30</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="headline13">Headline 13 (25-30 chars)</label>
+                            <input type="text" id="headline13" maxlength="30">
+                            <div class="character-count" id="headline13-count">0/30</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="headline14">Headline 14 (25-30 chars)</label>
+                            <input type="text" id="headline14" maxlength="30">
+                            <div class="character-count" id="headline14-count">0/30</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="headline15">Headline 15 (25-30 chars)</label>
+                            <input type="text" id="headline15" maxlength="30">
+                            <div class="character-count" id="headline15-count">0/30</div>
                         </div>
                         
                         <h4>Descriptions</h4>
@@ -736,6 +882,44 @@
                         <div id="ads-list-container">
                             <div class="keyword-list">
                                 <p>No ads in this ad group</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Keyword Coverage Analysis Section -->
+                <div id="keyword-coverage-analysis" class="coverage-analysis" style="display: none;">
+                    <div class="coverage-header">
+                        <h3 class="coverage-title">🎯 Keyword Coverage Analysis</h3>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div id="coverage-score" class="coverage-score">Coverage: 0%</div>
+                            <button id="refresh-analysis-btn" class="refresh-analysis-btn">Refresh Analysis</button>
+                        </div>
+                    </div>
+                    <div class="coverage-content">
+                        <div class="coverage-chart">
+                            <canvas id="coverage-chart" width="300" height="300"></canvas>
+                        </div>
+                        <div class="coverage-details">
+                            <div class="coverage-metric">
+                                <span class="metric-label">Total Keywords:</span>
+                                <span id="total-keywords" class="metric-value">0</span>
+                            </div>
+                            <div class="coverage-metric">
+                                <span class="metric-label">Fully Covered:</span>
+                                <span id="covered-keywords" class="metric-value">0</span>
+                            </div>
+                            <div class="coverage-metric">
+                                <span class="metric-label">Partially Covered:</span>
+                                <span id="partial-keywords" class="metric-value">0</span>
+                            </div>
+                            <div class="coverage-metric">
+                                <span class="metric-label">Not Covered:</span>
+                                <span id="missing-keywords" class="metric-value">0</span>
+                            </div>
+                            <div class="coverage-keywords">
+                                <h4>Keyword Details:</h4>
+                                <div id="keyword-coverage-list"></div>
                             </div>
                         </div>
                     </div>
@@ -773,6 +957,9 @@
         </div>
     </div>
 
+    <!-- Load Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <!-- Load JavaScript files -->
     <script src="openai_config.js"></script>
     <script src="openai_connector.js"></script>
@@ -852,6 +1039,10 @@
         const headline9 = document.getElementById('headline9');
         const headline10 = document.getElementById('headline10');
         const headline11 = document.getElementById('headline11');
+        const headline12 = document.getElementById('headline12');
+        const headline13 = document.getElementById('headline13');
+        const headline14 = document.getElementById('headline14');
+        const headline15 = document.getElementById('headline15');
         const description1 = document.getElementById('description1');
         const description2 = document.getElementById('description2');
         const description3 = document.getElementById('description3');
@@ -867,6 +1058,10 @@
         const headline9Count = document.getElementById('headline9-count');
         const headline10Count = document.getElementById('headline10-count');
         const headline11Count = document.getElementById('headline11-count');
+        const headline12Count = document.getElementById('headline12-count');
+        const headline13Count = document.getElementById('headline13-count');
+        const headline14Count = document.getElementById('headline14-count');
+        const headline15Count = document.getElementById('headline15-count');
         const description1Count = document.getElementById('description1-count');
         const description2Count = document.getElementById('description2-count');
         const description3Count = document.getElementById('description3-count');
@@ -874,6 +1069,16 @@
         const saveAdBtn = document.getElementById('save-ad-btn');
         const adSaveMessage = document.getElementById('ad-save-message');
         const adsListContainer = document.getElementById('ads-list-container');
+        
+        // Keyword Coverage Analysis elements
+        const keywordCoverageAnalysis = document.getElementById('keyword-coverage-analysis');
+        const coverageScore = document.getElementById('coverage-score');
+        const refreshAnalysisBtn = document.getElementById('refresh-analysis-btn');
+        const totalKeywordsEl = document.getElementById('total-keywords');
+        const coveredKeywordsEl = document.getElementById('covered-keywords');
+        const partialKeywordsEl = document.getElementById('partial-keywords');
+        const missingKeywordsEl = document.getElementById('missing-keywords');
+        const keywordCoverageList = document.getElementById('keyword-coverage-list');
         
         // Export elements
         const exportCampaignSelect = document.getElementById('export-campaign-select');
@@ -1134,6 +1339,17 @@
                 budget: clientInfo.budget || ''
             };
             
+            // For General Search campaigns (isUnitType=false), automatically create "Location" ad group
+            if (!isUnitType) {
+                const locationAdGroupId = 'adgroup_location_' + Date.now();
+                campaignsData[campaignId].adGroups[locationAdGroupId] = {
+                    name: 'Location',
+                    keywords: [],
+                    ads: [],
+                    isLocationAdGroup: true // Flag to identify this as the special location ad group
+                };
+            }
+            
             saveData();
             renderCampaigns();
             updateSelects();
@@ -1372,7 +1588,14 @@
                     if (result.success) {
                         displayKeywordSuggestions(result.data);
                     } else {
-                        throw new Error(result.error || 'Failed to generate keywords');
+                        // Handle specific cases
+                        if (result.reason === 'Semrush API key not configured') {
+                            const instructionText = result.instructions ? 
+                                result.instructions.steps.join('\n') : 
+                                'Please configure Semrush API key';
+                            throw new Error(`${result.message}\n\n${instructionText}`);
+                        }
+                        throw new Error(result.message || result.error || 'Failed to generate keywords');
                     }
                     
                 } catch (error) {
@@ -1426,6 +1649,13 @@
         function displayKeywordSuggestions(data) {
             console.log('Displaying keyword suggestions:', data); // Debug log
             
+            // Check if data is valid
+            if (!data) {
+                console.error('No data received for keyword suggestions');
+                alert('No keyword data received. Please try again.');
+                return;
+            }
+            
             // Collect all keywords with their types
             allKeywordsData = [];
             
@@ -1469,6 +1699,13 @@
             });
             
             allKeywordsData = uniqueKeywords;
+            
+            // Check if we have any keywords after processing
+            if (allKeywordsData.length === 0) {
+                console.warn('No keywords found in data structure:', data);
+                alert('No keywords were generated. This might be due to:\n\n1. Semrush API configuration issue\n2. No relevant keywords found for your search terms\n3. API rate limits\n\nPlease check your configuration and try again.');
+                return;
+            }
             
             // Populate the table
             populateKeywordsTable(allKeywordsData);
@@ -1792,10 +2029,12 @@
             adCampaignSelect.addEventListener('change', () => {
                 updateAdGroupSelect(adCampaignSelect.value, adGroupSelect);
                 updateAdsList();
+                updateKeywordCoverageAnalysis();
             });
             
             adGroupSelect.addEventListener('change', () => {
                 updateAdsList();
+                updateKeywordCoverageAnalysis();
             });
 
             saveAdBtn.addEventListener('click', () => {
@@ -1813,6 +2052,21 @@
                 }
                 
                 saveAd(campaignId, adGroupId);
+                updateKeywordCoverageAnalysis();
+            });
+            
+            // Keyword Coverage Analysis
+            refreshAnalysisBtn.addEventListener('click', () => {
+                updateKeywordCoverageAnalysis();
+            });
+            
+            // Monitor ad copy changes for real-time analysis
+            const adInputs = [headline1, headline2, headline3, headline4, headline5, headline6, 
+                             headline7, headline8, headline9, headline10, headline11,
+                             description1, description2, description3, description4];
+            
+            adInputs.forEach(input => {
+                input.addEventListener('input', debounce(updateKeywordCoverageAnalysis, 500));
             });
         }
         
@@ -1839,6 +2093,10 @@
                 headline9: headline9.value,
                 headline10: headline10.value,
                 headline11: headline11.value,
+                headline12: headline12.value,
+                headline13: headline13.value,
+                headline14: headline14.value,
+                headline15: headline15.value,
                 description1: description1.value,
                 description2: description2.value,
                 description3: description3.value,
@@ -1866,6 +2124,10 @@
             headline9.value = '';
             headline10.value = '';
             headline11.value = '';
+            headline12.value = '';
+            headline13.value = '';
+            headline14.value = '';
+            headline15.value = '';
             description1.value = '';
             description2.value = '';
             description3.value = '';
@@ -1938,6 +2200,18 @@
                             <div><strong>Headline 11:</strong> ${ad.headline11 || 'N/A'}</div>
                         </div>
                         <div class="keyword-item">
+                            <div><strong>Headline 12:</strong> ${ad.headline12 || 'N/A'}</div>
+                        </div>
+                        <div class="keyword-item">
+                            <div><strong>Headline 13:</strong> ${ad.headline13 || 'N/A'}</div>
+                        </div>
+                        <div class="keyword-item">
+                            <div><strong>Headline 14:</strong> ${ad.headline14 || 'N/A'}</div>
+                        </div>
+                        <div class="keyword-item">
+                            <div><strong>Headline 15:</strong> ${ad.headline15 || 'N/A'}</div>
+                        </div>
+                        <div class="keyword-item">
                             <div><strong>Description 1:</strong> ${ad.description1}</div>
                         </div>
                         <div class="keyword-item">
@@ -1970,6 +2244,269 @@
             campaignsData[campaignId].ads[adGroupId].splice(index, 1);
             saveData();
             updateAdsList();
+            updateKeywordCoverageAnalysis();
+        }
+        
+        // Keyword Coverage Analysis Variables
+        let coverageChart = null;
+        
+        // Keyword Coverage Analysis Functions
+        function updateKeywordCoverageAnalysis() {
+            const campaignId = adCampaignSelect.value;
+            const adGroupId = adGroupSelect.value;
+            
+            if (!campaignId || !adGroupId) {
+                keywordCoverageAnalysis.style.display = 'none';
+                return;
+            }
+            
+            // Get current ad copy
+            const currentAdCopy = getCurrentAdCopy();
+            
+            // Get saved keywords for this ad group
+            const savedKeywords = getSavedKeywords(campaignId, adGroupId);
+            
+            if (savedKeywords.length === 0) {
+                keywordCoverageAnalysis.style.display = 'none';
+                return;
+            }
+            
+            // Show the analysis section
+            keywordCoverageAnalysis.style.display = 'block';
+            
+            // Perform keyword coverage analysis
+            const analysis = analyzeKeywordCoverage(currentAdCopy, savedKeywords);
+            
+            // Update UI with analysis results
+            displayCoverageResults(analysis);
+        }
+        
+        function getCurrentAdCopy() {
+            return {
+                headlines: [
+                    headline1.value, headline2.value, headline3.value, headline4.value,
+                    headline5.value, headline6.value, headline7.value, headline8.value,
+                    headline9.value, headline10.value, headline11.value, headline12.value,
+                    headline13.value, headline14.value, headline15.value
+                ].filter(h => h.trim() !== ''),
+                descriptions: [
+                    description1.value, description2.value, description3.value, description4.value
+                ].filter(d => d.trim() !== '')
+            };
+        }
+        
+        function getSavedKeywords(campaignId, adGroupId) {
+            if (!campaignsData[campaignId] || !campaignsData[campaignId].keywords || 
+                !campaignsData[campaignId].keywords[adGroupId]) {
+                return [];
+            }
+            
+            return campaignsData[campaignId].keywords[adGroupId];
+        }
+        
+        function analyzeKeywordCoverage(adCopy, keywords) {
+            const allAdText = [...adCopy.headlines, ...adCopy.descriptions].join(' ').toLowerCase();
+            
+            let coveredCount = 0;
+            let partialCount = 0;
+            let missingCount = 0;
+            
+            const keywordDetails = keywords.map(keyword => {
+                const keywordText = keyword.text.toLowerCase();
+                const keywordWords = keywordText.split(' ');
+                
+                // Check for exact keyword match
+                if (allAdText.includes(keywordText)) {
+                    coveredCount++;
+                    return {
+                        keyword: keyword.text,
+                        matchType: keyword.matchType,
+                        status: 'covered',
+                        coverage: 100,
+                        foundIn: findKeywordInSections(keyword.text, adCopy)
+                    };
+                }
+                
+                // Check for partial match (individual words)
+                let matchedWords = 0;
+                keywordWords.forEach(word => {
+                    if (allAdText.includes(word.toLowerCase())) {
+                        matchedWords++;
+                    }
+                });
+                
+                const coveragePercentage = Math.round((matchedWords / keywordWords.length) * 100);
+                
+                if (coveragePercentage >= 50) {
+                    partialCount++;
+                    return {
+                        keyword: keyword.text,
+                        matchType: keyword.matchType,
+                        status: 'partial',
+                        coverage: coveragePercentage,
+                        foundIn: findKeywordInSections(keyword.text, adCopy)
+                    };
+                } else {
+                    missingCount++;
+                    return {
+                        keyword: keyword.text,
+                        matchType: keyword.matchType,
+                        status: 'missing',
+                        coverage: coveragePercentage,
+                        foundIn: []
+                    };
+                }
+            });
+            
+            const totalKeywords = keywords.length;
+            const overallCoverage = Math.round(((coveredCount + (partialCount * 0.5)) / totalKeywords) * 100);
+            
+            return {
+                totalKeywords,
+                coveredCount,
+                partialCount,
+                missingCount,
+                overallCoverage,
+                keywordDetails
+            };
+        }
+        
+        function findKeywordInSections(keyword, adCopy) {
+            const foundIn = [];
+            const keywordLower = keyword.toLowerCase();
+            
+            // Check headlines
+            adCopy.headlines.forEach((headline, index) => {
+                if (headline.toLowerCase().includes(keywordLower)) {
+                    foundIn.push(`Headline ${index + 1}`);
+                }
+            });
+            
+            // Check descriptions
+            adCopy.descriptions.forEach((description, index) => {
+                if (description.toLowerCase().includes(keywordLower)) {
+                    foundIn.push(`Description ${index + 1}`);
+                }
+            });
+            
+            return foundIn;
+        }
+        
+        function displayCoverageResults(analysis) {
+            // Update main metrics
+            coverageScore.textContent = `Coverage: ${analysis.overallCoverage}%`;
+            totalKeywordsEl.textContent = analysis.totalKeywords;
+            coveredKeywordsEl.textContent = analysis.coveredCount;
+            partialKeywordsEl.textContent = analysis.partialCount;
+            missingKeywordsEl.textContent = analysis.missingCount;
+            
+            // Update the coverage score color based on performance
+            coverageScore.className = 'coverage-score';
+            if (analysis.overallCoverage >= 80) {
+                coverageScore.style.background = 'linear-gradient(135deg, #4caf50, #81c784)';
+            } else if (analysis.overallCoverage >= 60) {
+                coverageScore.style.background = 'linear-gradient(135deg, #ff9800, #ffb74d)';
+            } else {
+                coverageScore.style.background = 'linear-gradient(135deg, #f44336, #e57373)';
+            }
+            
+            // Update keyword coverage list
+            displayKeywordDetails(analysis.keywordDetails);
+            
+            // Update chart
+            updateCoverageChart(analysis);
+        }
+        
+        function displayKeywordDetails(keywordDetails) {
+            let html = '';
+            
+            keywordDetails.forEach(detail => {
+                const statusClass = `keyword-${detail.status}`;
+                const statusText = detail.status === 'covered' ? 'Fully Covered' : 
+                                 detail.status === 'partial' ? `Partial (${detail.coverage}%)` : 'Not Covered';
+                const statusBadgeClass = `status-${detail.status}`;
+                
+                let foundInText = '';
+                if (detail.foundIn.length > 0) {
+                    foundInText = ` - Found in: ${detail.foundIn.join(', ')}`;
+                }
+                
+                html += `
+                    <div class="keyword-coverage-item ${statusClass}">
+                        <div>
+                            <strong>${detail.keyword}</strong>
+                            <span class="badge badge-${detail.matchType}">${detail.matchType}</span>
+                            ${foundInText}
+                        </div>
+                        <span class="coverage-status ${statusBadgeClass}">${statusText}</span>
+                    </div>
+                `;
+            });
+            
+            keywordCoverageList.innerHTML = html;
+        }
+        
+        function updateCoverageChart(analysis) {
+            const ctx = document.getElementById('coverage-chart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (coverageChart) {
+                coverageChart.destroy();
+            }
+            
+            coverageChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Fully Covered', 'Partially Covered', 'Not Covered'],
+                    datasets: [{
+                        data: [analysis.coveredCount, analysis.partialCount, analysis.missingCount],
+                        backgroundColor: ['#4caf50', '#ff9800', '#f44336'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                usePointStyle: true,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed;
+                                    const total = analysis.totalKeywords;
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '50%'
+                }
+            });
+        }
+        
+        // Utility function for debouncing
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
         }
         
         // Export
@@ -2081,7 +2618,7 @@
             const clientInfo = getClientInfo();
             
             // CSV Header for ads
-            let csv = 'Campaign,Ad Group,Headline 1,Headline 2,Headline 3,Headline 4,Headline 5,Headline 6,Headline 7,Headline 8,Headline 9,Headline 10,Headline 11,Description 1,Description 2,Description 3,Description 4,Final URL\n';
+            let csv = 'Campaign,Ad Group,Headline 1,Headline 2,Headline 3,Headline 4,Headline 5,Headline 6,Headline 7,Headline 8,Headline 9,Headline 10,Headline 11,Headline 12,Headline 13,Headline 14,Headline 15,Description 1,Description 2,Description 3,Description 4,Final URL\n';
             
             // Process each ad group
             for (const adGroupId in campaign.adGroups) {
@@ -2091,7 +2628,7 @@
                 // Process ads
                 const ads = campaign.ads && campaign.ads[adGroupId] ? campaign.ads[adGroupId] : [];
                 for (const ad of ads) {
-                    csv += `"${campaign.name}","${adGroupName}","${ad.headline1 || ''}","${ad.headline2 || ''}","${ad.headline3 || ''}","${ad.headline4 || ''}","${ad.headline5 || ''}","${ad.headline6 || ''}","${ad.headline7 || ''}","${ad.headline8 || ''}","${ad.headline9 || ''}","${ad.headline10 || ''}","${ad.headline11 || ''}","${ad.description1 || ''}","${ad.description2 || ''}","${ad.description3 || ''}","${ad.description4 || ''}","${clientInfo.websiteUrl || ''}"\n`;
+                    csv += `"${campaign.name}","${adGroupName}","${ad.headline1 || ''}","${ad.headline2 || ''}","${ad.headline3 || ''}","${ad.headline4 || ''}","${ad.headline5 || ''}","${ad.headline6 || ''}","${ad.headline7 || ''}","${ad.headline8 || ''}","${ad.headline9 || ''}","${ad.headline10 || ''}","${ad.headline11 || ''}","${ad.headline12 || ''}","${ad.headline13 || ''}","${ad.headline14 || ''}","${ad.headline15 || ''}","${ad.description1 || ''}","${ad.description2 || ''}","${ad.description3 || ''}","${ad.description4 || ''}","${clientInfo.websiteUrl || ''}"\n`;
                 }
             }
             
@@ -2124,7 +2661,7 @@
             const clientInfo = getClientInfo();
             
             // CSV Header - removed Path 1 and Path 2 columns that don't exist
-            let csv = 'Campaign,Ad Group,Headline 1,Headline 2,Headline 3,Headline 4,Headline 5,Headline 6,Headline 7,Headline 8,Headline 9,Headline 10,Headline 11,Description 1,Description 2,Description 3,Description 4,Final URL,Keyword,Match Type\n';
+            let csv = 'Campaign,Ad Group,Headline 1,Headline 2,Headline 3,Headline 4,Headline 5,Headline 6,Headline 7,Headline 8,Headline 9,Headline 10,Headline 11,Headline 12,Headline 13,Headline 14,Headline 15,Description 1,Description 2,Description 3,Description 4,Final URL,Keyword,Match Type\n';
             
             // Process each ad group
             for (const adGroupId in campaign.adGroups) {
@@ -2134,7 +2671,7 @@
                 // Process ads - removed references to path1 and path2
                 const ads = campaign.ads && campaign.ads[adGroupId] ? campaign.ads[adGroupId] : [];
                 for (const ad of ads) {
-                    csv += `"${campaign.name}","${adGroupName}","${ad.headline1 || ''}","${ad.headline2 || ''}","${ad.headline3 || ''}","${ad.headline4 || ''}","${ad.headline5 || ''}","${ad.headline6 || ''}","${ad.headline7 || ''}","${ad.headline8 || ''}","${ad.headline9 || ''}","${ad.headline10 || ''}","${ad.headline11 || ''}","${ad.description1 || ''}","${ad.description2 || ''}","${ad.description3 || ''}","${ad.description4 || ''}","${clientInfo.websiteUrl || ''}",,\n`;
+                    csv += `"${campaign.name}","${adGroupName}","${ad.headline1 || ''}","${ad.headline2 || ''}","${ad.headline3 || ''}","${ad.headline4 || ''}","${ad.headline5 || ''}","${ad.headline6 || ''}","${ad.headline7 || ''}","${ad.headline8 || ''}","${ad.headline9 || ''}","${ad.headline10 || ''}","${ad.headline11 || ''}","${ad.headline12 || ''}","${ad.headline13 || ''}","${ad.headline14 || ''}","${ad.headline15 || ''}","${ad.description1 || ''}","${ad.description2 || ''}","${ad.description3 || ''}","${ad.description4 || ''}","${clientInfo.websiteUrl || ''}",,\n`;
                 }
                 
                 // Process keywords - fixed column alignment (17 empty columns total: 2 campaign/adgroup + 11 headlines + 4 descriptions + 1 final URL = 18 columns before keyword)
@@ -2149,6 +2686,7 @@
         
         // Character Counters
         function setupCharacterCounters() {
+            // Add character count listeners for all form fields
             headline1.addEventListener('input', () => updateCharacterCount(headline1, headline1Count));
             headline2.addEventListener('input', () => updateCharacterCount(headline2, headline2Count));
             headline3.addEventListener('input', () => updateCharacterCount(headline3, headline3Count));
@@ -2160,12 +2698,16 @@
             headline9.addEventListener('input', () => updateCharacterCount(headline9, headline9Count));
             headline10.addEventListener('input', () => updateCharacterCount(headline10, headline10Count));
             headline11.addEventListener('input', () => updateCharacterCount(headline11, headline11Count));
+            headline12.addEventListener('input', () => updateCharacterCount(headline12, headline12Count));
+            headline13.addEventListener('input', () => updateCharacterCount(headline13, headline13Count));
+            headline14.addEventListener('input', () => updateCharacterCount(headline14, headline14Count));
+            headline15.addEventListener('input', () => updateCharacterCount(headline15, headline15Count));
             description1.addEventListener('input', () => updateCharacterCount(description1, description1Count));
             description2.addEventListener('input', () => updateCharacterCount(description2, description2Count));
             description3.addEventListener('input', () => updateCharacterCount(description3, description3Count));
             description4.addEventListener('input', () => updateCharacterCount(description4, description4Count));
             
-            // Initialize counts
+            // Initialize character counts
             updateCharacterCount(headline1, headline1Count);
             updateCharacterCount(headline2, headline2Count);
             updateCharacterCount(headline3, headline3Count);
@@ -2177,6 +2719,10 @@
             updateCharacterCount(headline9, headline9Count);
             updateCharacterCount(headline10, headline10Count);
             updateCharacterCount(headline11, headline11Count);
+            updateCharacterCount(headline12, headline12Count);
+            updateCharacterCount(headline13, headline13Count);
+            updateCharacterCount(headline14, headline14Count);
+            updateCharacterCount(headline15, headline15Count);
             updateCharacterCount(description1, description1Count);
             updateCharacterCount(description2, description2Count);
             updateCharacterCount(description3, description3Count);
@@ -2188,10 +2734,28 @@
             const currentLength = inputElement.value.length;
             countElement.textContent = `${currentLength}/${maxLength}`;
             
-            if (currentLength >= parseInt(maxLength)) {
-                countElement.style.color = '#ea4335';
+            // Check if this is a headline field (maxlength 30)
+            if (parseInt(maxLength) === 30) {
+                if (currentLength >= 25 && currentLength <= 30) {
+                    // Optimal range for headlines (25-30 chars)
+                    countElement.style.color = '#4caf50';
+                } else if (currentLength >= 20 && currentLength < 25) {
+                    // Acceptable but could be longer
+                    countElement.style.color = '#ff9800';
+                } else if (currentLength > 30) {
+                    // Over limit
+                    countElement.style.color = '#ea4335';
+                } else {
+                    // Too short
+                    countElement.style.color = '#666';
+                }
             } else {
-                countElement.style.color = '#666';
+                // Original logic for descriptions
+                if (currentLength >= parseInt(maxLength)) {
+                    countElement.style.color = '#ea4335';
+                } else {
+                    countElement.style.color = '#666';
+                }
             }
         }
         
@@ -2289,26 +2853,36 @@
             loadClientInfo();
         }
         
-        // Add a function to show a note if unit type campaign is selected
+        // Add a function to show a note based on campaign type
         function showUnitTypeNote() {
             const campaignId = keywordCampaignSelect.value;
-            const noteId = 'unit-type-note';
+            const noteId = 'campaign-type-note';
             let note = document.getElementById(noteId);
-            if (campaignId && campaignsData[campaignId] && campaignsData[campaignId].isUnitType) {
-                if (!note) {
-                    note = document.createElement('div');
-                    note.id = noteId;
+            
+            // Remove existing note
+            if (note) note.remove();
+            
+            if (campaignId && campaignsData[campaignId]) {
+                const campaign = campaignsData[campaignId];
+                note = document.createElement('div');
+                note.id = noteId;
+                note.style.padding = '10px';
+                note.style.margin = '10px 0';
+                note.style.borderRadius = '4px';
+                
+                if (campaign.isUnitType) {
                     note.style.background = '#fffbe6';
                     note.style.border = '1px solid #ffe58f';
-                    note.style.padding = '10px';
-                    note.style.margin = '10px 0';
-                    note.style.borderRadius = '4px';
                     note.style.color = '#ad8b00';
                     note.innerHTML = '<b>Unit Type Campaign:</b> Keyword generation will be strictly based on the ad group name (e.g., "Three Bedroom Homes").';
-                    keywordCampaignSelect.parentElement.parentElement.insertBefore(note, keywordCampaignSelect.parentElement.nextSibling);
+                } else {
+                    note.style.background = '#e8f5e8';
+                    note.style.border = '1px solid #4caf50';
+                    note.style.color = '#2e7d32';
+                    note.innerHTML = '<b>General Search Campaign:</b> Keyword generation will focus on location-based terms covering Location, New Apts, Near, and Access To classifications. The "Location" ad group has been automatically created.';
                 }
-            } else {
-                if (note) note.remove();
+                
+                keywordCampaignSelect.parentElement.parentElement.insertBefore(note, keywordCampaignSelect.parentElement.nextSibling);
             }
         }
         

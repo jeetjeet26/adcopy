@@ -17,11 +17,87 @@ class SemrushConnector {
      */
     async analyzeClientInfo(clientInfo, campaignContext = null, adGroupContext = null) {
         try {
+            console.log('\n=== ANALYZE CLIENT INFO ===');
+            console.log('Input clientInfo:', clientInfo);
+            console.log('Input campaignContext:', campaignContext);
+            console.log('Input adGroupContext:', adGroupContext);
+            
             // Check if this is a unit type campaign (empty clientInfo and campaignContext, only adGroupContext.name)
             const isUnitTypeCampaign = (!clientInfo || Object.keys(clientInfo).length === 0) && 
                                        !campaignContext && 
                                        adGroupContext && 
                                        adGroupContext.name;
+
+            // Check if this is a General Search campaign (isUnitType=false) with Location ad group
+            const isGeneralSearchCampaign = campaignContext && 
+                                           campaignContext.isUnitType === false && 
+                                           adGroupContext && 
+                                           adGroupContext.name === 'Location';
+                                           
+            console.log('Campaign type detection:');
+            console.log('- isUnitTypeCampaign:', isUnitTypeCampaign);
+            console.log('- isGeneralSearchCampaign:', isGeneralSearchCampaign);
+            console.log('===========================\n');
+
+            if (isGeneralSearchCampaign) {
+                // For General Search campaigns, generate location-based keywords
+                console.log('General Search campaign detected. Generating location-based keywords.');
+                
+                const locationPrompt = [
+                    {
+                        role: "system",
+                        content: `You are a keyword research specialist for General Search real estate campaigns. Your task is to generate location-based keywords that cover the 4 main classifications:
+
+1. Location - Direct location-based terms
+2. New Apts - New apartment/property related terms
+3. Near - Proximity-based terms (near, close to, by)
+4. Access To - Access/connectivity terms (access to, walking distance to, minutes from)
+
+Generate keywords that attract users searching for apartments or homes with language about:
+- Nearby locations (downtown, neighborhoods, landmarks)
+- Public works (transit, utilities, infrastructure)
+- Schools (elementary, high school, college)
+- Amenities (shopping, dining, entertainment)
+- Must cover: client name, price point, amenities, nearby locations
+
+Return JSON with:
+- coreTopics: array of 4-6 location-based topics
+- industryTerms: array of 6-10 real estate location terms
+- seedKeywords: array of 15-20 location-focused keywords
+- targetingInsights: description of location targeting strategy`
+                    },
+                    {
+                        role: "user",
+                        content: `Generate General Search location-based keywords for:
+
+Client Information:
+- Client Name: ${clientInfo.clientName || clientInfo.name || 'Property Management'}
+- Location: ${clientInfo.geographicTargeting || 'Metropolitan Area'}
+- Industry: ${clientInfo.industry || 'Real Estate'}
+- Target Audience: ${clientInfo.targetAudience || 'Apartment/Home Seekers'}
+- Unique Selling Points: ${clientInfo.uniqueSellingPoints || 'Quality Living'}
+- Price Point: ${clientInfo.budget || 'Competitive Pricing'}
+
+Campaign Context:
+- Campaign Name: ${campaignContext.name}
+- Campaign Budget: ${campaignContext.budget || 'Not specified'}
+
+Focus on creating keywords that cover:
+1. **Location**: Direct location terms (e.g., "apartments downtown [city]", "[neighborhood] homes")
+2. **New Apts**: New construction terms (e.g., "new apartments [location]", "newly built homes")
+3. **Near**: Proximity terms (e.g., "apartments near [landmark]", "homes close to [area]")
+4. **Access To**: Connectivity terms (e.g., "apartments walking distance to [transit]", "homes with access to [amenities]")
+
+Generate keywords that would attract searchers looking for properties in the specified location with nearby amenities, schools, and public works.`
+                    }
+                ];
+
+                const analysis = await this.openaiConnector.generateResponse(locationPrompt, 'gpt-4o');
+                const analysisData = this.parseJsonResponse(analysis);
+                
+                console.log('General Search campaign analysis completed:', analysisData);
+                return analysisData;
+            }
 
             if (isUnitTypeCampaign) {
                 // For unit type campaigns, generate keywords strictly based on ad group name
@@ -257,8 +333,14 @@ Focus on extracting terms that would be valuable for finding relevant keywords i
      */
     async generateKeywordRecommendations(clientInfo, campaignContext = null, adGroupContext = null) {
         try {
+            console.log('\n=== SEMRUSH KEYWORD GENERATION ===');
+            console.log('Client info:', clientInfo);
+            console.log('Campaign context:', campaignContext);
+            console.log('Ad group context:', adGroupContext);
+            
             // Step 1: Analyze client info with campaign context to get search terms
             const analysis = await this.analyzeClientInfo(clientInfo, campaignContext, adGroupContext);
+            console.log('Analysis completed:', analysis);
             
             // Step 2: Combine all potential search terms
             const allSearchTerms = [
@@ -266,9 +348,11 @@ Focus on extracting terms that would be valuable for finding relevant keywords i
                 ...analysis.industryTerms,
                 ...analysis.seedKeywords
             ];
+            console.log('All search terms:', allSearchTerms);
 
             // Step 3: Get keyword suggestions from Semrush
             const keywordSuggestions = await this.getKeywordSuggestions(allSearchTerms);
+            console.log('Keyword suggestions from Semrush:', keywordSuggestions.length, 'keywords');
 
             // Step 4: Organize and categorize results with enhanced context
             const result = {

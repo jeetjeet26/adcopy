@@ -170,6 +170,13 @@ app.post('/api/generate-ad-copy', async (req, res) => {
 
 app.post('/api/generate-keywords', async (req, res) => {
     try {
+        console.log('\n=== KEYWORD GENERATION REQUEST ===');
+        console.log('Full request body:', JSON.stringify(req.body, null, 2));
+        console.log('Client info received:', req.body.clientInfo);
+        console.log('Campaign context received:', req.body.campaignContext);
+        console.log('Ad group context received:', req.body.adGroupContext);
+        console.log('===================================\n');
+        
         console.log('Generating keywords for client:', req.body.clientInfo?.clientName || 'Unknown');
         
         if (!semrushConnector) {
