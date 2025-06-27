@@ -7,6 +7,7 @@ require('dotenv').config();
 const OpenAIConfig = require('./openai_config');
 const OpenAIConnector = require('./openai_connector');
 const SemrushConnector = require('./semrush_connector');
+const DatabaseService = require('./database_service');
 const { handleError, AppError } = require('./error_handling');
 
 const app = express();
@@ -21,11 +22,25 @@ app.use(express.static(path.join(__dirname)));
 // Initialize services
 let openaiConnector;
 let semrushConnector;
+let databaseService;
 
 try {
     const config = new OpenAIConfig();
     openaiConnector = new OpenAIConnector(config);
     console.log('OpenAI connector initialized successfully');
+    
+    // Initialize Supabase database service
+    if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
+        databaseService = new DatabaseService();
+        console.log('Supabase database service initialized successfully');
+    } else {
+        console.warn('SUPABASE_URL or SUPABASE_ANON_KEY not found in environment variables.');
+        console.warn('Database operations will not be available.');
+        console.warn('To enable database operations:');
+        console.warn('1. Add SUPABASE_URL=your_supabase_url to your .env file');
+        console.warn('2. Add SUPABASE_ANON_KEY=your_supabase_anon_key to your .env file');
+        console.warn('3. Restart the server');
+    }
     
     // Initialize Semrush connector if API key is provided
     if (process.env.SEMRUSH_API_KEY) {
@@ -222,6 +237,341 @@ app.post('/api/generate-keywords', async (req, res) => {
         });
     } catch (error) {
         console.error('Error generating keywords:', error);
+        handleError(error, res);
+    }
+});
+
+// Database API endpoints
+app.post('/api/migrate-data', async (req, res) => {
+    try {
+        if (!databaseService) {
+            return res.status(503).json({
+                success: false,
+                message: 'Database service not available',
+                error: 'Supabase configuration required'
+            });
+        }
+
+        console.log('=== DATA MIGRATION REQUEST ===');
+        const { clientInfo, campaignsData } = req.body;
+        
+        if (!clientInfo || !campaignsData) {
+            return res.status(400).json({
+                success: false,
+                message: 'Client info and campaigns data required'
+            });
+        }
+
+        const result = await databaseService.migrateLocalStorageData(clientInfo, campaignsData);
+        
+        console.log('Migration completed successfully');
+        res.json({
+            success: true,
+            message: 'Data migrated successfully',
+            data: result
+        });
+        
+    } catch (error) {
+        console.error('Error during migration:', error);
+        handleError(error, res);
+    }
+});
+
+// Client endpoints
+app.get('/api/clients', async (req, res) => {
+    try {
+        if (!databaseService) {
+            return res.status(503).json({
+                success: false,
+                message: 'Database service not available'
+            });
+        }
+
+        const { data: clients, error } = await databaseService.supabase
+            .from('clients')
+            .select('id, name, website_url, industry, created_at')
+            .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        
+        res.json({
+            success: true,
+            data: clients
+        });
+        
+    } catch (error) {
+        console.error('Error fetching clients:', error);
+        handleError(error, res);
+    }
+});
+
+app.post('/api/clients', async (req, res) => {
+    try {
+        if (!databaseService) {
+            return res.status(503).json({
+                success: false,
+                message: 'Database service not available'
+            });
+        }
+
+        const clientData = req.body;
+        const client = await databaseService.createClient(clientData);
+        
+        res.json({
+            success: true,
+            data: client
+        });
+        
+    } catch (error) {
+        console.error('Error creating client:', error);
+        handleError(error, res);
+    }
+});
+
+app.get('/api/clients/:clientId', async (req, res) => {
+    try {
+        if (!databaseService) {
+            return res.status(503).json({
+                success: false,
+                message: 'Database service not available'
+            });
+        }
+
+        const { clientId } = req.params;
+        const client = await databaseService.getClientWithAllCampaigns(clientId);
+        
+        res.json({
+            success: true,
+            data: client
+        });
+        
+    } catch (error) {
+        console.error('Error fetching client:', error);
+        handleError(error, res);
+    }
+});
+
+app.get('/api/clients/:clientId/campaigns', async (req, res) => {
+    try {
+        if (!databaseService) {
+            return res.status(503).json({
+                success: false,
+                message: 'Database service not available'
+            });
+        }
+
+        const { clientId } = req.params;
+        const campaigns = await databaseService.getCampaignsByClient(clientId);
+        
+        res.json({
+            success: true,
+            data: campaigns
+        });
+        
+    } catch (error) {
+        console.error('Error fetching campaigns for client:', error);
+        handleError(error, res);
+    }
+});
+
+app.put('/api/clients/:clientId', async (req, res) => {
+    try {
+        if (!databaseService) {
+            return res.status(503).json({
+                success: false,
+                message: 'Database service not available'
+            });
+        }
+
+        const { clientId } = req.params;
+        const updates = req.body;
+        
+        const client = await databaseService.updateClient(clientId, updates);
+        
+        res.json({
+            success: true,
+            data: client
+        });
+        
+    } catch (error) {
+        console.error('Error updating client:', error);
+        handleError(error, res);
+    }
+});
+
+app.post('/api/campaigns', async (req, res) => {
+    try {
+        if (!databaseService) {
+            return res.status(503).json({
+                success: false,
+                message: 'Database service not available'
+            });
+        }
+
+        const campaignData = req.body;
+        const campaign = await databaseService.createCampaign(campaignData);
+        
+        res.json({
+            success: true,
+            data: campaign
+        });
+        
+    } catch (error) {
+        console.error('Error creating campaign:', error);
+        handleError(error, res);
+    }
+});
+
+app.get('/api/campaigns/:campaignId', async (req, res) => {
+    try {
+        if (!databaseService) {
+            return res.status(503).json({
+                success: false,
+                message: 'Database service not available'
+            });
+        }
+
+        const { campaignId } = req.params;
+        const campaign = await databaseService.getCampaignWithFullStructure(campaignId);
+        
+        res.json({
+            success: true,
+            data: campaign
+        });
+        
+    } catch (error) {
+        console.error('Error fetching campaign:', error);
+        handleError(error, res);
+    }
+});
+
+app.put('/api/campaigns/:campaignId', async (req, res) => {
+    try {
+        if (!databaseService) {
+            return res.status(503).json({
+                success: false,
+                message: 'Database service not available'
+            });
+        }
+
+        const { campaignId } = req.params;
+        const updates = req.body;
+        
+        const campaign = await databaseService.updateCampaign(campaignId, updates);
+        
+        res.json({
+            success: true,
+            data: campaign
+        });
+        
+    } catch (error) {
+        console.error('Error updating campaign:', error);
+        handleError(error, res);
+    }
+});
+
+app.delete('/api/campaigns/:campaignId', async (req, res) => {
+    try {
+        if (!databaseService) {
+            return res.status(503).json({
+                success: false,
+                message: 'Database service not available'
+            });
+        }
+
+        const { campaignId } = req.params;
+        await databaseService.deleteCampaign(campaignId);
+        
+        res.json({
+            success: true,
+            message: 'Campaign deleted successfully'
+        });
+        
+    } catch (error) {
+        console.error('Error deleting campaign:', error);
+        handleError(error, res);
+    }
+});
+
+app.post('/api/ad-groups', async (req, res) => {
+    try {
+        if (!databaseService) {
+            return res.status(503).json({
+                success: false,
+                message: 'Database service not available'
+            });
+        }
+
+        const adGroupData = req.body;
+        const adGroup = await databaseService.createAdGroup(adGroupData);
+        
+        res.json({
+            success: true,
+            data: adGroup
+        });
+        
+    } catch (error) {
+        console.error('Error creating ad group:', error);
+        handleError(error, res);
+    }
+});
+
+app.post('/api/keywords', async (req, res) => {
+    try {
+        if (!databaseService) {
+            return res.status(503).json({
+                success: false,
+                message: 'Database service not available'
+            });
+        }
+
+        const { adGroupId, keywords } = req.body;
+        
+        // Clear existing keywords for this ad group
+        await databaseService.deleteKeywordsByAdGroup(adGroupId);
+        
+        // Add new keywords
+        const keywordData = keywords.map(kw => ({
+            ad_group_id: adGroupId,
+            text: kw.text,
+            match_type: kw.matchType,
+            search_volume: kw.searchVolume || 0,
+            cpc: kw.cpc || 0,
+            competition: kw.competition || 0
+        }));
+        
+        const result = await databaseService.createKeywords(keywordData);
+        
+        res.json({
+            success: true,
+            data: result
+        });
+        
+    } catch (error) {
+        console.error('Error saving keywords:', error);
+        handleError(error, res);
+    }
+});
+
+app.post('/api/ads', async (req, res) => {
+    try {
+        if (!databaseService) {
+            return res.status(503).json({
+                success: false,
+                message: 'Database service not available'
+            });
+        }
+
+        const adData = req.body;
+        const ad = await databaseService.createAd(adData);
+        
+        res.json({
+            success: true,
+            data: ad
+        });
+        
+    } catch (error) {
+        console.error('Error creating ad:', error);
         handleError(error, res);
     }
 });

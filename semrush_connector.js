@@ -299,8 +299,12 @@ Focus on extracting terms that would be valuable for finding relevant keywords i
         for (const seedKeyword of seedKeywords) {
             promises.push(
                 this.searchKeywords(seedKeyword, database, limitPerKeyword)
+                    .then(results => {
+                        console.log(`✅ Keywords found for "${seedKeyword}": ${results.length}`);
+                        return results;
+                    })
                     .catch(error => {
-                        console.warn(`Failed to fetch keywords for "${seedKeyword}":`, error.message);
+                        console.warn(`❌ Failed to fetch keywords for "${seedKeyword}":`, error.message);
                         return []; // Return empty array on error to continue with other keywords
                     })
             );
@@ -400,23 +404,45 @@ Focus on extracting terms that would be valuable for finding relevant keywords i
      */
     parseKeywordData(rawData) {
         try {
+            console.log('=== PARSING RAW DATA ===');
+            console.log('Raw data:', rawData);
+            
+            // Check for error responses
+            if (rawData.includes('ERROR') || rawData.includes('NOTHING FOUND')) {
+                console.log('⚠️ Semrush returned error or no results:', rawData);
+                return [];
+            }
+            
             const lines = rawData.trim().split('\n');
+            console.log('Lines count:', lines.length);
+            console.log('Header:', lines[0]);
+            
             const keywords = [];
 
             for (let i = 1; i < lines.length; i++) { // Skip header row
                 const parts = lines[i].split(';');
-                if (parts.length >= 6) {
-                    keywords.push({
+                console.log(`Line ${i} parts (${parts.length}):`, parts);
+                
+                // Accept 5 or more columns (trends column might be missing)
+                if (parts.length >= 5) {
+                    const keyword = {
                         keyword: parts[0].replace(/"/g, ''),
                         searchVolume: parseInt(parts[1]) || 0,
                         cpc: parseFloat(parts[2]) || 0,
                         competition: parseFloat(parts[3]) || 0,
                         results: parseInt(parts[4]) || 0,
-                        intent: parts[5] || 'unknown'
-                    });
+                        intent: parts[5] || 'informational' // Default if trends column missing
+                    };
+                    
+                    console.log('✅ Parsed keyword:', keyword);
+                    keywords.push(keyword);
+                } else {
+                    console.log('❌ Skipping line with insufficient columns:', parts);
                 }
             }
 
+            console.log('Total parsed keywords:', keywords.length);
+            console.log('========================');
             return keywords;
         } catch (error) {
             console.error('Error parsing keyword data:', error);

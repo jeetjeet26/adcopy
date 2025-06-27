@@ -505,6 +505,86 @@
         .refresh-analysis-btn:hover {
             background-color: #2d9146;
         }
+
+        .client-selection-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .client-selector {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .current-client-indicator {
+            padding: 12px;
+            background-color: #e8f5e8;
+            border-left: 4px solid #34a853;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+
+        .sync-status.loading {
+            color: #fbbc04;
+        }
+
+        .sync-status.success {
+            color: #34a853;
+        }
+
+        .sync-status.error {
+            color: #ea4335;
+        }
+
+        .save-status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .btn-secondary {
+            background-color: #34a853;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-icon {
+            background-color: #fbbc04;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-save {
+            background-color: #4285f4;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .loading {
+            color: #fbbc04;
+        }
     </style>
 </head>
 <body>
@@ -523,50 +603,85 @@
             <!-- Client Information Tab -->
             <div id="client-info-tab" class="tab-content active">
                 <h2>Client Information</h2>
-                <div class="form-group">
-                    <label for="client-name">Client Name *</label>
-                    <input type="text" id="client-name" placeholder="e.g., AMLI Residential">
+                <p style="color: #666; margin-bottom: 20px;">Select an existing client or create a new one</p>
+                
+                <!-- Client Selection Section -->
+                <div class="client-selection-section" style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label for="client-selector">Select Client</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <select id="client-selector" class="client-selector" style="flex: 1;">
+                                <option value="">-- Select an existing client --</option>
+                            </select>
+                            <button type="button" id="new-client-btn" class="btn" style="background-color: #34a853; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer;">New Client</button>
+                            <button type="button" id="refresh-clients-btn" class="btn" style="background-color: #fbbc04; color: white; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer;" title="Refresh client list">🔄</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Current Client Indicator -->
+                    <div id="current-client-indicator" class="current-client-indicator" style="display: none; padding: 12px; background-color: #e8f5e8; border-left: 4px solid #34a853; border-radius: 4px; margin-top: 15px;">
+                        <span style="font-weight: bold;">👤 Working with: </span>
+                        <span id="current-client-name" style="color: #2e7d32;"></span>
+                        <span id="sync-status" style="margin-left: 10px; font-size: 12px;"></span>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="website-url">Website URL *</label>
-                    <input type="url" id="website-url" placeholder="e.g., https://www.example.com">
+                
+                <!-- Client Information Form -->
+                <div class="client-form-section">
+                    <div class="form-group">
+                        <label for="client-name">Client Name *</label>
+                        <input type="text" id="client-name" placeholder="e.g., AMLI Residential">
+                    </div>
+                    <div class="form-group">
+                        <label for="website-url">Website URL *</label>
+                        <input type="url" id="website-url" placeholder="e.g., https://www.example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="industry">Industry/Niche *</label>
+                        <input type="text" id="industry" placeholder="e.g., Real Estate, Healthcare, Technology">
+                    </div>
+                    <div class="form-group">
+                        <label for="target-audience">Target Audience (Demographics, Interests) *</label>
+                        <textarea id="target-audience" placeholder="e.g., Adults 25-45, homeowners, interested in luxury living"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="geographic-targeting">Geographic Targeting *</label>
+                        <input type="text" id="geographic-targeting" placeholder="e.g., Chicago, IL metropolitan area">
+                    </div>
+                    <div class="form-group">
+                        <label for="unique-selling-points">Unique Selling Points (3-5) *</label>
+                        <textarea id="unique-selling-points" placeholder="e.g., 1. Luxury finishes and modern amenities&#10;2. Prime downtown location&#10;3. 24/7 concierge service"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="competitors">Competitors (3-5)</label>
+                        <input type="text" id="competitors" placeholder="e.g., Competitor A, Competitor B, Competitor C">
+                    </div>
+                    <div class="form-group">
+                        <label for="brand-voice">Brand Voice/Tone *</label>
+                        <textarea id="brand-voice" placeholder="e.g., Professional, upscale, friendly"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="call-to-action">Call to Action Preferences *</label>
+                        <input type="text" id="call-to-action" placeholder="e.g., Schedule a tour, Contact us, Learn more">
+                    </div>
+                    <div class="form-group">
+                        <label for="budget">Budget Information</label>
+                        <input type="text" id="budget" placeholder="e.g., $5,000/month">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="industry">Industry/Niche *</label>
-                    <input type="text" id="industry" placeholder="e.g., Real Estate, Healthcare, Technology">
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons" style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+                    <button type="button" id="save-client-btn" class="btn" style="background-color: #4285f4; color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                        💾 Save Client
+                    </button>
+                    <div class="nav-buttons">
+                        <button class="next-btn" id="client-info-next">Next: Campaign Structure</button>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="target-audience">Target Audience (Demographics, Interests) *</label>
-                    <textarea id="target-audience" placeholder="e.g., Adults 25-45, homeowners, interested in luxury living"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="geographic-targeting">Geographic Targeting *</label>
-                    <input type="text" id="geographic-targeting" placeholder="e.g., Chicago, IL metropolitan area">
-                </div>
-                <div class="form-group">
-                    <label for="unique-selling-points">Unique Selling Points (3-5) *</label>
-                    <textarea id="unique-selling-points" placeholder="e.g., 1. Luxury finishes and modern amenities&#10;2. Prime downtown location&#10;3. 24/7 concierge service"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="competitors">Competitors (3-5)</label>
-                    <input type="text" id="competitors" placeholder="e.g., Competitor A, Competitor B, Competitor C">
-                </div>
-                <div class="form-group">
-                    <label for="brand-voice">Brand Voice/Tone *</label>
-                    <textarea id="brand-voice" placeholder="e.g., Professional, upscale, friendly"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="call-to-action">Call to Action Preferences *</label>
-                    <input type="text" id="call-to-action" placeholder="e.g., Schedule a tour, Contact us, Learn more">
-                </div>
-                <div class="form-group">
-                    <label for="budget">Budget Information</label>
-                    <input type="text" id="budget" placeholder="e.g., $5,000/month">
-                </div>
-                <div class="nav-buttons">
-                    <div></div>
-                    <button class="next-btn" id="client-info-next">Next: Campaign Structure</button>
-                </div>
+                
+                <!-- Save Status Indicator -->
+                <div id="save-status" class="save-status" style="display: none; margin-top: 15px; padding: 10px; border-radius: 4px; font-weight: bold;"></div>
             </div>
             
             <!-- Campaign Structure Tab -->
@@ -678,10 +793,18 @@
                     
                     <div id="keyword-suggestions" style="display: none; margin-top: 15px;">
                         <h4>Keyword Suggestions</h4>
+                        <div style="margin-bottom: 10px;">
+                            <button id="save-selected-keywords-btn" style="background-color: #28a745; color: white;">Save Selected Keywords</button>
+                            <button id="select-all-keywords-btn" style="background-color: #6c757d; color: white; margin-left: 10px;">Select All</button>
+                            <button id="clear-selection-btn" style="background-color: #dc3545; color: white; margin-left: 10px;">Clear Selection</button>
+                        </div>
                         <div style="overflow-x: auto; max-height: 500px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px;">
                             <table id="keywords-table" style="width: 100%; border-collapse: collapse; margin-top: 0;">
                                 <thead>
                                     <tr style="background-color: #f5f5f5; border-bottom: 2px solid #ddd;">
+                                        <th style="padding: 10px; text-align: center; border-right: 1px solid #ddd;">
+                                            <input type="checkbox" id="select-all-checkbox">
+                                        </th>
                                         <th class="sortable" data-sort="type" style="padding: 10px; text-align: left; cursor: pointer; border-right: 1px solid #ddd;">
                                             Type <span class="sort-arrow">↕</span>
                                         </th>
@@ -737,6 +860,9 @@
                     </div>
                     <div class="col-50">
                         <h3>Keyword List</h3>
+                        <div style="margin-bottom: 10px;">
+                            <button id="save-keywords-to-db-btn" style="background-color: #1a73e8; color: white; display: none;">Save Keywords to Database</button>
+                        </div>
                         <div id="keyword-list-container">
                             <div class="keyword-list">
                                 <p>Select an ad group to view keywords</p>
@@ -769,87 +895,73 @@
                             </select>
                         </div>
                         <button id="generate-ad-copy">Generate Ad Copy</button>
+                        <button id="optimize-headlines" style="margin-left: 10px;">🔧 Optimize Headlines</button>
                         
                         <div id="loading-ad-copy" class="loading">
                             <div class="loading-spinner"></div>
                             <p>Generating AI-powered ad copy...</p>
                         </div>
                         
+                        <div id="optimization-feedback" style="margin-top: 10px; padding: 10px; border-radius: 4px; display: none;">
+                            <h4>✅ Headline Optimization Results</h4>
+                            <div id="optimization-details"></div>
+                        </div>
+                        
                         <h4>Headlines</h4>
                         <div class="form-group">
-                            <label for="headline1">Headline 1 (25-30 chars)</label>
+                            <label for="headline1">Headline 1 (30 char max)</label>
                             <input type="text" id="headline1" maxlength="30">
                             <div class="character-count" id="headline1-count">0/30</div>
                         </div>
                         <div class="form-group">
-                            <label for="headline2">Headline 2 (25-30 chars)</label>
+                            <label for="headline2">Headline 2 (30 char max)</label>
                             <input type="text" id="headline2" maxlength="30">
                             <div class="character-count" id="headline2-count">0/30</div>
                         </div>
                         <div class="form-group">
-                            <label for="headline3">Headline 3 (25-30 chars)</label>
+                            <label for="headline3">Headline 3 (30 char max)</label>
                             <input type="text" id="headline3" maxlength="30">
                             <div class="character-count" id="headline3-count">0/30</div>
                         </div>
                         <div class="form-group">
-                            <label for="headline4">Headline 4 (25-30 chars)</label>
+                            <label for="headline4">Headline 4 (30 char max)</label>
                             <input type="text" id="headline4" maxlength="30">
                             <div class="character-count" id="headline4-count">0/30</div>
                         </div>
                         <div class="form-group">
-                            <label for="headline5">Headline 5 (25-30 chars)</label>
+                            <label for="headline5">Headline 5 (30 char max)</label>
                             <input type="text" id="headline5" maxlength="30">
                             <div class="character-count" id="headline5-count">0/30</div>
                         </div>
                         <div class="form-group">
-                            <label for="headline6">Headline 6 (25-30 chars)</label>
+                            <label for="headline6">Headline 6 (30 char max)</label>
                             <input type="text" id="headline6" maxlength="30">
                             <div class="character-count" id="headline6-count">0/30</div>
                         </div>
                         <div class="form-group">
-                            <label for="headline7">Headline 7 (25-30 chars)</label>
+                            <label for="headline7">Headline 7 (30 char max)</label>
                             <input type="text" id="headline7" maxlength="30">
                             <div class="character-count" id="headline7-count">0/30</div>
                         </div>
                         <div class="form-group">
-                            <label for="headline8">Headline 8 (25-30 chars)</label>
+                            <label for="headline8">Headline 8 (30 char max)</label>
                             <input type="text" id="headline8" maxlength="30">
                             <div class="character-count" id="headline8-count">0/30</div>
                         </div>
                         <div class="form-group">
-                            <label for="headline9">Headline 9 (25-30 chars)</label>
+                            <label for="headline9">Headline 9 (30 char max)</label>
                             <input type="text" id="headline9" maxlength="30">
                             <div class="character-count" id="headline9-count">0/30</div>
                         </div>
                         <div class="form-group">
-                            <label for="headline10">Headline 10 (25-30 chars)</label>
+                            <label for="headline10">Headline 10 (30 char max)</label>
                             <input type="text" id="headline10" maxlength="30">
                             <div class="character-count" id="headline10-count">0/30</div>
                         </div>
                         <div class="form-group">
-                            <label for="headline11">Headline 11 (25-30 chars)</label>
+                            <label for="headline11">Headline 11 (30 char max)</label>
                             <input type="text" id="headline11" maxlength="30">
                             <div class="character-count" id="headline11-count">0/30</div>
-                        </div>
-                        <div class="form-group">
-                            <label for="headline12">Headline 12 (25-30 chars)</label>
-                            <input type="text" id="headline12" maxlength="30">
-                            <div class="character-count" id="headline12-count">0/30</div>
-                        </div>
-                        <div class="form-group">
-                            <label for="headline13">Headline 13 (25-30 chars)</label>
-                            <input type="text" id="headline13" maxlength="30">
-                            <div class="character-count" id="headline13-count">0/30</div>
-                        </div>
-                        <div class="form-group">
-                            <label for="headline14">Headline 14 (25-30 chars)</label>
-                            <input type="text" id="headline14" maxlength="30">
-                            <div class="character-count" id="headline14-count">0/30</div>
-                        </div>
-                        <div class="form-group">
-                            <label for="headline15">Headline 15 (25-30 chars)</label>
-                            <input type="text" id="headline15" maxlength="30">
-                            <div class="character-count" id="headline15-count">0/30</div>
                         </div>
                         
                         <h4>Descriptions</h4>
@@ -964,6 +1076,7 @@
     <script src="openai_config.js"></script>
     <script src="openai_connector.js"></script>
     <script src="agentic_ad_copy_generator.js"></script>
+    <script src="database_client.js"></script>
     <script src="error_handling.js"></script>
     
     <script>
@@ -1027,6 +1140,7 @@
         const adCampaignSelect = document.getElementById('ad-campaign-select');
         const adGroupSelect = document.getElementById('ad-group-select');
         const generateAdCopyBtn = document.getElementById('generate-ad-copy');
+        const optimizeHeadlinesBtn = document.getElementById('optimize-headlines');
         const loadingAdCopy = document.getElementById('loading-ad-copy');
         const headline1 = document.getElementById('headline1');
         const headline2 = document.getElementById('headline2');
@@ -1039,10 +1153,6 @@
         const headline9 = document.getElementById('headline9');
         const headline10 = document.getElementById('headline10');
         const headline11 = document.getElementById('headline11');
-        const headline12 = document.getElementById('headline12');
-        const headline13 = document.getElementById('headline13');
-        const headline14 = document.getElementById('headline14');
-        const headline15 = document.getElementById('headline15');
         const description1 = document.getElementById('description1');
         const description2 = document.getElementById('description2');
         const description3 = document.getElementById('description3');
@@ -1058,10 +1168,6 @@
         const headline9Count = document.getElementById('headline9-count');
         const headline10Count = document.getElementById('headline10-count');
         const headline11Count = document.getElementById('headline11-count');
-        const headline12Count = document.getElementById('headline12-count');
-        const headline13Count = document.getElementById('headline13-count');
-        const headline14Count = document.getElementById('headline14-count');
-        const headline15Count = document.getElementById('headline15-count');
         const description1Count = document.getElementById('description1-count');
         const description2Count = document.getElementById('description2-count');
         const description3Count = document.getElementById('description3-count');
@@ -1087,6 +1193,15 @@
         const exportResult = document.getElementById('export-result');
         
         // Client Information elements
+        const clientSelector = document.getElementById('client-selector');
+        const newClientBtn = document.getElementById('new-client-btn');
+        const refreshClientsBtn = document.getElementById('refresh-clients-btn');
+        const currentClientIndicator = document.getElementById('current-client-indicator');
+        const currentClientName = document.getElementById('current-client-name');
+        const syncStatus = document.getElementById('sync-status');
+        const saveClientBtn = document.getElementById('save-client-btn');
+        const saveStatus = document.getElementById('save-status');
+        
         const clientName = document.getElementById('client-name');
         const websiteUrl = document.getElementById('website-url');
         const industry = document.getElementById('industry');
@@ -1102,10 +1217,23 @@
         let campaignsData = {};
         window.campaignsData = campaignsData; // Make it globally accessible
         
+        // Database Client
+        let databaseClient = new DatabaseClient();
+        window.databaseClient = databaseClient; // Make it globally accessible
+        
         // Initialize the application
-        function init() {
-            // Load data from localStorage if available
-            loadData();
+        async function init() {
+            // Initialize database client
+            await initializeDatabaseClient();
+            
+            // Set up client management
+            setupClientManagement();
+            
+            // Check for data migration opportunities
+            checkForDataMigration();
+            
+            // Load data from Supabase or localStorage
+            await loadData();
             
             // Set up tab navigation
             setupTabs();
@@ -1133,6 +1261,152 @@
             updateSelects();
         }
         
+        // Check for data migration opportunities
+        function checkForDataMigration() {
+            if (databaseClient.hasLocalStorageData() && !databaseClient.isUsingSupabase()) {
+                showMigrationNotification();
+            } else if (databaseClient.isUsingSupabase()) {
+                loadDataFromSupabase();
+            }
+        }
+        
+        // Show migration notification
+        function showMigrationNotification() {
+            const notification = document.createElement('div');
+            notification.id = 'migration-notification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: linear-gradient(135deg, #4285f4, #34a853);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 1000;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                max-width: 90%;
+                text-align: center;
+            `;
+            
+            notification.innerHTML = `
+                <div style="margin-bottom: 10px;">
+                    <strong>🚀 Upgrade Available!</strong>
+                </div>
+                <div style="margin-bottom: 15px; font-size: 14px;">
+                    Migrate your local data to Supabase for cloud storage, multi-device access, and better reliability.
+                </div>
+                <button onclick="performMigration()" style="background: white; color: #4285f4; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-right: 10px; font-weight: bold;">
+                    Migrate Now
+                </button>
+                <button onclick="dismissMigrationNotification()" style="background: transparent; color: white; border: 1px solid white; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                    Later
+                </button>
+            `;
+            
+            document.body.appendChild(notification);
+        }
+        
+        // Perform data migration
+        async function performMigration() {
+            const notification = document.getElementById('migration-notification');
+            if (notification) {
+                notification.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <div style="margin-right: 10px;">🔄</div>
+                        <div>Migrating your data to Supabase...</div>
+                    </div>
+                `;
+            }
+            
+            try {
+                const result = await databaseClient.migrateLocalStorageData();
+                
+                if (notification) {
+                    notification.innerHTML = `
+                        <div style="margin-bottom: 10px;">
+                            <strong>✅ Migration Successful!</strong>
+                        </div>
+                        <div style="margin-bottom: 15px; font-size: 14px;">
+                            Your data has been successfully migrated to Supabase. You can now access it from any device!
+                        </div>
+                        <button onclick="dismissMigrationNotification(); loadDataFromSupabase();" style="background: white; color: #4285f4; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                            Continue
+                        </button>
+                    `;
+                }
+                
+                console.log('Migration successful:', result);
+            } catch (error) {
+                console.error('Migration failed:', error);
+                
+                if (notification) {
+                    notification.innerHTML = `
+                        <div style="margin-bottom: 10px;">
+                            <strong>❌ Migration Failed</strong>
+                        </div>
+                        <div style="margin-bottom: 15px; font-size: 14px;">
+                            ${error.message || 'An error occurred during migration. Please try again.'}
+                        </div>
+                        <button onclick="performMigration()" style="background: white; color: #4285f4; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-right: 10px; font-weight: bold;">
+                            Retry
+                        </button>
+                        <button onclick="dismissMigrationNotification()" style="background: transparent; color: white; border: 1px solid white; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                            Cancel
+                        </button>
+                    `;
+                }
+            }
+        }
+        
+        // Load data from Supabase
+        async function loadDataFromSupabase() {
+            try {
+                const client = await databaseClient.getCurrentClient();
+                if (client) {
+                    const { clientInfo, campaignsData: supabaseCampaignsData } = databaseClient.convertSupabaseToLocalFormat(client);
+                    
+                    // Update the form fields with client info
+                    updateClientInfoForm(clientInfo);
+                    
+                    // Update campaigns data
+                    campaignsData = supabaseCampaignsData;
+                    window.campaignsData = campaignsData;
+                    
+                    // Re-render the UI
+                    renderCampaigns();
+                    updateSelects();
+                    
+                    console.log('Data loaded from Supabase successfully');
+                }
+            } catch (error) {
+                console.error('Error loading data from Supabase:', error);
+            }
+        }
+        
+        // Update client info form
+        function updateClientInfoForm(clientInfo) {
+            if (clientName) clientName.value = clientInfo.clientName || '';
+            if (websiteUrl) websiteUrl.value = clientInfo.websiteUrl || '';
+            if (industry) industry.value = clientInfo.industry || '';
+            if (targetAudience) targetAudience.value = clientInfo.targetAudience || '';
+            if (geographicTargeting) geographicTargeting.value = clientInfo.geographicTargeting || '';
+            if (uniqueSellingPoints) uniqueSellingPoints.value = clientInfo.uniqueSellingPoints || '';
+            if (competitors) competitors.value = clientInfo.competitors || '';
+            if (brandVoice) brandVoice.value = clientInfo.brandVoice || '';
+            if (callToAction) callToAction.value = clientInfo.callToAction || '';
+            if (budget) budget.value = clientInfo.budget || '';
+        }
+        
+        // Dismiss migration notification
+        function dismissMigrationNotification() {
+            const notification = document.getElementById('migration-notification');
+            if (notification) {
+                notification.remove();
+            }
+        }
+        
         // Tab Navigation
         function setupTabs() {
             tabLinks.forEach(link => {
@@ -1151,10 +1425,208 @@
             });
         }
         
+        // Initialize Database Client
+        async function initializeDatabaseClient() {
+            await databaseClient.initializeSupabaseStatus();
+            await loadClientsDropdown();
+        }
+
+        // Client Management Setup
+        function setupClientManagement() {
+            // Client selector change
+            clientSelector.addEventListener('change', async () => {
+                const clientId = clientSelector.value;
+                if (clientId) {
+                    await loadSelectedClient(clientId);
+                }
+            });
+
+            // New client button
+            newClientBtn.addEventListener('click', () => {
+                clearClientForm();
+                databaseClient.clearCurrentClient();
+                updateCurrentClientIndicator();
+                clientSelector.value = '';
+            });
+
+            // Refresh clients button
+            refreshClientsBtn.addEventListener('click', () => {
+                loadClientsDropdown();
+            });
+
+            // Save client button
+            saveClientBtn.addEventListener('click', async () => {
+                await saveClientInfo();
+            });
+
+            // Auto-save on form changes (debounced)
+            let saveTimeout;
+            const formElements = [clientName, websiteUrl, industry, targetAudience, geographicTargeting, uniqueSellingPoints, competitors, brandVoice, callToAction, budget];
+            formElements.forEach(element => {
+                element.addEventListener('input', () => {
+                    showSaveStatus('Modified...', 'warning');
+                    clearTimeout(saveTimeout);
+                    saveTimeout = setTimeout(() => {
+                        if (databaseClient.currentClientId) {
+                            saveClientInfo(true); // Auto-save
+                        }
+                    }, 3000);
+                });
+            });
+        }
+
+        // Load clients dropdown
+        async function loadClientsDropdown() {
+            try {
+                if (!databaseClient.isSupabaseEnabled) {
+                    clientSelector.style.display = 'none';
+                    newClientBtn.textContent = 'Create Client';
+                    return;
+                }
+
+                showSyncStatus('Loading clients...', 'loading');
+                const clients = await databaseClient.getAllClients();
+                
+                clientSelector.innerHTML = '<option value="">-- Select an existing client --</option>';
+                clients.forEach(client => {
+                    const option = document.createElement('option');
+                    option.value = client.id;
+                    option.textContent = `${client.name} (${client.industry || 'No industry'})`;
+                    clientSelector.appendChild(option);
+                });
+
+                // Select current client if exists
+                if (databaseClient.currentClientId) {
+                    clientSelector.value = databaseClient.currentClientId;
+                    updateCurrentClientIndicator();
+                }
+
+                showSyncStatus('', '');
+            } catch (error) {
+                console.error('Error loading clients:', error);
+                showSyncStatus('Error loading clients', 'error');
+            }
+        }
+
+        // Load selected client
+        async function loadSelectedClient(clientId) {
+            try {
+                showSyncStatus('Loading client data...', 'loading');
+                const client = await databaseClient.setCurrentClient(clientId);
+                
+                if (client) {
+                    const { clientInfo } = databaseClient.convertSupabaseToLocalFormat(client);
+                    updateClientInfoForm(clientInfo);
+                    updateCurrentClientIndicator();
+                    showSyncStatus('Loaded', 'success');
+                    showSaveStatus('Client loaded successfully', 'success');
+                    
+                    // Load campaigns for this client
+                    await loadCampaignsForCurrentClient();
+                } else {
+                    showSyncStatus('Error', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading client:', error);
+                showSyncStatus('Error', 'error');
+                showSaveStatus(`Error loading client: ${error.message}`, 'error');
+            }
+        }
+
+        // Load campaigns for current client
+        async function loadCampaignsForCurrentClient() {
+            try {
+                if (!databaseClient.currentClientId) return;
+                
+                const client = await databaseClient.getCurrentClient();
+                if (client && client.campaigns) {
+                    const { campaignsData: supabaseCampaignsData } = databaseClient.convertSupabaseToLocalFormat(client);
+                    campaignsData = supabaseCampaignsData;
+                    window.campaignsData = campaignsData;
+                    
+                    renderCampaigns();
+                    updateSelects();
+                }
+            } catch (error) {
+                console.error('Error loading campaigns:', error);
+            }
+        }
+
+        // Clear client form
+        function clearClientForm() {
+            clientName.value = '';
+            websiteUrl.value = '';
+            industry.value = '';
+            targetAudience.value = '';
+            geographicTargeting.value = '';
+            uniqueSellingPoints.value = '';
+            competitors.value = '';
+            brandVoice.value = '';
+            callToAction.value = '';
+            budget.value = '';
+        }
+
+        // Update current client indicator
+        function updateCurrentClientIndicator() {
+            if (databaseClient.currentClient) {
+                currentClientIndicator.style.display = 'block';
+                currentClientName.textContent = databaseClient.currentClient.name;
+                showSyncStatus('✅ Connected', 'success');
+            } else {
+                currentClientIndicator.style.display = 'none';
+            }
+        }
+
+        // Show sync status
+        function showSyncStatus(message, type) {
+            if (!message) {
+                syncStatus.textContent = '';
+                return;
+            }
+
+            syncStatus.textContent = message;
+            syncStatus.className = `sync-status ${type}`;
+            
+            const colors = {
+                loading: '#fbbc04',
+                success: '#34a853',
+                error: '#ea4335',
+                warning: '#ff9800'
+            };
+            
+            syncStatus.style.color = colors[type] || '#666';
+        }
+
+        // Show save status
+        function showSaveStatus(message, type) {
+            if (!message) {
+                saveStatus.style.display = 'none';
+                return;
+            }
+
+            saveStatus.style.display = 'block';
+            saveStatus.textContent = message;
+            
+            const styles = {
+                success: { backgroundColor: '#d4edda', color: '#155724', border: '1px solid #c3e6cb' },
+                error: { backgroundColor: '#f8d7da', color: '#721c24', border: '1px solid #f5c6cb' },
+                warning: { backgroundColor: '#fff3cd', color: '#856404', border: '1px solid #ffeaa7' },
+                loading: { backgroundColor: '#d1ecf1', color: '#0c5460', border: '1px solid #bee5eb' }
+            };
+            
+            const style = styles[type] || styles.loading;
+            Object.assign(saveStatus.style, style);
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    saveStatus.style.display = 'none';
+                }, 3000);
+            }
+        }
+
         // Navigation Buttons
         function setupNavigation() {
             clientInfoNextBtn.addEventListener('click', () => {
-                saveClientInfo();
                 navigateToTab('campaign-structure');
             });
             
@@ -1216,15 +1688,14 @@
             });
             
             // Campaign form handlers
-            saveCampaignBtn.addEventListener('click', () => {
+            saveCampaignBtn.addEventListener('click', async () => {
                 if (validateCampaignForm()) {
                     const campaignName = campaignNameInput.value.trim();
                     const isUnitType = unitTypeCheckbox.checked;
-                    addCampaign(campaignName, isUnitType);
-                    showCampaignFormMessage('Campaign created successfully!');
+                    await addCampaign(campaignName, isUnitType);
                     setTimeout(() => {
                         hideForms();
-                    }, 1500);
+                    }, 2000);
                 }
             });
             
@@ -1304,8 +1775,11 @@
             return isValid;
         }
         
-        function showCampaignFormMessage(message) {
+        function showCampaignFormMessage(message, type = 'success') {
             campaignFormMessage.textContent = message;
+            campaignFormMessage.className = type === 'error' ? 'error' : 
+                                          type === 'loading' ? 'loading' : 'success';
+            campaignFormMessage.style.display = 'block';
         }
         
         function showAdGroupFormMessage(message) {
@@ -1327,32 +1801,90 @@
             }
         }
         
-        function addCampaign(name, isUnitType = false) {
-            const campaignId = 'campaign' + (Object.keys(campaignsData).length + 1);
-            const clientInfo = getClientInfo();
-            campaignsData[campaignId] = {
-                name: name,
-                adGroups: {},
-                keywords: {},
-                ads: {},
-                isUnitType: isUnitType,
-                budget: clientInfo.budget || ''
-            };
-            
-            // For General Search campaigns (isUnitType=false), automatically create "Location" ad group
-            if (!isUnitType) {
-                const locationAdGroupId = 'adgroup_location_' + Date.now();
-                campaignsData[campaignId].adGroups[locationAdGroupId] = {
-                    name: 'Location',
-                    keywords: [],
-                    ads: [],
-                    isLocationAdGroup: true // Flag to identify this as the special location ad group
+        async function addCampaign(name, isUnitType = false) {
+            try {
+                if (!databaseClient.currentClientId && databaseClient.isSupabaseEnabled) {
+                    showCampaignFormMessage('Please select or create a client first before creating campaigns.', 'error');
+                    return;
+                }
+
+                showCampaignFormMessage('Creating campaign...', 'loading');
+
+                const campaignData = {
+                    name: name,
+                    isUnitType: isUnitType,
+                    objective: '',
+                    budget: null
                 };
+
+                if (databaseClient.isSupabaseEnabled && databaseClient.currentClientId) {
+                    // Save to Supabase
+                    const savedCampaign = await databaseClient.saveCampaign(campaignData);
+                    
+                    // Add to local data
+                    campaignsData[savedCampaign.id] = {
+                        name: savedCampaign.name,
+                        isUnitType: savedCampaign.is_unit_type,
+                        adGroups: {},
+                        keywords: {},
+                        ads: {},
+                        budget: savedCampaign.budget || ''
+                    };
+
+                    // If it's not a unit type campaign, auto-create "Location" ad group
+                    if (!isUnitType) {
+                        const locationAdGroupData = {
+                            campaign_id: savedCampaign.id,
+                            name: 'Location',
+                            theme: 'Location-based targeting',
+                            target_audience: '',
+                            is_location_ad_group: true
+                        };
+                        
+                        const locationAdGroup = await databaseClient.createAdGroup(locationAdGroupData);
+                        campaignsData[savedCampaign.id].adGroups[locationAdGroup.id] = {
+                            name: 'Location',
+                            keywords: [],
+                            ads: [],
+                            isLocationAdGroup: true
+                        };
+                    }
+
+                    showCampaignFormMessage('Campaign created successfully in database!', 'success');
+                } else {
+                    // Fall back to localStorage
+                    const campaignId = 'campaign' + (Object.keys(campaignsData).length + 1);
+                    const clientInfo = getClientInfo();
+                    campaignsData[campaignId] = {
+                        name: name,
+                        adGroups: {},
+                        keywords: {},
+                        ads: {},
+                        isUnitType: isUnitType,
+                        budget: clientInfo.budget || ''
+                    };
+
+                    if (!isUnitType) {
+                        const locationAdGroupId = 'adgroup_location_' + Date.now();
+                        campaignsData[campaignId].adGroups[locationAdGroupId] = {
+                            name: 'Location',
+                            keywords: [],
+                            ads: [],
+                            isLocationAdGroup: true
+                        };
+                    }
+
+                    saveData(); // Only save to localStorage when not using Supabase
+                    showCampaignFormMessage('Campaign created locally!', 'success');
+                }
+                
+                renderCampaigns();
+                updateSelects();
+                
+            } catch (error) {
+                console.error('Error creating campaign:', error);
+                showCampaignFormMessage(`Error creating campaign: ${error.message}`, 'error');
             }
-            
-            saveData();
-            renderCampaigns();
-            updateSelects();
         }
         
         function addAdGroup(campaignId, name) {
@@ -1612,7 +2144,130 @@
                 clearSuggestionsBtn.style.display = 'none';
             });
             
-            addKeywordsBtn.addEventListener('click', () => {
+            // Save Selected Keywords functionality
+            const saveSelectedKeywordsBtn = document.getElementById('save-selected-keywords-btn');
+            const selectAllKeywordsBtn = document.getElementById('select-all-keywords-btn');
+            const clearSelectionBtn = document.getElementById('clear-selection-btn');
+            const selectAllCheckbox = document.getElementById('select-all-checkbox');
+            
+            saveSelectedKeywordsBtn.addEventListener('click', async () => {
+                const campaignId = keywordCampaignSelect.value;
+                const adGroupId = keywordAdGroupSelect.value;
+                
+                if (!campaignId || !adGroupId) {
+                    alert('Please select a campaign and ad group first.');
+                    return;
+                }
+                
+                const selectedCheckboxes = document.querySelectorAll('.keyword-select-checkbox:checked');
+                if (selectedCheckboxes.length === 0) {
+                    alert('Please select at least one keyword to save.');
+                    return;
+                }
+                
+                const selectedKeywords = Array.from(selectedCheckboxes).map(checkbox => {
+                    return {
+                        text: checkbox.getAttribute('data-keyword'),
+                        matchType: checkbox.getAttribute('data-match-type')
+                    };
+                });
+                
+                try {
+                    // Save to local storage and Supabase
+                    if (!campaignsData[campaignId].keywords) {
+                        campaignsData[campaignId].keywords = {};
+                    }
+                    if (!campaignsData[campaignId].keywords[adGroupId]) {
+                        campaignsData[campaignId].keywords[adGroupId] = [];
+                    }
+                    
+                    // Add selected keywords to local storage
+                    selectedKeywords.forEach(kw => {
+                        campaignsData[campaignId].keywords[adGroupId].push(kw);
+                    });
+                    
+                    // Save to Supabase if enabled, otherwise localStorage
+                    if (databaseClient && databaseClient.isSupabaseEnabled) {
+                        try {
+                            const allKeywords = campaignsData[campaignId].keywords[adGroupId] || [];
+                            await databaseClient.saveKeywords(adGroupId, allKeywords);
+                            console.log('Keywords saved to Supabase successfully');
+                        } catch (error) {
+                            console.error('Error saving keywords to Supabase:', error);
+                            alert(`Keywords saved locally but failed to save to database: ${error.message}`);
+                            saveData(); // Fallback to localStorage on error
+                        }
+                    } else {
+                        saveData(); // Only save to localStorage when not using Supabase
+                    }
+                    
+                    // Update the keyword list display
+                    updateKeywordList();
+                    
+                    // Clear selections
+                    selectedCheckboxes.forEach(checkbox => checkbox.checked = false);
+                    selectAllCheckbox.checked = false;
+                    
+                    alert(`Successfully saved ${selectedKeywords.length} keywords!`);
+                    
+                } catch (error) {
+                    console.error('Error saving selected keywords:', error);
+                    alert(`Error saving keywords: ${error.message}`);
+                }
+            });
+            
+            selectAllKeywordsBtn.addEventListener('click', () => {
+                const checkboxes = document.querySelectorAll('.keyword-select-checkbox');
+                checkboxes.forEach(checkbox => checkbox.checked = true);
+                selectAllCheckbox.checked = true;
+            });
+            
+            clearSelectionBtn.addEventListener('click', () => {
+                const checkboxes = document.querySelectorAll('.keyword-select-checkbox');
+                checkboxes.forEach(checkbox => checkbox.checked = false);
+                selectAllCheckbox.checked = false;
+            });
+            
+            selectAllCheckbox.addEventListener('change', () => {
+                const checkboxes = document.querySelectorAll('.keyword-select-checkbox');
+                checkboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
+            });
+            
+            // Save Keywords to Database button
+            const saveKeywordsToDbBtn = document.getElementById('save-keywords-to-db-btn');
+            saveKeywordsToDbBtn.addEventListener('click', async () => {
+                const campaignId = keywordCampaignSelect.value;
+                const adGroupId = keywordAdGroupSelect.value;
+                
+                if (!campaignId || !adGroupId) {
+                    alert('Please select a campaign and ad group first.');
+                    return;
+                }
+                
+                if (!databaseClient || !databaseClient.isSupabaseEnabled) {
+                    alert('Database connection is not available.');
+                    return;
+                }
+                
+                const keywords = campaignsData[campaignId].keywords && 
+                                campaignsData[campaignId].keywords[adGroupId] ? 
+                                campaignsData[campaignId].keywords[adGroupId] : [];
+                
+                if (keywords.length === 0) {
+                    alert('No keywords to save for this ad group.');
+                    return;
+                }
+                
+                try {
+                    await databaseClient.saveKeywords(adGroupId, keywords);
+                    alert(`Successfully saved ${keywords.length} keywords to the database!`);
+                } catch (error) {
+                    console.error('Error saving keywords to database:', error);
+                    alert(`Error saving keywords to database: ${error.message}`);
+                }
+            });
+            
+            addKeywordsBtn.addEventListener('click', async () => {
                 const campaignId = keywordCampaignSelect.value;
                 const adGroupId = keywordAdGroupSelect.value;
                 const keywords = keywordsInput.value.trim().split('\n').filter(k => k.trim() !== '');
@@ -1637,7 +2292,7 @@
                     return;
                 }
                 
-                addKeywords(campaignId, adGroupId, keywords, matchTypes);
+                await addKeywords(campaignId, adGroupId, keywords, matchTypes);
                 keywordsInput.value = '';
             });
         }
@@ -1724,7 +2379,7 @@
             if (keywords.length === 0) {
                 const noResultsRow = document.createElement('tr');
                 const noResultsCell = document.createElement('td');
-                noResultsCell.setAttribute('colspan', '8');
+                noResultsCell.setAttribute('colspan', '9'); // Updated to 9 columns to account for checkbox
                 noResultsCell.style.textAlign = 'center';
                 noResultsCell.style.padding = '20px';
                 noResultsCell.style.color = '#666';
@@ -1787,6 +2442,16 @@
                 const intentCell = document.createElement('td');
                 intentCell.textContent = kw.intent || 'N/A';
                 
+                // Create checkbox cell
+                const checkboxCell = document.createElement('td');
+                checkboxCell.style.textAlign = 'center';
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'keyword-select-checkbox';
+                checkbox.setAttribute('data-keyword', kw.keyword || '');
+                checkbox.setAttribute('data-match-type', 'exact'); // Default match type
+                checkboxCell.appendChild(checkbox);
+                
                 // Create action cell with button
                 const actionCell = document.createElement('td');
                 actionCell.style.textAlign = 'center';
@@ -1802,6 +2467,7 @@
                 actionCell.appendChild(addButton);
                 
                 // Append all cells to row
+                row.appendChild(checkboxCell);
                 row.appendChild(typeCell);
                 row.appendChild(keywordCell);
                 row.appendChild(searchVolumeCell);
@@ -1926,31 +2592,52 @@
         // Make addKeywordToInput globally accessible
         window.addKeywordToInput = addKeywordToInput;
         
-        function addKeywords(campaignId, adGroupId, keywords, matchTypes) {
+                async function addKeywords(campaignId, adGroupId, keywords, matchTypes) {
             if (!campaignsData[campaignId].keywords) {
                 campaignsData[campaignId].keywords = {};
             }
-            
+
             if (!campaignsData[campaignId].keywords[adGroupId]) {
                 campaignsData[campaignId].keywords[adGroupId] = [];
             }
-            
+
+            // Prepare keywords for both local storage and Supabase
+            const newKeywords = [];
             for (const keyword of keywords) {
                 for (const matchType of matchTypes) {
-                    campaignsData[campaignId].keywords[adGroupId].push({
+                    const keywordObj = {
                         text: keyword,
                         matchType: matchType
-                    });
+                    };
+                    campaignsData[campaignId].keywords[adGroupId].push(keywordObj);
+                    newKeywords.push(keywordObj);
                 }
             }
+
+            // Save to Supabase if enabled, otherwise localStorage
+            if (databaseClient && databaseClient.isSupabaseEnabled) {
+                try {
+                    // Get all keywords for this ad group (including existing ones)
+                    const allKeywords = campaignsData[campaignId].keywords[adGroupId] || [];
+                    await databaseClient.saveKeywords(adGroupId, allKeywords);
+                    console.log('Keywords saved to Supabase successfully');
+                } catch (error) {
+                    console.error('Error saving keywords to Supabase:', error);
+                    // Fallback to localStorage on error
+                    saveData();
+                    alert(`Keywords saved locally but failed to save to database: ${error.message}`);
+                }
+            } else {
+                saveData(); // Only save to localStorage when not using Supabase
+            }
             
-            saveData();
             updateKeywordList();
         }
         
-        function updateKeywordList() {
+                function updateKeywordList() {
             const campaignId = keywordCampaignSelect.value;
             const adGroupId = keywordAdGroupSelect.value;
+            const saveKeywordsToDbBtn = document.getElementById('save-keywords-to-db-btn');
             
             if (!campaignId || !adGroupId) {
                 keywordListContainer.innerHTML = `
@@ -1958,9 +2645,10 @@
                         <p>Select an ad group to view keywords</p>
                     </div>
                 `;
+                if (saveKeywordsToDbBtn) saveKeywordsToDbBtn.style.display = 'none';
                 return;
             }
-            
+
             const keywords = campaignsData[campaignId].keywords && 
                             campaignsData[campaignId].keywords[adGroupId] ? 
                             campaignsData[campaignId].keywords[adGroupId] : [];
@@ -1971,6 +2659,7 @@
                         <p>No keywords in this ad group</p>
                     </div>
                 `;
+                if (saveKeywordsToDbBtn) saveKeywordsToDbBtn.style.display = 'none';
                 return;
             }
             
@@ -2008,16 +2697,39 @@
             // Add event listeners to delete buttons
             const deleteButtons = keywordListContainer.querySelectorAll('.delete-btn');
             deleteButtons.forEach(button => {
-                button.addEventListener('click', () => {
+                button.addEventListener('click', async () => {
                     const index = parseInt(button.getAttribute('data-keyword-index'));
-                    deleteKeyword(campaignId, adGroupId, index);
+                    await deleteKeyword(campaignId, adGroupId, index);
                 });
             });
+            
+            // Show save button if there are keywords and Supabase is enabled
+            if (saveKeywordsToDbBtn) {
+                if (databaseClient && databaseClient.isSupabaseEnabled && keywords.length > 0) {
+                    saveKeywordsToDbBtn.style.display = 'inline-block';
+                } else {
+                    saveKeywordsToDbBtn.style.display = 'none';
+                }
+            }
         }
         
-        function deleteKeyword(campaignId, adGroupId, index) {
+        async function deleteKeyword(campaignId, adGroupId, index) {
             campaignsData[campaignId].keywords[adGroupId].splice(index, 1);
-            saveData();
+            
+            // Save to Supabase if enabled, otherwise localStorage
+            if (databaseClient && databaseClient.isSupabaseEnabled) {
+                try {
+                    const allKeywords = campaignsData[campaignId].keywords[adGroupId] || [];
+                    await databaseClient.saveKeywords(adGroupId, allKeywords);
+                    console.log('Keywords updated in Supabase after deletion');
+                } catch (error) {
+                    console.error('Error updating keywords in Supabase:', error);
+                    saveData(); // Fallback to localStorage on error
+                }
+            } else {
+                saveData(); // Only save to localStorage when not using Supabase
+            }
+            
             updateKeywordList();
         }
         
@@ -2037,7 +2749,7 @@
                 updateKeywordCoverageAnalysis();
             });
 
-            saveAdBtn.addEventListener('click', () => {
+            saveAdBtn.addEventListener('click', async () => {
                 const campaignId = adCampaignSelect.value;
                 const adGroupId = adGroupSelect.value;
                 
@@ -2051,7 +2763,7 @@
                     return;
                 }
                 
-                saveAd(campaignId, adGroupId);
+                await saveAd(campaignId, adGroupId);
                 updateKeywordCoverageAnalysis();
             });
             
@@ -2070,49 +2782,124 @@
             });
         }
         
-        function saveAd(campaignId, adGroupId) {
-            if (!campaignsData[campaignId].ads) {
-                campaignsData[campaignId].ads = {};
+        async function saveAd(campaignId, adGroupId) {
+            try {
+                // Show saving message
+                adSaveMessage.textContent = 'Saving ad...';
+                adSaveMessage.style.color = '#fbbc04';
+                
+                const adData = {
+                    ad_group_id: adGroupId,
+                    headline_1: headline1.value || null,
+                    headline_2: headline2.value || null,
+                    headline_3: headline3.value || null,
+                    headline_4: headline4.value || null,
+                    headline_5: headline5.value || null,
+                    headline_6: headline6.value || null,
+                    headline_7: headline7.value || null,
+                    headline_8: headline8.value || null,
+                    headline_9: headline9.value || null,
+                    headline_10: headline10.value || null,
+                    headline_11: headline11.value || null,
+                    description_1: description1.value || null,
+                    description_2: description2.value || null,
+                    description_3: description3.value || null,
+                    description_4: description4.value || null
+                };
+
+                if (databaseClient && databaseClient.isSupabaseEnabled) {
+                    // Save to Supabase database
+                    const savedAd = await databaseClient.createAd(adData);
+                    
+                    // Update local campaignsData for UI consistency
+                    if (!campaignsData[campaignId].ads) {
+                        campaignsData[campaignId].ads = {};
+                    }
+                    
+                    if (!campaignsData[campaignId].ads[adGroupId]) {
+                        campaignsData[campaignId].ads[adGroupId] = [];
+                    }
+                    
+                    // Add the saved ad to local data (converted from Supabase format)
+                    campaignsData[campaignId].ads[adGroupId].push({
+                        id: savedAd.id,
+                        headline1: savedAd.headline_1 || '',
+                        headline2: savedAd.headline_2 || '',
+                        headline3: savedAd.headline_3 || '',
+                        headline4: savedAd.headline_4 || '',
+                        headline5: savedAd.headline_5 || '',
+                        headline6: savedAd.headline_6 || '',
+                        headline7: savedAd.headline_7 || '',
+                        headline8: savedAd.headline_8 || '',
+                        headline9: savedAd.headline_9 || '',
+                        headline10: savedAd.headline_10 || '',
+                        headline11: savedAd.headline_11 || '',
+                        description1: savedAd.description_1 || '',
+                        description2: savedAd.description_2 || '',
+                        description3: savedAd.description_3 || '',
+                        description4: savedAd.description_4 || ''
+                    });
+                    
+                    // Show success message
+                    adSaveMessage.textContent = 'Ad saved to database successfully!';
+                    adSaveMessage.style.color = '#34a853';
+                } else {
+                    // Fallback to localStorage only (for development/offline mode)
+                    if (!campaignsData[campaignId].ads) {
+                        campaignsData[campaignId].ads = {};
+                    }
+                    
+                    if (!campaignsData[campaignId].ads[adGroupId]) {
+                        campaignsData[campaignId].ads[adGroupId] = [];
+                    }
+                    
+                    const adId = 'ad_' + Date.now();
+                    campaignsData[campaignId].ads[adGroupId].push({
+                        id: adId,
+                        headline1: headline1.value,
+                        headline2: headline2.value,
+                        headline3: headline3.value,
+                        headline4: headline4.value,
+                        headline5: headline5.value,
+                        headline6: headline6.value,
+                        headline7: headline7.value,
+                        headline8: headline8.value,
+                        headline9: headline9.value,
+                        headline10: headline10.value,
+                        headline11: headline11.value,
+                        description1: description1.value,
+                        description2: description2.value,
+                        description3: description3.value,
+                        description4: description4.value
+                    });
+                    
+                    saveData(); // Only save to localStorage when not using Supabase
+                    
+                    adSaveMessage.textContent = 'Ad saved locally!';
+                    adSaveMessage.style.color = '#34a853';
+                }
+                
+                updateAdsList();
+                
+                setTimeout(() => {
+                    adSaveMessage.textContent = '';
+                }, 3000);
+                
+                // Clear form
+                clearAdForm();
+                
+            } catch (error) {
+                console.error('Error saving ad:', error);
+                adSaveMessage.textContent = `Error saving ad: ${error.message}`;
+                adSaveMessage.style.color = '#ea4335';
+                
+                setTimeout(() => {
+                    adSaveMessage.textContent = '';
+                }, 5000);
             }
-            
-            if (!campaignsData[campaignId].ads[adGroupId]) {
-                campaignsData[campaignId].ads[adGroupId] = [];
-            }
-            
-            const adId = 'ad_' + Date.now();
-            campaignsData[campaignId].ads[adGroupId].push({
-                id: adId,
-                headline1: headline1.value,
-                headline2: headline2.value,
-                headline3: headline3.value,
-                headline4: headline4.value,
-                headline5: headline5.value,
-                headline6: headline6.value,
-                headline7: headline7.value,
-                headline8: headline8.value,
-                headline9: headline9.value,
-                headline10: headline10.value,
-                headline11: headline11.value,
-                headline12: headline12.value,
-                headline13: headline13.value,
-                headline14: headline14.value,
-                headline15: headline15.value,
-                description1: description1.value,
-                description2: description2.value,
-                description3: description3.value,
-                description4: description4.value
-            });
-            
-            saveData();
-            updateAdsList();
-            
-            // Show success message
-            adSaveMessage.textContent = 'Ad saved successfully!';
-            setTimeout(() => {
-                adSaveMessage.textContent = '';
-            }, 3000);
-            
-            // Clear form
+        }
+
+        function clearAdForm() {
             headline1.value = '';
             headline2.value = '';
             headline3.value = '';
@@ -2124,10 +2911,6 @@
             headline9.value = '';
             headline10.value = '';
             headline11.value = '';
-            headline12.value = '';
-            headline13.value = '';
-            headline14.value = '';
-            headline15.value = '';
             description1.value = '';
             description2.value = '';
             description3.value = '';
@@ -2200,18 +2983,6 @@
                             <div><strong>Headline 11:</strong> ${ad.headline11 || 'N/A'}</div>
                         </div>
                         <div class="keyword-item">
-                            <div><strong>Headline 12:</strong> ${ad.headline12 || 'N/A'}</div>
-                        </div>
-                        <div class="keyword-item">
-                            <div><strong>Headline 13:</strong> ${ad.headline13 || 'N/A'}</div>
-                        </div>
-                        <div class="keyword-item">
-                            <div><strong>Headline 14:</strong> ${ad.headline14 || 'N/A'}</div>
-                        </div>
-                        <div class="keyword-item">
-                            <div><strong>Headline 15:</strong> ${ad.headline15 || 'N/A'}</div>
-                        </div>
-                        <div class="keyword-item">
                             <div><strong>Description 1:</strong> ${ad.description1}</div>
                         </div>
                         <div class="keyword-item">
@@ -2233,16 +3004,26 @@
             // Add event listeners to delete buttons
             const deleteButtons = adsListContainer.querySelectorAll('.delete-btn');
             deleteButtons.forEach(button => {
-                button.addEventListener('click', () => {
+                button.addEventListener('click', async () => {
                     const index = parseInt(button.getAttribute('data-ad-index'));
-                    deleteAd(campaignId, adGroupId, index);
+                    await deleteAd(campaignId, adGroupId, index);
                 });
             });
         }
         
-        function deleteAd(campaignId, adGroupId, index) {
+        async function deleteAd(campaignId, adGroupId, index) {
             campaignsData[campaignId].ads[adGroupId].splice(index, 1);
-            saveData();
+            
+            // Save to Supabase if enabled, otherwise localStorage
+            if (databaseClient && databaseClient.isSupabaseEnabled) {
+                // TODO: Implement deleteAd API call to Supabase
+                // For now, we'll just update the local data
+                console.log('Ad deleted locally - Supabase ad deletion API not yet implemented');
+                // Note: You would need to add a deleteAd method to database_client.js and server.js
+            } else {
+                saveData(); // Only save to localStorage when not using Supabase
+            }
+            
             updateAdsList();
             updateKeywordCoverageAnalysis();
         }
@@ -2286,8 +3067,7 @@
                 headlines: [
                     headline1.value, headline2.value, headline3.value, headline4.value,
                     headline5.value, headline6.value, headline7.value, headline8.value,
-                    headline9.value, headline10.value, headline11.value, headline12.value,
-                    headline13.value, headline14.value, headline15.value
+                    headline9.value, headline10.value, headline11.value
                 ].filter(h => h.trim() !== ''),
                 descriptions: [
                     description1.value, description2.value, description3.value, description4.value
@@ -2618,7 +3398,7 @@
             const clientInfo = getClientInfo();
             
             // CSV Header for ads
-            let csv = 'Campaign,Ad Group,Headline 1,Headline 2,Headline 3,Headline 4,Headline 5,Headline 6,Headline 7,Headline 8,Headline 9,Headline 10,Headline 11,Headline 12,Headline 13,Headline 14,Headline 15,Description 1,Description 2,Description 3,Description 4,Final URL\n';
+            let csv = 'Campaign,Ad Group,Headline 1,Headline 2,Headline 3,Headline 4,Headline 5,Headline 6,Headline 7,Headline 8,Headline 9,Headline 10,Headline 11,Description 1,Description 2,Description 3,Description 4,Final URL\n';
             
             // Process each ad group
             for (const adGroupId in campaign.adGroups) {
@@ -2628,7 +3408,7 @@
                 // Process ads
                 const ads = campaign.ads && campaign.ads[adGroupId] ? campaign.ads[adGroupId] : [];
                 for (const ad of ads) {
-                    csv += `"${campaign.name}","${adGroupName}","${ad.headline1 || ''}","${ad.headline2 || ''}","${ad.headline3 || ''}","${ad.headline4 || ''}","${ad.headline5 || ''}","${ad.headline6 || ''}","${ad.headline7 || ''}","${ad.headline8 || ''}","${ad.headline9 || ''}","${ad.headline10 || ''}","${ad.headline11 || ''}","${ad.headline12 || ''}","${ad.headline13 || ''}","${ad.headline14 || ''}","${ad.headline15 || ''}","${ad.description1 || ''}","${ad.description2 || ''}","${ad.description3 || ''}","${ad.description4 || ''}","${clientInfo.websiteUrl || ''}"\n`;
+                    csv += `"${campaign.name}","${adGroupName}","${ad.headline1 || ''}","${ad.headline2 || ''}","${ad.headline3 || ''}","${ad.headline4 || ''}","${ad.headline5 || ''}","${ad.headline6 || ''}","${ad.headline7 || ''}","${ad.headline8 || ''}","${ad.headline9 || ''}","${ad.headline10 || ''}","${ad.headline11 || ''}","${ad.description1 || ''}","${ad.description2 || ''}","${ad.description3 || ''}","${ad.description4 || ''}","${clientInfo.websiteUrl || ''}"\n`;
                 }
             }
             
@@ -2661,7 +3441,7 @@
             const clientInfo = getClientInfo();
             
             // CSV Header - removed Path 1 and Path 2 columns that don't exist
-            let csv = 'Campaign,Ad Group,Headline 1,Headline 2,Headline 3,Headline 4,Headline 5,Headline 6,Headline 7,Headline 8,Headline 9,Headline 10,Headline 11,Headline 12,Headline 13,Headline 14,Headline 15,Description 1,Description 2,Description 3,Description 4,Final URL,Keyword,Match Type\n';
+            let csv = 'Campaign,Ad Group,Headline 1,Headline 2,Headline 3,Headline 4,Headline 5,Headline 6,Headline 7,Headline 8,Headline 9,Headline 10,Headline 11,Description 1,Description 2,Description 3,Description 4,Final URL,Keyword,Match Type\n';
             
             // Process each ad group
             for (const adGroupId in campaign.adGroups) {
@@ -2671,7 +3451,7 @@
                 // Process ads - removed references to path1 and path2
                 const ads = campaign.ads && campaign.ads[adGroupId] ? campaign.ads[adGroupId] : [];
                 for (const ad of ads) {
-                    csv += `"${campaign.name}","${adGroupName}","${ad.headline1 || ''}","${ad.headline2 || ''}","${ad.headline3 || ''}","${ad.headline4 || ''}","${ad.headline5 || ''}","${ad.headline6 || ''}","${ad.headline7 || ''}","${ad.headline8 || ''}","${ad.headline9 || ''}","${ad.headline10 || ''}","${ad.headline11 || ''}","${ad.headline12 || ''}","${ad.headline13 || ''}","${ad.headline14 || ''}","${ad.headline15 || ''}","${ad.description1 || ''}","${ad.description2 || ''}","${ad.description3 || ''}","${ad.description4 || ''}","${clientInfo.websiteUrl || ''}",,\n`;
+                    csv += `"${campaign.name}","${adGroupName}","${ad.headline1 || ''}","${ad.headline2 || ''}","${ad.headline3 || ''}","${ad.headline4 || ''}","${ad.headline5 || ''}","${ad.headline6 || ''}","${ad.headline7 || ''}","${ad.headline8 || ''}","${ad.headline9 || ''}","${ad.headline10 || ''}","${ad.headline11 || ''}","${ad.description1 || ''}","${ad.description2 || ''}","${ad.description3 || ''}","${ad.description4 || ''}","${clientInfo.websiteUrl || ''}",,\n`;
                 }
                 
                 // Process keywords - fixed column alignment (17 empty columns total: 2 campaign/adgroup + 11 headlines + 4 descriptions + 1 final URL = 18 columns before keyword)
@@ -2684,49 +3464,164 @@
             return csv;
         }
         
-        // Character Counters
+        // Enhanced Character Counters with Quality Feedback
         function setupCharacterCounters() {
-            // Add character count listeners for all form fields
-            headline1.addEventListener('input', () => updateCharacterCount(headline1, headline1Count));
-            headline2.addEventListener('input', () => updateCharacterCount(headline2, headline2Count));
-            headline3.addEventListener('input', () => updateCharacterCount(headline3, headline3Count));
-            headline4.addEventListener('input', () => updateCharacterCount(headline4, headline4Count));
-            headline5.addEventListener('input', () => updateCharacterCount(headline5, headline5Count));
-            headline6.addEventListener('input', () => updateCharacterCount(headline6, headline6Count));
-            headline7.addEventListener('input', () => updateCharacterCount(headline7, headline7Count));
-            headline8.addEventListener('input', () => updateCharacterCount(headline8, headline8Count));
-            headline9.addEventListener('input', () => updateCharacterCount(headline9, headline9Count));
-            headline10.addEventListener('input', () => updateCharacterCount(headline10, headline10Count));
-            headline11.addEventListener('input', () => updateCharacterCount(headline11, headline11Count));
-            headline12.addEventListener('input', () => updateCharacterCount(headline12, headline12Count));
-            headline13.addEventListener('input', () => updateCharacterCount(headline13, headline13Count));
-            headline14.addEventListener('input', () => updateCharacterCount(headline14, headline14Count));
-            headline15.addEventListener('input', () => updateCharacterCount(headline15, headline15Count));
-            description1.addEventListener('input', () => updateCharacterCount(description1, description1Count));
-            description2.addEventListener('input', () => updateCharacterCount(description2, description2Count));
-            description3.addEventListener('input', () => updateCharacterCount(description3, description3Count));
-            description4.addEventListener('input', () => updateCharacterCount(description4, description4Count));
+            // Setup for all headline inputs
+            for (let i = 1; i <= 11; i++) {
+                const input = document.getElementById(`headline${i}`);
+                const counter = document.getElementById(`headline${i}-count`);
+                if (input && counter) {
+                    input.addEventListener('input', () => updateHeadlineQuality(input, counter, i));
+                    // Initialize
+                    updateHeadlineQuality(input, counter, i);
+                }
+            }
             
-            // Initialize character counts
-            updateCharacterCount(headline1, headline1Count);
-            updateCharacterCount(headline2, headline2Count);
-            updateCharacterCount(headline3, headline3Count);
-            updateCharacterCount(headline4, headline4Count);
-            updateCharacterCount(headline5, headline5Count);
-            updateCharacterCount(headline6, headline6Count);
-            updateCharacterCount(headline7, headline7Count);
-            updateCharacterCount(headline8, headline8Count);
-            updateCharacterCount(headline9, headline9Count);
-            updateCharacterCount(headline10, headline10Count);
-            updateCharacterCount(headline11, headline11Count);
-            updateCharacterCount(headline12, headline12Count);
-            updateCharacterCount(headline13, headline13Count);
-            updateCharacterCount(headline14, headline14Count);
-            updateCharacterCount(headline15, headline15Count);
-            updateCharacterCount(description1, description1Count);
-            updateCharacterCount(description2, description2Count);
-            updateCharacterCount(description3, description3Count);
-            updateCharacterCount(description4, description4Count);
+            // Setup for description inputs
+            for (let i = 1; i <= 4; i++) {
+                const input = document.getElementById(`description${i}`);
+                const counter = document.getElementById(`description${i}-count`);
+                if (input && counter) {
+                    input.addEventListener('input', () => updateCharacterCount(input, counter));
+                    updateCharacterCount(input, counter);
+                }
+            }
+        }
+        
+        function updateHeadlineQuality(inputElement, countElement, headlineNumber) {
+            const maxLength = parseInt(inputElement.getAttribute('maxlength'));
+            const currentLength = inputElement.value.length;
+            const text = inputElement.value;
+            
+            // Calculate quality score
+            const quality = scoreHeadlineQuality(text, maxLength);
+            
+            // Update counter display
+            let displayText = `${currentLength}/${maxLength}`;
+            let color = '#666';
+            
+            // Length-based coloring
+            if (currentLength >= maxLength) {
+                color = '#ea4335'; // Red for at limit
+            } else if (currentLength >= maxLength * 0.9) {
+                color = '#34a853'; // Green for optimal range
+            } else if (currentLength >= maxLength * 0.8) {
+                color = '#fbbc04'; // Yellow for good range
+            } else if (currentLength > 0) {
+                color = '#ea4335'; // Red for too short
+            }
+            
+            // Add quality indicators
+            if (text.length > 0) {
+                const warnings = getHeadlineWarnings(text, maxLength);
+                if (warnings.length > 0) {
+                    displayText += ` ⚠️`;
+                    color = '#ea4335';
+                } else if (quality >= 80) {
+                    displayText += ` ✅`;
+                } else if (quality >= 60) {
+                    displayText += ` ⚡`;
+                }
+            }
+            
+            countElement.textContent = displayText;
+            countElement.style.color = color;
+            
+            // Add quality tooltip
+            const warnings = getHeadlineWarnings(text, maxLength);
+            if (warnings.length > 0) {
+                countElement.title = `Issues: ${warnings.join(', ')}`;
+            } else {
+                countElement.title = `Quality Score: ${quality}/100`;
+            }
+        }
+        
+        function scoreHeadlineQuality(text, maxLength) {
+            if (!text) return 0;
+            
+            let score = 0;
+            const length = text.length;
+            
+            // Length optimization (25-30 chars optimal)
+            if (length >= 25 && length <= 30) {
+                score += 30;
+            } else if (length >= 20 && length < 25) {
+                score += 15;
+            } else if (length > 30) {
+                score -= 20;
+            }
+            
+            // Word count (3-5 words optimal)
+            const wordCount = text.split(' ').filter(w => w.length > 0).length;
+            if (wordCount >= 3 && wordCount <= 5) {
+                score += 25;
+            } else if (wordCount === 2 || wordCount === 6) {
+                score += 10;
+            }
+            
+            // Power words
+            const powerWords = ['luxury', 'premium', 'new', 'available', 'now', 'today'];
+            const powerWordCount = powerWords.filter(word => 
+                text.toLowerCase().includes(word)
+            ).length;
+            score += powerWordCount * 10;
+            
+            // Brand relevance
+            const brandTerms = ['aero', 'apartments', 'san diego'];
+            const brandCount = brandTerms.filter(term => 
+                text.toLowerCase().includes(term)
+            ).length;
+            score += brandCount * 15;
+            
+            // Avoid common truncation patterns
+            const truncationIssues = getHeadlineWarnings(text, maxLength);
+            score -= truncationIssues.length * 15;
+            
+            return Math.max(0, Math.min(100, score));
+        }
+        
+        function getHeadlineWarnings(text, maxLength) {
+            const warnings = [];
+            
+            // Check for incomplete words
+            const incompletePhrases = [
+                'Prime Locat', 'Luxury Apart', 'High Luxu', 'Comp Pricing',
+                'Essential Amenit', 'Amenities Galore in Aero Apts'
+            ];
+            
+            for (const phrase of incompletePhrases) {
+                if (text.includes(phrase)) {
+                    warnings.push('Incomplete phrase detected');
+                    break;
+                }
+            }
+            
+            // Check if ends with incomplete word
+            if (text.length === maxLength) {
+                const words = text.split(' ');
+                const lastWord = words[words.length - 1];
+                if (lastWord.length < 4 && !/[aeiou]/i.test(lastWord)) {
+                    warnings.push('May end with incomplete word');
+                }
+            }
+            
+            // Check for trailing punctuation issues
+            if (text.endsWith(',') || text.endsWith(' ')) {
+                warnings.push('Trailing punctuation/space');
+            }
+            
+            // Too short warning
+            if (text.length > 0 && text.length < maxLength * 0.8) {
+                warnings.push('Too short - add more content');
+            }
+            
+            // No brand terms
+            const brandTerms = ['aero', 'apartment', 'san diego', 'luxury'];
+            if (!brandTerms.some(term => text.toLowerCase().includes(term))) {
+                warnings.push('Consider adding brand/location terms');
+            }
+            
+            return warnings;
         }
         
         function updateCharacterCount(inputElement, countElement) {
@@ -2734,28 +3629,10 @@
             const currentLength = inputElement.value.length;
             countElement.textContent = `${currentLength}/${maxLength}`;
             
-            // Check if this is a headline field (maxlength 30)
-            if (parseInt(maxLength) === 30) {
-                if (currentLength >= 25 && currentLength <= 30) {
-                    // Optimal range for headlines (25-30 chars)
-                    countElement.style.color = '#4caf50';
-                } else if (currentLength >= 20 && currentLength < 25) {
-                    // Acceptable but could be longer
-                    countElement.style.color = '#ff9800';
-                } else if (currentLength > 30) {
-                    // Over limit
-                    countElement.style.color = '#ea4335';
-                } else {
-                    // Too short
-                    countElement.style.color = '#666';
-                }
+            if (currentLength >= parseInt(maxLength)) {
+                countElement.style.color = '#ea4335';
             } else {
-                // Original logic for descriptions
-                if (currentLength >= parseInt(maxLength)) {
-                    countElement.style.color = '#ea4335';
-                } else {
-                    countElement.style.color = '#666';
-                }
+                countElement.style.color = '#666';
             }
         }
         
@@ -2801,9 +3678,42 @@
             }
         }
         
-        function saveClientInfo() {
-            const clientInfo = getClientInfo();
-            localStorage.setItem('clientInfo', JSON.stringify(clientInfo));
+        async function saveClientInfo(isAutoSave = false) {
+            try {
+                if (!isAutoSave) {
+                    showSaveStatus('Saving...', 'loading');
+                }
+                
+                const clientInfo = getClientInfo();
+                
+                // Validate required fields
+                if (!clientInfo.clientName || !clientInfo.websiteUrl || !clientInfo.industry || !clientInfo.targetAudience) {
+                    showSaveStatus('Please fill in all required fields', 'error');
+                    return;
+                }
+                
+                const result = await databaseClient.saveClientInfo(clientInfo);
+                
+                if (result.success) {
+                    if (result.mode === 'supabase') {
+                        if (result.action === 'created') {
+                            showSaveStatus('Client created successfully!', 'success');
+                            await loadClientsDropdown(); // Refresh dropdown
+                            clientSelector.value = databaseClient.currentClientId;
+                        } else {
+                            showSaveStatus(isAutoSave ? 'Auto-saved' : 'Client updated successfully!', 'success');
+                        }
+                        updateCurrentClientIndicator();
+                    } else {
+                        showSaveStatus('Saved locally (Supabase unavailable)', 'warning');
+                    }
+                } else {
+                    showSaveStatus(`Error: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error saving client info:', error);
+                showSaveStatus(`Error saving: ${error.message}`, 'error');
+            }
         }
         
         function getClientInfo() {
@@ -2819,6 +3729,19 @@
                 callToAction: callToAction.value,
                 budget: budget.value
             };
+        }
+
+        function updateClientInfoForm(clientInfo) {
+            if (clientName) clientName.value = clientInfo.clientName || '';
+            if (websiteUrl) websiteUrl.value = clientInfo.websiteUrl || '';
+            if (industry) industry.value = clientInfo.industry || '';
+            if (targetAudience) targetAudience.value = clientInfo.targetAudience || '';
+            if (geographicTargeting) geographicTargeting.value = clientInfo.geographicTargeting || '';
+            if (uniqueSellingPoints) uniqueSellingPoints.value = clientInfo.uniqueSellingPoints || '';
+            if (competitors) competitors.value = clientInfo.competitors || '';
+            if (brandVoice) brandVoice.value = clientInfo.brandVoice || '';
+            if (callToAction) callToAction.value = clientInfo.callToAction || '';
+            if (budget) budget.value = clientInfo.budget || '';
         }
         
         function loadClientInfo() {
@@ -2843,14 +3766,33 @@
             localStorage.setItem('campaignsData', JSON.stringify(campaignsData));
         }
         
-        function loadData() {
+        async function loadData() {
+            // Try to load from Supabase first, fallback to localStorage
+            if (databaseClient && databaseClient.isSupabaseEnabled && databaseClient.currentClientId) {
+                try {
+                    console.log('Loading data from Supabase...');
+                    await loadCampaignsForCurrentClient();
+                    console.log('Data loaded from Supabase successfully');
+                    return;
+                } catch (error) {
+                    console.error('Error loading from Supabase, falling back to localStorage:', error);
+                }
+            }
+            
+            // Fallback to localStorage
             const savedCampaignsData = localStorage.getItem('campaignsData');
             if (savedCampaignsData) {
                 campaignsData = JSON.parse(savedCampaignsData);
                 window.campaignsData = campaignsData; // Update global reference
+                console.log('Data loaded from localStorage');
+            } else {
+                console.log('No data found in localStorage');
             }
             
-            loadClientInfo();
+            // Only load client info from localStorage if not using Supabase
+            if (!databaseClient || !databaseClient.isSupabaseEnabled) {
+                loadClientInfo();
+            }
         }
         
         // Add a function to show a note based on campaign type
@@ -2884,6 +3826,146 @@
                 
                 keywordCampaignSelect.parentElement.parentElement.insertBefore(note, keywordCampaignSelect.parentElement.nextSibling);
             }
+        }
+        
+        // Optimize Headlines Functionality
+        function optimizeExistingHeadlines() {
+            const optimizationFeedback = document.getElementById('optimization-feedback');
+            const optimizationDetails = document.getElementById('optimization-details');
+            
+            let optimizedCount = 0;
+            let improvements = [];
+            
+            // Process all 11 headlines
+            for (let i = 1; i <= 11; i++) {
+                const input = document.getElementById(`headline${i}`);
+                if (input && input.value.trim()) {
+                    const original = input.value.trim();
+                    const optimized = optimizeHeadlineText(original);
+                    
+                    if (optimized !== original) {
+                        input.value = optimized;
+                        optimizedCount++;
+                        improvements.push({
+                            number: i,
+                            original: original,
+                            optimized: optimized,
+                            score: scoreHeadlineQuality(optimized, 30)
+                        });
+                        
+                        // Trigger input event to update character count
+                        const event = new Event('input', { bubbles: true });
+                        input.dispatchEvent(event);
+                    }
+                }
+            }
+            
+            // Show feedback
+            if (optimizedCount > 0) {
+                let feedbackHTML = `<p><strong>Optimized ${optimizedCount} headlines:</strong></p><ul>`;
+                improvements.forEach(improvement => {
+                    feedbackHTML += `<li><strong>Headline ${improvement.number}:</strong><br>
+                        Before: "${improvement.original}" (${improvement.original.length} chars)<br>
+                        After: "${improvement.optimized}" (${improvement.optimized.length} chars) - Quality: ${improvement.score}/100
+                    </li>`;
+                });
+                feedbackHTML += '</ul>';
+                
+                optimizationDetails.innerHTML = feedbackHTML;
+                optimizationFeedback.style.display = 'block';
+                optimizationFeedback.style.backgroundColor = '#e8f5e8';
+                optimizationFeedback.style.border = '1px solid #4caf50';
+                optimizationFeedback.style.color = '#2e7d32';
+                
+                // Auto-hide after 10 seconds
+                setTimeout(() => {
+                    optimizationFeedback.style.display = 'none';
+                }, 10000);
+            } else {
+                optimizationDetails.innerHTML = '<p>All headlines are already optimized! ✅</p>';
+                optimizationFeedback.style.display = 'block';
+                optimizationFeedback.style.backgroundColor = '#e3f2fd';
+                optimizationFeedback.style.border = '1px solid #2196f3';
+                optimizationFeedback.style.color = '#1565c0';
+                
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    optimizationFeedback.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        function optimizeHeadlineText(text) {
+            if (!text || text.length <= 30) return text;
+            
+            let optimized = text.trim();
+            
+            // Phase 1: Smart abbreviations
+            const abbreviations = {
+                'Apartments': 'Apts',
+                'Apartment': 'Apt',
+                'Location': 'Loc',
+                'Available': 'Avail',
+                'Premium': 'Prime',
+                'Luxury': 'Lux',
+                'Amenities': 'Amenit',
+                'Technology': 'Tech',
+                'Construction': 'Const',
+                'Competitive': 'Comp',
+                'Essential': 'Key'
+            };
+            
+            for (const [full, abbr] of Object.entries(abbreviations)) {
+                if (optimized.includes(full)) {
+                    const candidate = optimized.replace(new RegExp(full, 'gi'), abbr);
+                    if (candidate.length <= 30) {
+                        optimized = candidate;
+                        break;
+                    }
+                }
+            }
+            
+            // Phase 2: Smart word replacements
+            const replacements = {
+                'Prime Locat': 'Prime Loc',
+                'Luxury Apart': 'Luxury Apts',
+                'High Luxu': 'High Luxury',
+                'Comp Pricing': 'Great Price',
+                'Essential Amenit': 'Key Amenities',
+                'Amenities Galore in Aero Apts': 'Many Amenities at Aero',
+                'Competitive Pricing, High Luxu': 'Great Price, Luxury'
+            };
+            
+            for (const [broken, fixed] of Object.entries(replacements)) {
+                if (optimized.includes(broken)) {
+                    optimized = optimized.replace(broken, fixed);
+                    break;
+                }
+            }
+            
+            // Phase 3: If still too long, smart truncation
+            if (optimized.length > 30) {
+                const words = optimized.split(' ');
+                let result = '';
+                
+                for (const word of words) {
+                    const candidate = result + (result ? ' ' : '') + word;
+                    if (candidate.length <= 30) {
+                        result = candidate;
+                    } else {
+                        break;
+                    }
+                }
+                
+                optimized = result || optimized.substring(0, 30).trim();
+            }
+            
+            return optimized;
+        }
+        
+        // Add event listener for optimize button
+        if (optimizeHeadlinesBtn) {
+            optimizeHeadlinesBtn.addEventListener('click', optimizeExistingHeadlines);
         }
         
         // Initialize the application

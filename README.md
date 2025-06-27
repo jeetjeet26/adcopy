@@ -26,7 +26,7 @@ This tool revolutionizes Google Ads campaign creation by combining:
 
 ### **AI-Powered Content Creation**
 - **Contextual Ad Copy**: GPT-4 orchestrated content that aligns with keyword strategy
-- **Real-Time Validation**: Character limit enforcement (headlines: 25-30, descriptions: 90)
+- **Real-Time Validation**: Character limit enforcement (headlines: 30, descriptions: 90, paths: 15)
 - **Brand Voice Integration**: Consistent messaging across all campaign content
 - **Multi-Format Generation**: Headlines, descriptions, and display URLs
 
