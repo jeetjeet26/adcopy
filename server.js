@@ -75,7 +75,7 @@ app.get('/api/health', async (req, res) => {
                 openai: await openaiConnector.testConnection(),
                 semrush: {
                     configured: !!semrushConnector,
-                    working: semrushConnector ? await semrushConnector.testConnection() : false
+                    working: !!semrushConnector // Only check if configured, don't test API
                 }
             }
         };
@@ -183,6 +183,72 @@ app.post('/api/generate-ad-copy', async (req, res) => {
     }
 });
 
+// New endpoint for integrated ad copy generation with fresh keyword data
+app.post('/api/generate-ad-copy-intelligent', async (req, res) => {
+    try {
+        console.log('=== INTELLIGENT AD COPY GENERATION REQUEST ===');
+        const { clientInfo, campaignContext, adGroupContext } = req.body;
+        
+        // Step 1: Generate fresh keyword intelligence using tiered approach
+        let keywordData = null;
+        if (semrushConnector) {
+            console.log('Generating fresh keyword intelligence...');
+            keywordData = await semrushConnector.generateTieredKeywordRecommendations(
+                clientInfo, 
+                campaignContext, 
+                adGroupContext
+            );
+            
+            // Ensure ALL intelligence is passed through
+            if (keywordData) {
+                keywordData = {
+                    ...keywordData,
+                    // Ensure these critical fields are included
+                    adCopyTerms: keywordData.adCopyTerms || {},
+                    patternInsights: keywordData.patternInsights || {},
+                    analysis: keywordData.analysis || {},
+                    validation: keywordData.validation || {}
+                };
+            }
+        } else {
+            console.log('Using basic keyword structure (no Semrush)');
+            // Fallback structure
+            keywordData = {
+                keywords: { all: [], highVolume: [], mediumVolume: [] },
+                recommendations: { primaryKeywords: [] },
+                adCopyTerms: {},
+                patternInsights: {},
+                analysis: {}
+            };
+        }
+        
+        // Step 2: Generate ad copy with FULL intelligence
+        console.log('Generating ad copy with complete keyword intelligence...');
+        const adCopy = await openaiConnector.generateAdCopy(
+            clientInfo, 
+            campaignContext, 
+            adGroupContext, 
+            keywordData
+        );
+        
+        res.json({
+            success: true,
+            data: {
+                adCopy,
+                keywordInsights: {
+                    totalKeywords: keywordData.keywords?.all?.length || 0,
+                    patternInsights: keywordData.patternInsights,
+                    adCopyTerms: keywordData.adCopyTerms
+                }
+            }
+        });
+        
+    } catch (error) {
+        console.error('Error in intelligent ad copy generation:', error);
+        handleError(error, res);
+    }
+});
+
 app.post('/api/generate-keywords', async (req, res) => {
     try {
         console.log('\n=== KEYWORD GENERATION REQUEST ===');
@@ -237,6 +303,54 @@ app.post('/api/generate-keywords', async (req, res) => {
         });
     } catch (error) {
         console.error('Error generating keywords:', error);
+        handleError(error, res);
+    }
+});
+
+app.post('/api/generate-keywords-tiered', async (req, res) => {
+    try {
+        console.log('\n=== TIERED KEYWORD GENERATION REQUEST ===');
+        console.log('Using validated success-pattern approach');
+        console.log('Full request body:', JSON.stringify(req.body, null, 2));
+        
+        if (!semrushConnector) {
+            return res.json({
+                success: false,
+                message: 'Keyword generation is not available',
+                reason: 'Semrush API key not configured',
+                instructions: {
+                    title: 'To enable keyword generation:',
+                    steps: [
+                        '1. Get your API key from https://www.semrush.com/api-documentation/',
+                        '2. Add SEMRUSH_API_KEY=your_key_here to your .env file',
+                        '3. Restart the server'
+                    ]
+                }
+            });
+        }
+        
+        if (!req.body.adGroupContext || !req.body.adGroupContext.name) {
+            throw new AppError(400, 'AD_GROUP_NAME_REQUIRED', 'Ad group name is required for keyword generation');
+        }
+        
+        let { clientInfo, campaignContext, adGroupContext } = req.body;
+        
+        // Generate keyword recommendations using tiered validated approach
+        const keywordData = await semrushConnector.generateTieredKeywordRecommendations(
+            clientInfo, 
+            campaignContext, 
+            adGroupContext
+        );
+        
+        res.json({
+            success: true,
+            data: keywordData,
+            approach: 'tiered_validated',
+            message: 'Keywords generated using success-pattern validated approach'
+        });
+        
+    } catch (error) {
+        console.error('Error generating tiered keywords:', error);
         handleError(error, res);
     }
 });
@@ -395,6 +509,31 @@ app.put('/api/clients/:clientId', async (req, res) => {
         
     } catch (error) {
         console.error('Error updating client:', error);
+        handleError(error, res);
+    }
+});
+
+app.delete('/api/clients/:clientId', async (req, res) => {
+    try {
+        if (!databaseService) {
+            return res.status(503).json({
+                success: false,
+                message: 'Database service not available'
+            });
+        }
+
+        const { clientId } = req.params;
+        
+        // Use comprehensive deletion that removes all related data
+        await databaseService.deleteClientComplete(clientId);
+        
+        res.json({
+            success: true,
+            message: 'Client and all related data deleted successfully'
+        });
+        
+    } catch (error) {
+        console.error('Error deleting client:', error);
         handleError(error, res);
     }
 });

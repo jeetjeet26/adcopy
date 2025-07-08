@@ -53,6 +53,24 @@ class DatabaseService {
         return true;
     }
 
+    // Comprehensive client deletion using database CASCADE
+    async deleteClientComplete(clientId) {
+        try {
+            console.log(`Starting deletion for client ${clientId} using database CASCADE`);
+            
+            // The database has CASCADE delete rules set up, so deleting the client
+            // will automatically delete all related campaigns, ad groups, keywords, and ads
+            await this.deleteClient(clientId);
+            
+            console.log(`Client ${clientId} and all related data deleted successfully via CASCADE`);
+            return true;
+            
+        } catch (error) {
+            console.error(`Error during client deletion for client ${clientId}:`, error);
+            throw error;
+        }
+    }
+
     // Campaign operations
     async createCampaign(campaignData) {
         const { data, error } = await this.supabase
@@ -368,6 +386,10 @@ class DatabaseService {
                                     headline_9: localAd.headline9,
                                     headline_10: localAd.headline10,
                                     headline_11: localAd.headline11,
+                                    headline_12: localAd.headline12,
+                                    headline_13: localAd.headline13,
+                                    headline_14: localAd.headline14,
+                                    headline_15: localAd.headline15,
                                     description_1: localAd.description1,
                                     description_2: localAd.description2,
                                     description_3: localAd.description3,

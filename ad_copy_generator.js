@@ -58,13 +58,13 @@ class AdCopyGenerator {
             headlines.push(this.createBenefitHeadline(usp));
         }
 
-        // Ensure we have at least 11 headlines
-        while (headlines.length < 11) {
+        // Ensure we have at least 15 headlines
+        while (headlines.length < 15) {
             headlines.push(this.getGenericHeadline(industry));
         }
 
-        // Return only unique headlines, up to 11
-        return [...new Set(headlines)].slice(0, 11);
+        // Return only unique headlines, up to 15
+        return [...new Set(headlines)].slice(0, 15);
     }
 
     /**
@@ -266,7 +266,15 @@ class AdCopyGenerator {
             `Leading ${industry} Company`,
             `Best ${industry} Results`,
             `Certified ${industry} Pro`,
-            `Award-Winning ${industry}`
+            `Award-Winning ${industry}`,
+            `Expert ${industry} Team`,
+            `Quality ${industry} Provider`,
+            `Reliable ${industry} Help`,
+            `Premium ${industry} Service`,
+            `Professional ${industry} Care`,
+            `Trusted ${industry} Experts`,
+            `Superior ${industry} Quality`,
+            `Excellence in ${industry}`
         ];
         
         // Cycle through templates to ensure variety
@@ -392,56 +400,17 @@ class AdCopyGenerator {
             return optimized;
         }
         
-        // Phase 1: Smart abbreviations - preserve meaning
-        const abbreviations = {
-            'Apartments': 'Apts',
-            'Apartment': 'Apt', 
-            'Application': 'App',
-            'Information': 'Info',
-            'Professional': 'Pro',
-            'Premium': 'Prime',
-            'Luxury': 'Lux',
-            'Location': 'Loc',
-            'Available': 'Avail',
-            'Experience': 'Exp',
-            'Construction': 'Const',
-            'Technology': 'Tech',
-            'Amenities': 'Amenit',
-            'Competitive': 'Comp',
-            'Essential': 'Key'
-        };
-        
-        for (const [full, abbr] of Object.entries(abbreviations)) {
-            if (optimized.includes(full)) {
-                const candidate = optimized.replace(new RegExp(full, 'gi'), abbr);
-                if (candidate.length <= maxLength) {
-                    optimized = candidate;
-                    break;
-                }
-            }
-        }
-        
-        if (optimized.length <= maxLength) {
-            return optimized;
-        }
-        
-        // Phase 2: Smart word replacements
-        const replacements = {
+        // Phase 1: Natural language optimization - preserve keyword integrity
+        // Remove redundant words without losing search terms
+        const redundantPhrases = {
             'Now Available': 'Available',
-            'Now Leasing': 'Leasing',
+            'Now Leasing': 'Leasing', 
             'High Quality': 'Quality',
             'Top Quality': 'Quality',
-            'Great Prices': 'Great Value',
-            'Prime Location': 'Prime Loc',
-            'Near Top Schools': 'Near Schools',
-            'Luxury Living': 'Lux Living',
-            'New Construction': 'New Const',
-            'Smart Home': 'Smart Tech',
-            'Amenities Galore': 'Many Amenities',
             'Contact Us': 'Call Us'
         };
         
-        for (const [long, short] of Object.entries(replacements)) {
+        for (const [long, short] of Object.entries(redundantPhrases)) {
             if (optimized.includes(long)) {
                 const candidate = optimized.replace(long, short);
                 if (candidate.length <= maxLength) {
@@ -535,10 +504,10 @@ class AdCopyGenerator {
             }
         }
         
-        // Variation 3: Focus on key benefits
+        // Variation 3: Focus on key search terms  
         const keyPhrases = [
-            'Luxury', 'Premium', 'New', 'Available', 'Aero', 'Apartments', 
-            'San Diego', 'Prime', 'Location', 'Amenities'
+            'Luxury', 'Premium', 'New', 'Available', 'Apartments', 
+            'San Diego', 'Location', 'Amenities', 'Rentals', 'Downtown'
         ];
         
         let focused = '';
@@ -693,8 +662,8 @@ class AdCopyGenerator {
         const problematicHeadlines = [
             "Luxury Apartments, Prime Locat",      // Truncated "Location"
             "Competitive Pricing, High Luxu",     // Truncated "Luxury" 
-            "New Apts Near Essential Amenit",     // Truncated "Amenities"
-            "Amenities Galore in Aero Apts",      // Fine but could be better
+            "New Apartments Near Essential",      // Truncated "Amenities"
+            "Amenities Galore in Aero",           // Updated to use full form
             "Experience Luxury Living Today",      // Good example
             "Newly Built Aero Apartments"         // Good example
         ];
@@ -735,8 +704,8 @@ class AdCopyGenerator {
             "Apartments Near Top Schools",
             "Luxury Apartments, Prime Locat",      // 31 chars - truncated
             "Competitive Pricing, High Luxu",     // 31 chars - truncated
-            "Amenities Galore in Aero Apts",      // 30 chars - at limit
-            "New Apts Near Essential Amenit",     // 31 chars - truncated  
+            "Amenities Galore in Aero",           // Updated to use full form
+            "New Apartments Near Essential",      // Truncated  
             "Luxury Living, Great Prices!",
             "Newly Built Aero Apartments",
             "Proximity & Comfort at Aero"
@@ -774,7 +743,7 @@ class AdCopyGenerator {
         console.log('• "Prime Locat" → "Prime Loc"');
         console.log('• "High Luxu" → "High Luxury"');
         console.log('• "Essential Amenit" → "Key Amenities"');
-        console.log('• Smart abbreviations: Apartments → Apts');
+        console.log('• Preserves "Apartments" for better character usage');
         console.log('• Intelligent word boundary truncation');
         console.log('• Quality scoring with relevance factors');
         
@@ -793,7 +762,7 @@ class AdCopyGenerator {
             'High Luxu',
             'Comp Pricing',
             'Essential Amenit',
-            'New Apts Near Essential Amenit'
+            'New Apartments Near Essential'
         ];
         
         return incompletePhrases.some(phrase => headline.includes(phrase));

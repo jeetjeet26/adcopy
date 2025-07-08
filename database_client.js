@@ -513,6 +513,10 @@ class DatabaseClient {
                                 headline9: ad.headline_9 || '',
                                 headline10: ad.headline_10 || '',
                                 headline11: ad.headline_11 || '',
+                                headline12: ad.headline_12 || '',
+                                headline13: ad.headline_13 || '',
+                                headline14: ad.headline_14 || '',
+                                headline15: ad.headline_15 || '',
                                 description1: ad.description_1 || '',
                                 description2: ad.description_2 || '',
                                 description3: ad.description_3 || '',
@@ -552,6 +556,34 @@ class DatabaseClient {
         this.currentClientId = null;
         this.currentClient = null;
         localStorage.removeItem('supabase_client_id');
+    }
+
+    async deleteClient(clientId) {
+        try {
+            const response = await fetch(`${this.apiBaseUrl}/api/clients/${clientId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            
+            // If this was the current client, clear it
+            if (this.currentClientId === clientId) {
+                this.clearCurrentClient();
+            }
+            
+            return result;
+        } catch (error) {
+            console.error('Error deleting client:', error);
+            throw error;
+        }
     }
 }
 

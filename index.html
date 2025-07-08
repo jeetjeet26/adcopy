@@ -294,6 +294,45 @@
             background-color: #ea4335;
         }
         
+        .keyword-type-validated-primary {
+            background-color: #34a853;
+            position: relative;
+        }
+        
+        .keyword-type-validated-primary::after {
+            content: "✓";
+            position: absolute;
+            right: 2px;
+            top: 0;
+            font-size: 8px;
+        }
+        
+        .keyword-type-validated-secondary {
+            background-color: #137333;
+            position: relative;
+        }
+        
+        .keyword-type-validated-secondary::after {
+            content: "✓";
+            position: absolute;
+            right: 2px;
+            top: 0;
+            font-size: 8px;
+        }
+        
+        .keyword-type-validated-longtail {
+            background-color: #0d652d;
+            position: relative;
+        }
+        
+        .keyword-type-validated-longtail::after {
+            content: "✓";
+            position: absolute;
+            right: 2px;
+            top: 0;
+            font-size: 8px;
+        }
+        
         .add-keyword-btn {
             padding: 4px 8px;
             background-color: #4285f4;
@@ -620,9 +659,14 @@
                     
                     <!-- Current Client Indicator -->
                     <div id="current-client-indicator" class="current-client-indicator" style="display: none; padding: 12px; background-color: #e8f5e8; border-left: 4px solid #34a853; border-radius: 4px; margin-top: 15px;">
-                        <span style="font-weight: bold;">👤 Working with: </span>
-                        <span id="current-client-name" style="color: #2e7d32;"></span>
-                        <span id="sync-status" style="margin-left: 10px; font-size: 12px;"></span>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span style="font-weight: bold;">👤 Working with: </span>
+                                <span id="current-client-name" style="color: #2e7d32;"></span>
+                                <span id="sync-status" style="margin-left: 10px; font-size: 12px;"></span>
+                            </div>
+                            <button type="button" id="delete-client-btn" class="delete-btn" style="padding: 6px 12px; font-size: 12px; display: none;">🗑️ Delete Client</button>
+                        </div>
                     </div>
                 </div>
                 
@@ -781,8 +825,31 @@
                 
                 <!-- AI Keyword Generation Section -->
                 <div style="background-color: #f8f9ff; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
-                    <h3 style="margin-top: 0; color: #4285f4;">🤖 Step 2: Generate Keywords with AI</h3>
-                    <p style="margin-bottom: 10px; color: #666;">Generate relevant keywords automatically based on your selected campaign and ad group using AI analysis and Semrush data.</p>
+                    <h3 style="margin-top: 0; color: #4285f4;">🤖 Step 2: Generate Keywords</h3>
+                    <p style="margin-bottom: 15px; color: #666;">Choose your keyword generation approach:</p>
+                    
+                    <!-- Approach Selection -->
+                    <div style="margin-bottom: 15px; padding: 10px; background-color: #fff; border-radius: 4px; border: 1px solid #e0e0e0;">
+                        <div style="margin-bottom: 10px;">
+                            <input type="radio" id="approach-ai" name="keyword-approach" value="ai" checked>
+                            <label for="approach-ai" style="margin-left: 8px; font-weight: 500;">
+                                🤖 AI-Driven Approach <span style="color: #666; font-size: 0.9em;">(Current method)</span>
+                            </label>
+                            <p style="margin: 5px 0 0 25px; font-size: 0.85em; color: #666;">
+                                Uses AI to generate creative keyword combinations. May produce more specific terms that don't always have Semrush data.
+                            </p>
+                        </div>
+                        <div>
+                            <input type="radio" id="approach-validated" name="keyword-approach" value="validated">
+                            <label for="approach-validated" style="margin-left: 8px; font-weight: 500;">
+                                ✅ Validated Pattern Approach <span style="color: #34a853; font-size: 0.9em;">(Recommended)</span>
+                            </label>
+                            <p style="margin: 5px 0 0 25px; font-size: 0.85em; color: #666;">
+                                Uses proven keyword patterns based on success analysis. Focuses on broad terms that have data, with specific terms for ad copy.
+                            </p>
+                        </div>
+                    </div>
+                    
                     <button id="generate-keywords-btn" style="background-color: #4285f4; margin-right: 10px;">Generate Keywords <span class="ai-badge">AI</span></button>
                     <button id="clear-suggestions-btn" style="background-color: #ea4335; display: none;">Clear Suggestions</button>
                     
@@ -962,6 +1029,26 @@
                             <label for="headline11">Headline 11 (30 char max)</label>
                             <input type="text" id="headline11" maxlength="30">
                             <div class="character-count" id="headline11-count">0/30</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="headline12">Headline 12 (30 char max)</label>
+                            <input type="text" id="headline12" maxlength="30">
+                            <div class="character-count" id="headline12-count">0/30</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="headline13">Headline 13 (30 char max)</label>
+                            <input type="text" id="headline13" maxlength="30">
+                            <div class="character-count" id="headline13-count">0/30</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="headline14">Headline 14 (30 char max)</label>
+                            <input type="text" id="headline14" maxlength="30">
+                            <div class="character-count" id="headline14-count">0/30</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="headline15">Headline 15 (30 char max)</label>
+                            <input type="text" id="headline15" maxlength="30">
+                            <div class="character-count" id="headline15-count">0/30</div>
                         </div>
                         
                         <h4>Descriptions</h4>
@@ -1148,11 +1235,15 @@
         const headline4 = document.getElementById('headline4');
         const headline5 = document.getElementById('headline5');
         const headline6 = document.getElementById('headline6');
-        const headline7 = document.getElementById('headline7');
-        const headline8 = document.getElementById('headline8');
-        const headline9 = document.getElementById('headline9');
-        const headline10 = document.getElementById('headline10');
-        const headline11 = document.getElementById('headline11');
+                        const headline7 = document.getElementById('headline7');
+                const headline8 = document.getElementById('headline8');
+                const headline9 = document.getElementById('headline9');
+                const headline10 = document.getElementById('headline10');
+                const headline11 = document.getElementById('headline11');
+                const headline12 = document.getElementById('headline12');
+                const headline13 = document.getElementById('headline13');
+                const headline14 = document.getElementById('headline14');
+                const headline15 = document.getElementById('headline15');
         const description1 = document.getElementById('description1');
         const description2 = document.getElementById('description2');
         const description3 = document.getElementById('description3');
@@ -1165,9 +1256,13 @@
         const headline6Count = document.getElementById('headline6-count');
         const headline7Count = document.getElementById('headline7-count');
         const headline8Count = document.getElementById('headline8-count');
-        const headline9Count = document.getElementById('headline9-count');
-        const headline10Count = document.getElementById('headline10-count');
-        const headline11Count = document.getElementById('headline11-count');
+                        const headline9Count = document.getElementById('headline9-count');
+                const headline10Count = document.getElementById('headline10-count');
+                const headline11Count = document.getElementById('headline11-count');
+                const headline12Count = document.getElementById('headline12-count');
+                const headline13Count = document.getElementById('headline13-count');
+                const headline14Count = document.getElementById('headline14-count');
+                const headline15Count = document.getElementById('headline15-count');
         const description1Count = document.getElementById('description1-count');
         const description2Count = document.getElementById('description2-count');
         const description3Count = document.getElementById('description3-count');
@@ -1459,6 +1554,14 @@
                 await saveClientInfo();
             });
 
+            // Delete client button
+            const deleteClientBtn = document.getElementById('delete-client-btn');
+            if (deleteClientBtn) {
+                deleteClientBtn.addEventListener('click', async () => {
+                    await deleteCurrentClient();
+                });
+            }
+
             // Auto-save on form changes (debounced)
             let saveTimeout;
             const formElements = [clientName, websiteUrl, industry, targetAudience, geographicTargeting, uniqueSellingPoints, competitors, brandVoice, callToAction, budget];
@@ -1568,12 +1671,24 @@
 
         // Update current client indicator
         function updateCurrentClientIndicator() {
+            const deleteClientBtn = document.getElementById('delete-client-btn');
+            
             if (databaseClient.currentClient) {
                 currentClientIndicator.style.display = 'block';
                 currentClientName.textContent = databaseClient.currentClient.name;
                 showSyncStatus('✅ Connected', 'success');
+                
+                // Show delete button if database is enabled
+                if (databaseClient.isSupabaseEnabled && deleteClientBtn) {
+                    deleteClientBtn.style.display = 'inline-block';
+                }
             } else {
                 currentClientIndicator.style.display = 'none';
+                
+                // Hide delete button
+                if (deleteClientBtn) {
+                    deleteClientBtn.style.display = 'none';
+                }
             }
         }
 
@@ -1621,6 +1736,71 @@
                 setTimeout(() => {
                     saveStatus.style.display = 'none';
                 }, 3000);
+            }
+        }
+
+        // Delete current client
+        async function deleteCurrentClient() {
+            if (!databaseClient.currentClient || !databaseClient.currentClientId) {
+                showSaveStatus('No client selected to delete', 'error');
+                return;
+            }
+
+            const clientName = databaseClient.currentClient.name;
+            
+            // Confirmation dialog
+            const confirmMessage = `Are you sure you want to delete "${clientName}" and ALL associated data?\n\nThis will permanently remove:\n• All campaigns\n• All ad groups\n• All keywords\n• All ads\n• All client information\n\nThis action cannot be undone.`;
+            
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+
+            try {
+                showSyncStatus('Deleting client...', 'loading');
+                showSaveStatus('Deleting client and all associated data...', 'loading');
+
+                // Call the delete API
+                const response = await fetch(`/api/clients/${databaseClient.currentClientId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Clear current client data
+                    databaseClient.clearCurrentClient();
+                    
+                    // Clear the form
+                    clearClientForm();
+                    
+                    // Clear local campaign data
+                    campaignsData = {};
+                    window.campaignsData = campaignsData;
+                    
+                    // Update UI
+                    updateCurrentClientIndicator();
+                    renderCampaigns();
+                    updateSelects();
+                    
+                    // Reset client selector
+                    clientSelector.value = '';
+                    
+                    // Reload clients dropdown
+                    await loadClientsDropdown();
+                    
+                    showSaveStatus(`Client "${clientName}" deleted successfully`, 'success');
+                    showSyncStatus('', '');
+                } else {
+                    throw new Error(result.message || 'Failed to delete client');
+                }
+
+            } catch (error) {
+                console.error('Error deleting client:', error);
+                showSaveStatus(`Error deleting client: ${error.message}`, 'error');
+                showSyncStatus('Error', 'error');
             }
         }
 
@@ -2006,6 +2186,10 @@
             // AI Keyword Generation
             generateKeywordsBtn.addEventListener('click', async () => {
                 try {
+                    // Get selected approach
+                    const selectedApproach = document.querySelector('input[name="keyword-approach"]:checked').value;
+                    console.log('Selected keyword approach:', selectedApproach);
+                    
                     const campaignId = keywordCampaignSelect.value;
                     const adGroupId = keywordAdGroupSelect.value;
                     
@@ -2080,6 +2264,14 @@
                     keywordSuggestions.style.display = 'none';
                     generateKeywordsBtn.disabled = true;
                     
+                    // Update loading message based on approach
+                    const loadingMessage = loadingKeywords.querySelector('p');
+                    if (selectedApproach === 'validated') {
+                        loadingMessage.textContent = 'Using validated patterns to generate keywords...';
+                    } else {
+                        loadingMessage.textContent = 'Analyzing campaign and generating keywords...';
+                    }
+                    
                     // If unit type, only send ad group name as context
                     let payload;
                     if (onlyUseAdGroupName && adGroupContext) {
@@ -2096,7 +2288,12 @@
                         };
                     }
                     
-                    const response = await fetch('/api/generate-keywords', {
+                    // Choose endpoint based on selected approach
+                    const endpoint = selectedApproach === 'validated' ? 
+                        '/api/generate-keywords-tiered' : 
+                        '/api/generate-keywords';
+                    
+                    const response = await fetch(endpoint, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -2301,6 +2498,76 @@
         let currentSortDirection = 'asc';
         let allKeywordsData = [];
 
+        function showAdCopyTermsInfo(adCopyTerms) {
+            // Create or update ad copy terms info section
+            let adCopyInfoDiv = document.getElementById('ad-copy-terms-info');
+            if (!adCopyInfoDiv) {
+                adCopyInfoDiv = document.createElement('div');
+                adCopyInfoDiv.id = 'ad-copy-terms-info';
+                adCopyInfoDiv.style.cssText = `
+                    background-color: #e8f5e8;
+                    border: 1px solid #34a853;
+                    border-radius: 6px;
+                    padding: 15px;
+                    margin: 15px 0;
+                    font-size: 14px;
+                `;
+                
+                // Insert before the keywords table wrapper
+                const keywordSuggestions = document.getElementById('keyword-suggestions');
+                const keywordsTable = document.getElementById('keywords-table');
+                const tableWrapper = keywordsTable.parentElement; // Get the wrapper div
+                keywordSuggestions.insertBefore(adCopyInfoDiv, tableWrapper);
+            }
+            
+            let content = `
+                <h4 style="margin-top: 0; color: #34a853;">💡 Specific Terms for Ad Copy (Not Targeting)</h4>
+                <p style="margin-bottom: 10px; color: #666;">
+                    <strong>Strategy:</strong> Use broad keywords below for targeting, and these specific terms in your ad headlines and descriptions.
+                </p>
+            `;
+            
+            if (adCopyTerms.amenityTerms && adCopyTerms.amenityTerms.length > 0) {
+                content += `
+                    <div style="margin-bottom: 10px;">
+                        <strong>Amenities:</strong> ${adCopyTerms.amenityTerms.join(', ')}
+                    </div>
+                `;
+            }
+            
+            if (adCopyTerms.locationTerms && adCopyTerms.locationTerms.length > 0) {
+                content += `
+                    <div style="margin-bottom: 10px;">
+                        <strong>Location Terms:</strong> ${adCopyTerms.locationTerms.join(', ')}
+                    </div>
+                `;
+            }
+            
+            if (adCopyTerms.proximityTerms && adCopyTerms.proximityTerms.length > 0) {
+                content += `
+                    <div style="margin-bottom: 10px;">
+                        <strong>Proximity Terms:</strong> ${adCopyTerms.proximityTerms.join(', ')}
+                    </div>
+                `;
+            }
+            
+            if (adCopyTerms.featureTerms && adCopyTerms.featureTerms.length > 0) {
+                content += `
+                    <div style="margin-bottom: 10px;">
+                        <strong>Feature Terms:</strong> ${adCopyTerms.featureTerms.join(', ')}
+                    </div>
+                `;
+            }
+            
+            content += `
+                <p style="margin-bottom: 0; font-size: 12px; color: #555;">
+                    <em>These specific terms often don't have keyword data, but work great in ad copy to attract qualified traffic.</em>
+                </p>
+            `;
+            
+            adCopyInfoDiv.innerHTML = content;
+        }
+
         function displayKeywordSuggestions(data) {
             console.log('Displaying keyword suggestions:', data); // Debug log
             
@@ -2314,32 +2581,68 @@
             // Collect all keywords with their types
             allKeywordsData = [];
             
-            // Add primary keywords (High Volume)
-            if (data.keywords && data.keywords.highVolume && data.keywords.highVolume.length > 0) {
-                data.keywords.highVolume.slice(0, 20).forEach(kw => {
-                    allKeywordsData.push({...kw, type: 'Primary'});
-                });
-            }
-            
-            // Add long-tail keywords
-            if (data.recommendations && data.recommendations.longTail && data.recommendations.longTail.length > 0) {
-                data.recommendations.longTail.slice(0, 20).forEach(kw => {
-                    allKeywordsData.push({...kw, type: 'Long-tail'});
-                });
-            }
-            
-            // Add low competition keywords
-            if (data.keywords && data.keywords.lowCompetition && data.keywords.lowCompetition.length > 0) {
-                data.keywords.lowCompetition.slice(0, 20).forEach(kw => {
-                    allKeywordsData.push({...kw, type: 'Low Competition'});
-                });
-            }
-            
-            // Add medium volume keywords
-            if (data.keywords && data.keywords.mediumVolume && data.keywords.mediumVolume.length > 0) {
-                data.keywords.mediumVolume.slice(0, 20).forEach(kw => {
-                    allKeywordsData.push({...kw, type: 'Medium Volume'});
-                });
+            // Handle tiered validated approach response
+            if (data.strategy === 'tiered_validated') {
+                // Show additional insights for validated approach
+                if (data.recommendations && data.recommendations.successRate) {
+                    console.log('Success rate:', data.recommendations.successRate);
+                }
+                
+                // Add primary keywords (targeting keywords)
+                if (data.targetingKeywords && data.targetingKeywords.primary && data.targetingKeywords.primary.length > 0) {
+                    data.targetingKeywords.primary.slice(0, 15).forEach(kw => {
+                        allKeywordsData.push({...kw, type: 'Primary (Validated)'});
+                    });
+                }
+                
+                // Add secondary keywords
+                if (data.targetingKeywords && data.targetingKeywords.secondary && data.targetingKeywords.secondary.length > 0) {
+                    data.targetingKeywords.secondary.slice(0, 15).forEach(kw => {
+                        allKeywordsData.push({...kw, type: 'Secondary (Validated)'});
+                    });
+                }
+                
+                // Add long-tail keywords
+                if (data.targetingKeywords && data.targetingKeywords.longTail && data.targetingKeywords.longTail.length > 0) {
+                    data.targetingKeywords.longTail.slice(0, 15).forEach(kw => {
+                        allKeywordsData.push({...kw, type: 'Long-tail (Validated)'});
+                    });
+                }
+                
+                // Show ad copy terms as informational (not for targeting)
+                if (data.adCopyTerms) {
+                    console.log('Ad copy terms for headlines/descriptions:', data.adCopyTerms);
+                    showAdCopyTermsInfo(data.adCopyTerms);
+                }
+            } else {
+                // Handle original AI-driven approach response
+                // Add primary keywords (High Volume)
+                if (data.keywords && data.keywords.highVolume && data.keywords.highVolume.length > 0) {
+                    data.keywords.highVolume.slice(0, 20).forEach(kw => {
+                        allKeywordsData.push({...kw, type: 'Primary'});
+                    });
+                }
+                
+                // Add long-tail keywords
+                if (data.recommendations && data.recommendations.longTail && data.recommendations.longTail.length > 0) {
+                    data.recommendations.longTail.slice(0, 20).forEach(kw => {
+                        allKeywordsData.push({...kw, type: 'Long-tail'});
+                    });
+                }
+                
+                // Add low competition keywords
+                if (data.keywords && data.keywords.lowCompetition && data.keywords.lowCompetition.length > 0) {
+                    data.keywords.lowCompetition.slice(0, 20).forEach(kw => {
+                        allKeywordsData.push({...kw, type: 'Low Competition'});
+                    });
+                }
+                
+                // Add medium volume keywords
+                if (data.keywords && data.keywords.mediumVolume && data.keywords.mediumVolume.length > 0) {
+                    data.keywords.mediumVolume.slice(0, 20).forEach(kw => {
+                        allKeywordsData.push({...kw, type: 'Medium Volume'});
+                    });
+                }
             }
             
             // Remove duplicates based on keyword text
@@ -2403,6 +2706,15 @@
                         break;
                     case 'Medium Volume':
                         badgeClass = 'keyword-type-medium';
+                        break;
+                    case 'Primary (Validated)':
+                        badgeClass = 'keyword-type-validated-primary';
+                        break;
+                    case 'Secondary (Validated)':
+                        badgeClass = 'keyword-type-validated-secondary';
+                        break;
+                    case 'Long-tail (Validated)':
+                        badgeClass = 'keyword-type-validated-longtail';
                         break;
                 }
                 
@@ -2774,7 +3086,7 @@
             
             // Monitor ad copy changes for real-time analysis
             const adInputs = [headline1, headline2, headline3, headline4, headline5, headline6, 
-                             headline7, headline8, headline9, headline10, headline11,
+                             headline7, headline8, headline9, headline10, headline11, headline12, headline13, headline14, headline15,
                              description1, description2, description3, description4];
             
             adInputs.forEach(input => {
@@ -2798,9 +3110,13 @@
                     headline_6: headline6.value || null,
                     headline_7: headline7.value || null,
                     headline_8: headline8.value || null,
-                    headline_9: headline9.value || null,
-                    headline_10: headline10.value || null,
-                    headline_11: headline11.value || null,
+                                            headline_9: headline9.value || null,
+                        headline_10: headline10.value || null,
+                        headline_11: headline11.value || null,
+                        headline_12: headline12.value || null,
+                        headline_13: headline13.value || null,
+                        headline_14: headline14.value || null,
+                        headline_15: headline15.value || null,
                     description_1: description1.value || null,
                     description_2: description2.value || null,
                     description_3: description3.value || null,
@@ -2834,6 +3150,10 @@
                         headline9: savedAd.headline_9 || '',
                         headline10: savedAd.headline_10 || '',
                         headline11: savedAd.headline_11 || '',
+                        headline12: savedAd.headline_12 || '',
+                        headline13: savedAd.headline_13 || '',
+                        headline14: savedAd.headline_14 || '',
+                        headline15: savedAd.headline_15 || '',
                         description1: savedAd.description_1 || '',
                         description2: savedAd.description_2 || '',
                         description3: savedAd.description_3 || '',
@@ -2867,6 +3187,10 @@
                         headline9: headline9.value,
                         headline10: headline10.value,
                         headline11: headline11.value,
+                        headline12: headline12.value,
+                        headline13: headline13.value,
+                        headline14: headline14.value,
+                        headline15: headline15.value,
                         description1: description1.value,
                         description2: description2.value,
                         description3: description3.value,
@@ -2908,9 +3232,13 @@
             headline6.value = '';
             headline7.value = '';
             headline8.value = '';
-            headline9.value = '';
-            headline10.value = '';
-            headline11.value = '';
+                            headline9.value = '';
+                headline10.value = '';
+                headline11.value = '';
+                headline12.value = '';
+                headline13.value = '';
+                headline14.value = '';
+                headline15.value = '';
             description1.value = '';
             description2.value = '';
             description3.value = '';
@@ -2981,6 +3309,10 @@
                         </div>
                         <div class="keyword-item">
                             <div><strong>Headline 11:</strong> ${ad.headline11 || 'N/A'}</div>
+                    <div><strong>Headline 12:</strong> ${ad.headline12 || 'N/A'}</div>
+                    <div><strong>Headline 13:</strong> ${ad.headline13 || 'N/A'}</div>
+                    <div><strong>Headline 14:</strong> ${ad.headline14 || 'N/A'}</div>
+                    <div><strong>Headline 15:</strong> ${ad.headline15 || 'N/A'}</div>
                         </div>
                         <div class="keyword-item">
                             <div><strong>Description 1:</strong> ${ad.description1}</div>
@@ -3067,7 +3399,7 @@
                 headlines: [
                     headline1.value, headline2.value, headline3.value, headline4.value,
                     headline5.value, headline6.value, headline7.value, headline8.value,
-                    headline9.value, headline10.value, headline11.value
+                    headline9.value, headline10.value, headline11.value, headline12.value, headline13.value, headline14.value, headline15.value
                 ].filter(h => h.trim() !== ''),
                 descriptions: [
                     description1.value, description2.value, description3.value, description4.value
@@ -3398,7 +3730,7 @@
             const clientInfo = getClientInfo();
             
             // CSV Header for ads
-            let csv = 'Campaign,Ad Group,Headline 1,Headline 2,Headline 3,Headline 4,Headline 5,Headline 6,Headline 7,Headline 8,Headline 9,Headline 10,Headline 11,Description 1,Description 2,Description 3,Description 4,Final URL\n';
+            let csv = 'Campaign,Ad Group,Headline 1,Headline 2,Headline 3,Headline 4,Headline 5,Headline 6,Headline 7,Headline 8,Headline 9,Headline 10,Headline 11,Headline 12,Headline 13,Headline 14,Headline 15,Description 1,Description 2,Description 3,Description 4,Final URL\n';
             
             // Process each ad group
             for (const adGroupId in campaign.adGroups) {
@@ -3408,7 +3740,7 @@
                 // Process ads
                 const ads = campaign.ads && campaign.ads[adGroupId] ? campaign.ads[adGroupId] : [];
                 for (const ad of ads) {
-                    csv += `"${campaign.name}","${adGroupName}","${ad.headline1 || ''}","${ad.headline2 || ''}","${ad.headline3 || ''}","${ad.headline4 || ''}","${ad.headline5 || ''}","${ad.headline6 || ''}","${ad.headline7 || ''}","${ad.headline8 || ''}","${ad.headline9 || ''}","${ad.headline10 || ''}","${ad.headline11 || ''}","${ad.description1 || ''}","${ad.description2 || ''}","${ad.description3 || ''}","${ad.description4 || ''}","${clientInfo.websiteUrl || ''}"\n`;
+                    csv += `"${campaign.name}","${adGroupName}","${ad.headline1 || ''}","${ad.headline2 || ''}","${ad.headline3 || ''}","${ad.headline4 || ''}","${ad.headline5 || ''}","${ad.headline6 || ''}","${ad.headline7 || ''}","${ad.headline8 || ''}","${ad.headline9 || ''}","${ad.headline10 || ''}","${ad.headline11 || ''}","${ad.headline12 || ''}","${ad.headline13 || ''}","${ad.headline14 || ''}","${ad.headline15 || ''}","${ad.description1 || ''}","${ad.description2 || ''}","${ad.description3 || ''}","${ad.description4 || ''}","${clientInfo.websiteUrl || ''}"\n`;
                 }
             }
             
@@ -3441,7 +3773,7 @@
             const clientInfo = getClientInfo();
             
             // CSV Header - removed Path 1 and Path 2 columns that don't exist
-            let csv = 'Campaign,Ad Group,Headline 1,Headline 2,Headline 3,Headline 4,Headline 5,Headline 6,Headline 7,Headline 8,Headline 9,Headline 10,Headline 11,Description 1,Description 2,Description 3,Description 4,Final URL,Keyword,Match Type\n';
+            let csv = 'Campaign,Ad Group,Headline 1,Headline 2,Headline 3,Headline 4,Headline 5,Headline 6,Headline 7,Headline 8,Headline 9,Headline 10,Headline 11,Headline 12,Headline 13,Headline 14,Headline 15,Description 1,Description 2,Description 3,Description 4,Final URL,Keyword,Match Type\n';
             
             // Process each ad group
             for (const adGroupId in campaign.adGroups) {
@@ -3451,13 +3783,13 @@
                 // Process ads - removed references to path1 and path2
                 const ads = campaign.ads && campaign.ads[adGroupId] ? campaign.ads[adGroupId] : [];
                 for (const ad of ads) {
-                    csv += `"${campaign.name}","${adGroupName}","${ad.headline1 || ''}","${ad.headline2 || ''}","${ad.headline3 || ''}","${ad.headline4 || ''}","${ad.headline5 || ''}","${ad.headline6 || ''}","${ad.headline7 || ''}","${ad.headline8 || ''}","${ad.headline9 || ''}","${ad.headline10 || ''}","${ad.headline11 || ''}","${ad.description1 || ''}","${ad.description2 || ''}","${ad.description3 || ''}","${ad.description4 || ''}","${clientInfo.websiteUrl || ''}",,\n`;
+                    csv += `"${campaign.name}","${adGroupName}","${ad.headline1 || ''}","${ad.headline2 || ''}","${ad.headline3 || ''}","${ad.headline4 || ''}","${ad.headline5 || ''}","${ad.headline6 || ''}","${ad.headline7 || ''}","${ad.headline8 || ''}","${ad.headline9 || ''}","${ad.headline10 || ''}","${ad.headline11 || ''}","${ad.headline12 || ''}","${ad.headline13 || ''}","${ad.headline14 || ''}","${ad.headline15 || ''}","${ad.description1 || ''}","${ad.description2 || ''}","${ad.description3 || ''}","${ad.description4 || ''}","${clientInfo.websiteUrl || ''}",,\n`;
                 }
                 
-                // Process keywords - fixed column alignment (17 empty columns total: 2 campaign/adgroup + 11 headlines + 4 descriptions + 1 final URL = 18 columns before keyword)
+                // Process keywords - fixed column alignment (21 empty columns total: 2 campaign/adgroup + 15 headlines + 4 descriptions + 1 final URL = 22 columns before keyword)
                 const keywords = campaign.keywords && campaign.keywords[adGroupId] ? campaign.keywords[adGroupId] : [];
                 for (const keyword of keywords) {
-                    csv += `"${campaign.name}","${adGroupName}",,,,,,,,,,,,,,,,,"${clientInfo.websiteUrl || ''}","${keyword.text}","${keyword.matchType}"\n`;
+                    csv += `"${campaign.name}","${adGroupName}",,,,,,,,,,,,,,,,,,,,"${clientInfo.websiteUrl || ''}","${keyword.text}","${keyword.matchType}"\n`;
                 }
             }
             
@@ -3467,7 +3799,7 @@
         // Enhanced Character Counters with Quality Feedback
         function setupCharacterCounters() {
             // Setup for all headline inputs
-            for (let i = 1; i <= 11; i++) {
+            for (let i = 1; i <= 15; i++) {
                 const input = document.getElementById(`headline${i}`);
                 const counter = document.getElementById(`headline${i}-count`);
                 if (input && counter) {
@@ -3824,7 +4156,14 @@
                     note.innerHTML = '<b>General Search Campaign:</b> Keyword generation will focus on location-based terms covering Location, New Apts, Near, and Access To classifications. The "Location" ad group has been automatically created.';
                 }
                 
-                keywordCampaignSelect.parentElement.parentElement.insertBefore(note, keywordCampaignSelect.parentElement.nextSibling);
+                // Safely insert the note after the campaign select element
+                const campaignContainer = keywordCampaignSelect.parentElement.parentElement;
+                const nextElement = keywordCampaignSelect.parentElement.nextSibling;
+                if (nextElement && campaignContainer.contains(nextElement)) {
+                    campaignContainer.insertBefore(note, nextElement);
+                } else {
+                    campaignContainer.appendChild(note);
+                }
             }
         }
         
@@ -3836,8 +4175,8 @@
             let optimizedCount = 0;
             let improvements = [];
             
-            // Process all 11 headlines
-            for (let i = 1; i <= 11; i++) {
+            // Process all 15 headlines
+            for (let i = 1; i <= 15; i++) {
                 const input = document.getElementById(`headline${i}`);
                 if (input && input.value.trim()) {
                     const original = input.value.trim();

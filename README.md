@@ -114,7 +114,7 @@ Complete the client profile with:
 
 ### AI & Data Integration
 - **Primary AI**: OpenAI GPT-4 for complex analysis and orchestration
-- **Content Generation**: GPT-3.5-Turbo for high-speed ad copy creation
+- **Content Generation**: GPT-4 for high-quality ad copy creation
 - **Keyword Data**: Semrush API for professional market intelligence
 - **Fallback Systems**: Graceful degradation when external services unavailable
 

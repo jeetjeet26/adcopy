@@ -175,8 +175,15 @@ class AgenticAdCopyGenerator {
             
             console.log('Final request payload:', requestPayload);
 
+            // Determine which endpoint to use based on saved keywords availability
+            const endpoint = savedKeywords 
+                ? '/api/generate-ad-copy'  // Use existing endpoint with saved keywords
+                : '/api/generate-ad-copy-intelligent';  // Use new intelligent endpoint
+            
+            console.log(`Using endpoint: ${endpoint}`);
+            
             // Make API call to backend with campaign and ad group context
-            const response = await fetch(`${this.apiBaseUrl}/api/generate-ad-copy`, {
+            const response = await fetch(`${this.apiBaseUrl}${endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -235,8 +242,8 @@ class AgenticAdCopyGenerator {
         console.log('Headlines:', adCopy.headlines);
         console.log('Descriptions:', adCopy.descriptions);
         
-        // Update headlines - Updated to handle 11 headlines
-        const headlineIds = ['headline1', 'headline2', 'headline3', 'headline4', 'headline5', 'headline6', 'headline7', 'headline8', 'headline9', 'headline10', 'headline11'];
+        // Update headlines - Updated to handle 15 headlines
+        const headlineIds = ['headline1', 'headline2', 'headline3', 'headline4', 'headline5', 'headline6', 'headline7', 'headline8', 'headline9', 'headline10', 'headline11', 'headline12', 'headline13', 'headline14', 'headline15'];
         for (let i = 0; i < adCopy.headlines.length && i < headlineIds.length; i++) {
             const headlineInput = document.getElementById(headlineIds[i]);
             if (headlineInput) {
@@ -284,6 +291,10 @@ class AgenticAdCopyGenerator {
         const headline9 = document.getElementById('headline9').value;
         const headline10 = document.getElementById('headline10').value;
         const headline11 = document.getElementById('headline11').value;
+        const headline12 = document.getElementById('headline12').value;
+        const headline13 = document.getElementById('headline13').value;
+        const headline14 = document.getElementById('headline14').value;
+        const headline15 = document.getElementById('headline15').value;
         const description1 = document.getElementById('description1').value;
         const description2 = document.getElementById('description2').value;
         const description3 = document.getElementById('description3').value;
@@ -295,7 +306,7 @@ class AgenticAdCopyGenerator {
             const domain = this.extractDomain(websiteUrl);
             
             // Count total available headlines and descriptions
-            const availableHeadlines = [headline1, headline2, headline3, headline4, headline5, headline6, headline7, headline8, headline9, headline10, headline11].filter(h => h && h.trim()).length;
+            const availableHeadlines = [headline1, headline2, headline3, headline4, headline5, headline6, headline7, headline8, headline9, headline10, headline11, headline12, headline13, headline14, headline15].filter(h => h && h.trim()).length;
             const availableDescriptions = [description1, description2, description3, description4].filter(d => d && d.trim()).length;
             
             previewContainer.innerHTML = `
@@ -367,8 +378,11 @@ class AgenticAdCopyGenerator {
         errorDiv.textContent = message;
         
         const generateButton = document.getElementById('generate-ad-copy');
-        if (generateButton && generateButton.parentNode) {
+        if (generateButton && generateButton.parentNode && generateButton.parentNode.contains(generateButton)) {
             generateButton.parentNode.insertBefore(errorDiv, generateButton);
+        } else if (generateButton) {
+            // Fallback: append to the parent container
+            generateButton.parentNode.appendChild(errorDiv);
         }
         
         // Auto-hide after 5 seconds
@@ -392,8 +406,11 @@ class AgenticAdCopyGenerator {
         successDiv.textContent = message;
         
         const generateButton = document.getElementById('generate-ad-copy');
-        if (generateButton && generateButton.parentNode) {
+        if (generateButton && generateButton.parentNode && generateButton.parentNode.contains(generateButton)) {
             generateButton.parentNode.insertBefore(successDiv, generateButton);
+        } else if (generateButton) {
+            // Fallback: append to the parent container
+            generateButton.parentNode.appendChild(successDiv);
         }
         
         // Auto-hide after 3 seconds

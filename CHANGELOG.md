@@ -241,7 +241,7 @@
 
 #### **Advanced AI Ad Copy Generation**
 - **Keyword-Driven Content**: Ad copy generation now leverages real keyword data for maximum relevance
-- **Dual AI Architecture**: GPT-4 for orchestration and strategy, GPT-3.5-Turbo for content generation
+- **Enhanced AI Architecture**: GPT-4 for orchestration, strategy, and content generation with separated headline/description calls
 - **Context-Aware Messaging**: Copy aligned with both keywords and campaign objectives
 - **Enhanced Character Optimization**: Intelligent text fitting for Google Ads requirements
 

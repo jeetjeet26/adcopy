@@ -85,7 +85,7 @@ clients (id, name, website_url, industry, ...)
 ├── campaigns (id, client_id, name, is_unit_type, ...)
     ├── ad_groups (id, campaign_id, name, theme, ...)
         ├── keywords (id, ad_group_id, text, match_type, ...)
-        └── ads (id, ad_group_id, headline_1...11, description_1...4, ...)
+        └── ads (id, ad_group_id, headline_1...15, description_1...4, ...)
 ```
 
 ## Benefits of Migration

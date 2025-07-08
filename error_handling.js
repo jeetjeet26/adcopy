@@ -53,8 +53,11 @@ class ErrorHandler {
         if (location === 'default') {
             // Insert before the first heading
             const firstHeading = document.querySelector('h1, h2, h3');
-            if (firstHeading && firstHeading.parentNode) {
+            if (firstHeading && firstHeading.parentNode && firstHeading.parentNode.contains(firstHeading)) {
                 firstHeading.parentNode.insertBefore(this.errorContainer, firstHeading);
+            } else if (firstHeading) {
+                // Fallback: insert at the top of the body
+                document.body.insertBefore(this.errorContainer, document.body.firstChild);
             }
         } else if (location === 'adCopy') {
             // Insert in the ad copy section

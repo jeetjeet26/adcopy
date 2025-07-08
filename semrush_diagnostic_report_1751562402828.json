@@ -1,0 +1,418 @@
+{
+  "timestamp": "2025-07-03T17:06:33.814Z",
+  "environment": {
+    "node": "v20.11.1",
+    "platform": "win32",
+    "arch": "x64"
+  },
+  "tests": [
+    {
+      "name": "DNS Resolution",
+      "results": [
+        {
+          "status": "success",
+          "duration": "25.93ms",
+          "addresses": [
+            "35.190.116.83"
+          ],
+          "message": "Resolved to 1 IP address(es)"
+        }
+      ]
+    },
+    {
+      "name": "Basic Connectivity",
+      "results": [
+        {
+          "url": "https://api.semrush.com",
+          "status": "success",
+          "statusCode": 400,
+          "duration": "136.96ms",
+          "headers": {
+            "server": "nginx",
+            "date": "Thu, 03 Jul 2025 17:06:32 GMT",
+            "content-type": "text/plain; charset=utf-8",
+            "content-length": "21",
+            "x-content-type-options": "nosniff",
+            "sm-log-id": "api-flb-6799c9037d176e8ece2a34bc8b892fed",
+            "via": "1.1 google",
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+          }
+        },
+        {
+          "url": "http://api.semrush.com",
+          "status": "success",
+          "statusCode": 301,
+          "duration": "12.54ms",
+          "headers": {
+            "cache-control": "private",
+            "location": "https://api.semrush.com:443/",
+            "content-length": "0",
+            "date": "Thu, 03 Jul 2025 17:06:32 GMT",
+            "content-type": "text/html; charset=UTF-8"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Timeout Tests",
+      "results": [
+        {
+          "timeout": "5000ms",
+          "status": "success",
+          "duration": "204.47ms",
+          "dataLength": 35,
+          "statusCode": 200
+        },
+        {
+          "timeout": "10000ms",
+          "status": "success",
+          "duration": "211.49ms",
+          "dataLength": 35,
+          "statusCode": 200
+        },
+        {
+          "timeout": "15000ms",
+          "status": "success",
+          "duration": "150.22ms",
+          "dataLength": 35,
+          "statusCode": 200
+        },
+        {
+          "timeout": "30000ms",
+          "status": "success",
+          "duration": "139.87ms",
+          "dataLength": 35,
+          "statusCode": 200
+        },
+        {
+          "timeout": "60000ms",
+          "status": "success",
+          "duration": "150.57ms",
+          "dataLength": 35,
+          "statusCode": 200
+        }
+      ]
+    },
+    {
+      "name": "Endpoint Tests",
+      "results": [
+        {
+          "endpoint": "phrase_all (problematic)",
+          "type": "phrase_all",
+          "status": "success",
+          "duration": "144.26ms",
+          "dataLength": 35,
+          "statusCode": 200
+        },
+        {
+          "endpoint": "phrase_this",
+          "type": "phrase_this",
+          "status": "success",
+          "duration": "130.18ms",
+          "dataLength": 58,
+          "statusCode": 200
+        },
+        {
+          "endpoint": "phrase_related",
+          "type": "phrase_related",
+          "status": "success",
+          "duration": "1048.16ms",
+          "dataLength": 130,
+          "statusCode": 200
+        },
+        {
+          "endpoint": "phrase_questions",
+          "type": "phrase_questions",
+          "status": "success",
+          "duration": "569.91ms",
+          "dataLength": 197,
+          "statusCode": 200
+        },
+        {
+          "endpoint": "domain_organic",
+          "type": "domain_organic",
+          "status": "success",
+          "duration": "505.31ms",
+          "dataLength": 101,
+          "statusCode": 200
+        },
+        {
+          "endpoint": "backlinks_overview",
+          "type": "backlinks_overview",
+          "status": "http_error",
+          "statusCode": 400,
+          "duration": "65.10ms",
+          "error": "query type not found\n"
+        }
+      ]
+    },
+    {
+      "name": "Payload Size Tests",
+      "results": [
+        {
+          "limit": 1,
+          "status": "success",
+          "duration": "144.37ms",
+          "dataLength": 96,
+          "statusCode": 200
+        },
+        {
+          "limit": 5,
+          "status": "success",
+          "duration": "140.78ms",
+          "dataLength": 96,
+          "statusCode": 200
+        },
+        {
+          "limit": 10,
+          "status": "success",
+          "duration": "138.11ms",
+          "dataLength": 96,
+          "statusCode": 200
+        },
+        {
+          "limit": 25,
+          "status": "success",
+          "duration": "140.34ms",
+          "dataLength": 96,
+          "statusCode": 200
+        },
+        {
+          "limit": 50,
+          "status": "success",
+          "duration": "140.66ms",
+          "dataLength": 96,
+          "statusCode": 200
+        },
+        {
+          "limit": 100,
+          "status": "success",
+          "duration": "137.05ms",
+          "dataLength": 96,
+          "statusCode": 200
+        }
+      ]
+    },
+    {
+      "name": "Concurrent Request Tests",
+      "results": [
+        {
+          "concurrentRequests": 1,
+          "totalDuration": "136.32ms",
+          "successCount": 1,
+          "failureCount": 0,
+          "results": [
+            {
+              "status": "success",
+              "duration": "136.06ms",
+              "dataLength": 31,
+              "statusCode": 200
+            }
+          ]
+        },
+        {
+          "concurrentRequests": 2,
+          "totalDuration": "203.48ms",
+          "successCount": 2,
+          "failureCount": 0,
+          "results": [
+            {
+              "status": "success",
+              "duration": "149.14ms",
+              "dataLength": 31,
+              "statusCode": 200
+            },
+            {
+              "status": "success",
+              "duration": "203.09ms",
+              "dataLength": 33,
+              "statusCode": 200
+            }
+          ]
+        },
+        {
+          "concurrentRequests": 3,
+          "totalDuration": "269.97ms",
+          "successCount": 3,
+          "failureCount": 0,
+          "results": [
+            {
+              "status": "success",
+              "duration": "199.42ms",
+              "dataLength": 31,
+              "statusCode": 200
+            },
+            {
+              "status": "success",
+              "duration": "143.41ms",
+              "dataLength": 33,
+              "statusCode": 200
+            },
+            {
+              "status": "success",
+              "duration": "269.57ms",
+              "dataLength": 33,
+              "statusCode": 200
+            }
+          ]
+        },
+        {
+          "concurrentRequests": 5,
+          "totalDuration": "291.49ms",
+          "successCount": 5,
+          "failureCount": 0,
+          "results": [
+            {
+              "status": "success",
+              "duration": "220.61ms",
+              "dataLength": 31,
+              "statusCode": 200
+            },
+            {
+              "status": "success",
+              "duration": "140.90ms",
+              "dataLength": 33,
+              "statusCode": 200
+            },
+            {
+              "status": "success",
+              "duration": "137.13ms",
+              "dataLength": 33,
+              "statusCode": 200
+            },
+            {
+              "status": "success",
+              "duration": "291.00ms",
+              "dataLength": 33,
+              "statusCode": 200
+            },
+            {
+              "status": "success",
+              "duration": "203.43ms",
+              "dataLength": 32,
+              "statusCode": 200
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Rate Limit Tests",
+      "results": [
+        {
+          "request": 1,
+          "delay": "138.94ms",
+          "status": "success"
+        },
+        {
+          "request": 2,
+          "delay": "167.77ms",
+          "status": "success"
+        },
+        {
+          "request": 3,
+          "delay": "161.23ms",
+          "status": "success"
+        },
+        {
+          "request": 4,
+          "delay": "138.81ms",
+          "status": "success"
+        },
+        {
+          "request": 5,
+          "delay": "155.37ms",
+          "status": "success"
+        },
+        {
+          "request": 6,
+          "delay": "143.48ms",
+          "status": "success"
+        },
+        {
+          "request": 7,
+          "delay": "145.88ms",
+          "status": "success"
+        },
+        {
+          "request": 8,
+          "delay": "153.64ms",
+          "status": "success"
+        },
+        {
+          "request": 9,
+          "delay": "138.15ms",
+          "status": "success"
+        },
+        {
+          "request": 10,
+          "delay": "139.56ms",
+          "status": "success"
+        }
+      ]
+    },
+    {
+      "name": "HTTP Client Tests",
+      "results": [
+        {
+          "client": "native_https",
+          "status": "success",
+          "duration": "138.88ms",
+          "dataLength": 35,
+          "statusCode": 200
+        },
+        {
+          "client": "axios",
+          "status": "success",
+          "duration": "167.62ms",
+          "dataLength": 35,
+          "statusCode": 200
+        }
+      ]
+    },
+    {
+      "name": "Network Latency",
+      "results": [
+        {
+          "avgLatency": "67.21ms",
+          "minLatency": "66.16ms",
+          "maxLatency": "68.66ms",
+          "samples": 5
+        }
+      ]
+    },
+    {
+      "name": "API Comparison",
+      "results": [
+        {
+          "api": "Semrush",
+          "status": "success",
+          "duration": "168.78ms",
+          "dataLength": 35,
+          "statusCode": 200
+        },
+        {
+          "api": "Google",
+          "status": "success",
+          "duration": "155.43ms",
+          "dataLength": 7086,
+          "statusCode": 200
+        },
+        {
+          "api": "GitHub",
+          "status": "http_error",
+          "statusCode": 403,
+          "duration": "113.08ms",
+          "error": "\r\nRequest forbidden by administrative rules. Please make sure your request has a User-Agent header ("
+        },
+        {
+          "api": "JSONPlaceholder",
+          "status": "success",
+          "duration": "66.26ms",
+          "dataLength": 292,
+          "statusCode": 200
+        }
+      ]
+    }
+  ]
+}
